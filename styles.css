@@ -295,3 +295,16 @@ h1,h2,h3{color:var(--tinta)}
 .persona p{margin:0}
 .persona .rol{font:600 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ocre)}
 .persona .tit{color:var(--tinta2);font-size:15px;margin-top:4px}
+
+/* servicios con dron */
+.dron{display:flex;gap:26px;align-items:flex-start;margin-top:26px;background:#14293e;border:1px solid #28425c;border-radius:20px;padding:30px}
+.dron>svg{flex:none;width:64px;height:64px;fill:none;stroke:var(--oro);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dron-cuerpo{min-width:0}
+.dron h3{color:#fff;font-size:24px;margin:2px 0 8px}
+.dron-equipo{margin:0 0 18px;color:#bccad6;font-size:15.5px}
+.dron-items{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px 26px}
+.dron-items li{display:flex;flex-direction:column;gap:2px;padding-left:14px;border-left:2px solid var(--oro)}
+.dron-items b{color:#fff;font-weight:600}
+.dron-items span{color:#bccad6;font-size:14.5px}
+.dron-lim{margin:20px 0 0;font:12.5px/1.5 var(--mono);color:#9fd3e0;border-top:1px dashed #35516d;padding-top:14px}
+@media (max-width:640px){.dron{flex-direction:column;padding:24px}}

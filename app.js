@@ -167,6 +167,15 @@
     h("option", { value: "otro" }, sel, "Otro / no lo sé todavía");
   })();
 
+  /* ---------- detalle de servicios con dron ---------- */
+  (function dron() {
+    var dd = D.dron; if (!dd) return;
+    $("#dron-equipo").textContent = dd.equipo;
+    var ul = $("#dron-items");
+    dd.items.forEach(function (i) { h("li", {}, ul, '<b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span>'); });
+    $("#dron-lim").textContent = dd.limites;
+  })();
+
   /* ---------- cifras con conteo ---------- */
   (function cifras() {
     var box = $("#cifras");

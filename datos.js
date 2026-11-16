@@ -48,7 +48,28 @@ window.CONSULTORIA = {
       para: "Grupos de investigación, asociaciones y empresas que se presentan a convocatorias o deben rendir cuentas",
       entrega: "Estructuración técnica y administrativa de la propuesta, cronograma y entregables, informes de avance y un informe final técnico y financiero.",
       respaldo: "Formulación y seguimiento administrativo de proyectos universidad-empresa en la OTRI y la Vicerrectoría de Investigación y Extensión de la UPTC · informes técnicos y financieros (Zahira Rodríguez)" }
+    ,
+    { id: "dron", linea: ["academica", "empresarial"], icono: "dron", titulo: "Mapeo y monitoreo de lotes con dron",
+      para: "Productores, asociaciones, empresas del agro y grupos que necesitan ver el lote desde arriba",
+      entrega: "Ortomosaico georreferenciado y modelo de superficie del predio, conteo de plantas, cobertura e índices de vegetación en RGB, y registro fotográfico, con mapas listos para QGIS.",
+      respaldo: "Equipo propio: dron DJI Lito X1 Fly More Combo Plus (cámara de 48 MP, GPS, 3 baterías) · análisis geoespacial en QGIS y Google Earth Engine" }
   ],
+
+  /* Detalle de los servicios con dron. Equipo y límites según la ficha del fabricante (DJI Lito X1):
+     cámara RGB de 48 MP, GPS/Galileo, sin sensor multiespectral ni térmico en el combo.
+     La experiencia de vuelo y los permisos NO se afirman hasta tenerlos verificados. */
+  dron: {
+    equipo: "DJI Lito X1 Fly More Combo Plus: cámara de 48 MP con gimbal de 3 ejes, video 4K, GPS, sensores de obstáculos y 3 baterías.",
+    items: [
+      { t: "Ortomosaico y modelo de superficie", d: "Mapa aéreo georreferenciado del lote y su relieve, listo para QGIS." },
+      { t: "Conteo de plantas y fallas de siembra", d: "Detección sobre el ortomosaico, validada con muestreos en campo." },
+      { t: "Cobertura e índices de vegetación en RGB", d: "Vigor relativo entre zonas del lote (VARI, GLI). No es NDVI." },
+      { t: "Delimitación visual de predios", d: "Apoyo al polígono para EUDR o formalización. No reemplaza un levantamiento topográfico." },
+      { t: "Seguimiento de ensayos y parcelas", d: "Vuelos repetidos para comparar tratamientos: cobertura y altura relativa." },
+      { t: "Registro de daños y evidencias", d: "Granizo, heladas, inundaciones o fallas visibles, documentados para informes." }
+    ],
+    limites: "Cámara RGB: no mide NDVI ni temperatura. La precisión absoluta de los mapas mejora con puntos de control en tierra, y se acuerda según el uso."
+  },
 
   /* Embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo */
   lineas: {
@@ -66,6 +87,7 @@ window.CONSULTORIA = {
     { texto: "Quiero capacitar o formalizar a una asociación", servicio: "talleres", linea: ["empresarial"] },
     { texto: "Debo probar si mi producto funciona en campo", servicio: "ensayos", linea: ["empresarial"] },
     { texto: "Debo rendir informes técnicos y financieros de un proyecto", servicio: "proyectos", linea: ["academica", "empresarial"] },
+    { texto: "Quiero ver, mapear o contar plantas de mis lotes desde el aire", servicio: "dron", linea: ["academica", "empresarial"] },
     { texto: "Todavía no sé cuál es mi problema, quiero conversarlo", servicio: null, linea: ["academica", "empresarial"] }
   ],
   opcionesDatos: [
