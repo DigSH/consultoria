@@ -160,24 +160,12 @@
         '<h3>' + esc(s.titulo) + '</h3>' +
         '<p class="para">Para: ' + esc(s.para) + '.</p>' +
         '<p>' + esc(s.entrega) + '</p>' +
+        (D[s.id] && D[s.id].items ? '<ul class="incluye">' + D[s.id].items.map(function (i) { return '<li title="' + esc(i.d) + '">' + esc(i.t) + '</li>'; }).join("") + '</ul><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
         '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>');
     });
     var sel = $("#f-servicio");
     D.servicios.forEach(function (s) { h("option", { value: s.id }, sel, esc(s.titulo)); });
     h("option", { value: "otro" }, sel, "Otro / no lo sé todavía");
-  })();
-
-  /* ---------- bloques de detalle: dron e inteligencia artificial ---------- */
-  (function bloques() {
-    function pintar(pre, intro, dd) {
-      if (!dd) return;
-      $("#" + pre + "-" + (pre === "dron" ? "equipo" : "intro")).textContent = intro;
-      var ul = $("#" + pre + "-items");
-      dd.items.forEach(function (i) { h("li", {}, ul, '<b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span>'); });
-      $("#" + pre + "-lim").textContent = dd.limites;
-    }
-    pintar("dron", D.dron && D.dron.equipo, D.dron);
-    pintar("ia", D.ia && D.ia.intro, D.ia);
   })();
 
   /* ---------- cifras con conteo ---------- */

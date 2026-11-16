@@ -62,7 +62,6 @@ window.CONSULTORIA = {
   /* Detalle de los modelos a medida. Los casos de fruta y cosecha se ofrecen a medida: no se afirma
      un proyecto entregado hasta tener un caso verificado. */
   ia: {
-    intro: "Modelos que se construyen con los datos de tu finca, no genéricos. Se parte de un piloto pequeño y se crece cuando el resultado lo justifica.",
     items: [
       { t: "Conteo de fruta", d: "Visión por computador sobre fotos o video del cultivo, en la planta o en la cosecha." },
       { t: "Proyección de cosecha", d: "Estimación de producción por lote y por semana con conteos, clima y registros de la finca." },
@@ -76,7 +75,6 @@ window.CONSULTORIA = {
   /* Detalle de los servicios con dron. Cámara RGB (sin sensor multiespectral ni térmico).
      La experiencia de vuelo y los permisos NO se afirman hasta tenerlos verificados. */
   dron: {
-    equipo: "Dron propio con cámara de 48 MP, estabilizador de 3 ejes y video 4K.",
     items: [
       { t: "Ortomosaico y modelo de superficie", d: "Mapa aéreo georreferenciado del lote y su relieve, listo para QGIS." },
       { t: "Conteo de plantas y fallas de siembra", d: "Detección sobre el ortomosaico, validada con muestreos en campo." },
