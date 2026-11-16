@@ -167,13 +167,17 @@
     h("option", { value: "otro" }, sel, "Otro / no lo sé todavía");
   })();
 
-  /* ---------- detalle de servicios con dron ---------- */
-  (function dron() {
-    var dd = D.dron; if (!dd) return;
-    $("#dron-equipo").textContent = dd.equipo;
-    var ul = $("#dron-items");
-    dd.items.forEach(function (i) { h("li", {}, ul, '<b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span>'); });
-    $("#dron-lim").textContent = dd.limites;
+  /* ---------- bloques de detalle: dron e inteligencia artificial ---------- */
+  (function bloques() {
+    function pintar(pre, intro, dd) {
+      if (!dd) return;
+      $("#" + pre + "-" + (pre === "dron" ? "equipo" : "intro")).textContent = intro;
+      var ul = $("#" + pre + "-items");
+      dd.items.forEach(function (i) { h("li", {}, ul, '<b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span>'); });
+      $("#" + pre + "-lim").textContent = dd.limites;
+    }
+    pintar("dron", D.dron && D.dron.equipo, D.dron);
+    pintar("ia", D.ia && D.ia.intro, D.ia);
   })();
 
   /* ---------- cifras con conteo ---------- */

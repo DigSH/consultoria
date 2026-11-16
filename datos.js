@@ -51,24 +51,42 @@ window.CONSULTORIA = {
     ,
     { id: "dron", linea: ["academica", "empresarial"], icono: "dron", titulo: "Mapeo y monitoreo de lotes con dron",
       para: "Productores, asociaciones, empresas del agro y grupos que necesitan ver el lote desde arriba",
-      entrega: "Ortomosaico georreferenciado y modelo de superficie del predio, conteo de plantas, cobertura e índices de vegetación en RGB, y registro fotográfico, con mapas listos para QGIS.",
-      respaldo: "Equipo propio: dron DJI Lito X1 Fly More Combo Plus (cámara de 48 MP, GPS, 3 baterías) · análisis geoespacial en QGIS y Google Earth Engine" }
+      entrega: "Ortomosaico georreferenciado y modelo de superficie del predio, conteo de plantas, cobertura e índices de vegetación en RGB, y registro fotográfico, a cielo abierto o bajo cubierta, con mapas listos para QGIS.",
+      respaldo: "Equipo propio de vuelo (cámara de 48 MP y video 4K) · análisis geoespacial en QGIS y Google Earth Engine" },
+    { id: "ia", linea: ["empresarial"], icono: "ia", titulo: "Modelos de inteligencia artificial a medida para fincas",
+      para: "Fincas, empresas agrícolas y asociaciones que quieren contar, medir o anticipar con sus propios datos",
+      entrega: "Modelo entrenado con imágenes y registros de tu finca, validado con su error medido, y una herramienta sencilla (tablero) para usarlo. Conteo de fruta, proyección de cosecha y otros casos.",
+      respaldo: "Diagnóstico de enfermedades por imagen en 7 cultivos (Surco AgTech) · Python y aprendizaje automático · Certificación Profesional en Inteligencia Artificial (MinTIC, 2024) · estadística avanzada" }
   ],
 
-  /* Detalle de los servicios con dron. Equipo y límites según la ficha del fabricante (DJI Lito X1):
-     cámara RGB de 48 MP, GPS/Galileo, sin sensor multiespectral ni térmico en el combo.
+  /* Detalle de los modelos a medida. Los casos de fruta y cosecha se ofrecen a medida: no se afirma
+     un proyecto entregado hasta tener un caso verificado. */
+  ia: {
+    intro: "Modelos que se construyen con los datos de tu finca, no genéricos. Se parte de un piloto pequeño y se crece cuando el resultado lo justifica.",
+    items: [
+      { t: "Conteo de fruta", d: "Visión por computador sobre fotos o video del cultivo, en la planta o en la cosecha." },
+      { t: "Proyección de cosecha", d: "Estimación de producción por lote y por semana con conteos, clima y registros de la finca." },
+      { t: "Detección temprana de plagas y enfermedades", d: "Diagnóstico por imagen adaptado a tus cultivos." },
+      { t: "Clasificación de calidad", d: "Fruta por tamaño, madurez o defectos para ordenar la cosecha y la venta." },
+      { t: "Y otros casos", d: "Si tu finca tiene un dato que hoy se cuenta a mano, se evalúa si un modelo puede hacerlo." }
+    ],
+    limites: "Cada modelo se entrena y se valida con datos de tu finca y se entrega con su error medido. Con pocos datos propios, se empieza por un piloto."
+  },
+
+  /* Detalle de los servicios con dron. Cámara RGB (sin sensor multiespectral ni térmico).
      La experiencia de vuelo y los permisos NO se afirman hasta tenerlos verificados. */
   dron: {
-    equipo: "DJI Lito X1 Fly More Combo Plus: cámara de 48 MP con gimbal de 3 ejes, video 4K, GPS, sensores de obstáculos y 3 baterías.",
+    equipo: "Dron propio con cámara de 48 MP, estabilizador de 3 ejes y video 4K.",
     items: [
       { t: "Ortomosaico y modelo de superficie", d: "Mapa aéreo georreferenciado del lote y su relieve, listo para QGIS." },
       { t: "Conteo de plantas y fallas de siembra", d: "Detección sobre el ortomosaico, validada con muestreos en campo." },
       { t: "Cobertura e índices de vegetación en RGB", d: "Vigor relativo entre zonas del lote (VARI, GLI). No es NDVI." },
       { t: "Delimitación visual de predios", d: "Apoyo al polígono para EUDR o formalización. No reemplaza un levantamiento topográfico." },
       { t: "Seguimiento de ensayos y parcelas", d: "Vuelos repetidos para comparar tratamientos: cobertura y altura relativa." },
-      { t: "Registro de daños y evidencias", d: "Granizo, heladas, inundaciones o fallas visibles, documentados para informes." }
+      { t: "Registro de daños y evidencias", d: "Granizo, heladas, inundaciones o fallas visibles, documentados para informes." },
+      { t: "Vuelos bajo cubierta", d: "Inspección, conteo y registro en invernaderos y cultivos bajo cubierta." }
     ],
-    limites: "Cámara RGB: no mide NDVI ni temperatura. La precisión absoluta de los mapas mejora con puntos de control en tierra, y se acuerda según el uso."
+    limites: "Cámara RGB: no mide NDVI ni temperatura. La precisión absoluta de los mapas mejora con puntos de control en tierra, y se acuerda según el uso. Bajo cubierta, el plan de vuelo depende del espacio disponible."
   },
 
   /* Embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo */
@@ -88,6 +106,7 @@ window.CONSULTORIA = {
     { texto: "Debo probar si mi producto funciona en campo", servicio: "ensayos", linea: ["empresarial"] },
     { texto: "Debo rendir informes técnicos y financieros de un proyecto", servicio: "proyectos", linea: ["academica", "empresarial"] },
     { texto: "Quiero ver, mapear o contar plantas de mis lotes desde el aire", servicio: "dron", linea: ["academica", "empresarial"] },
+    { texto: "Quiero contar fruta o proyectar mi cosecha con inteligencia artificial", servicio: "ia", linea: ["empresarial"] },
     { texto: "Todavía no sé cuál es mi problema, quiero conversarlo", servicio: null, linea: ["academica", "empresarial"] }
   ],
   opcionesDatos: [
