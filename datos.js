@@ -78,7 +78,7 @@ window.CONSULTORIA = {
       respaldo: "7 artículos con DOI verificado en Crossref (2023 a 2026) y 2 cartillas técnicas del Repositorio UPTC" },
 
     /* ---- en preparación: sin respaldo publicado hasta que el equipo aporte soportes ---- */
-    { id: "bajo", cat: "agro", corto: "Bajo cubierta", estado: "preparacion", linea: ["empresarial", "productor"], icono: "invernadero",
+    { id: "bajo", cat: "agro", corto: "Bajo cubierta", responsables: ["Faiver"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "invernadero",
       titulo: "Cultivos intensivos bajo cubierta (MIPE, MIRFE)", desc: "Manejo integrado de plagas y enfermedades (MIPE) y manejo integrado de riego y fertilización (MIRFE) en invernaderos y cultivos bajo cubierta." },
     { id: "suelos", cat: "agro", corto: "Suelos y aguas", responsables: ["Diego"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "suelo",
       titulo: "Cultivos extensivos: análisis de suelos y aguas", desc: "Análisis de suelos y aguas para cultivos extensivos, con interpretación de resultados." },
