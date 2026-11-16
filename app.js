@@ -213,7 +213,7 @@
         ? '<p class="lidera"><span>Lidera</span>' + s.responsables.map(function (n) { return '<a href="#equipo" data-persona="' + esc(n) + '">' + esc(n) + '</a>'; }).join("") + '</p>' : "";
     }
     /* cada tarjeta se puede contraer: contraída muestra icono, etiquetas, título y quién la lidera */
-    var cerrarInicial = window.innerWidth <= 860, todas = null;
+    var cerrarInicial = true, todas = null; /* todas empiezan contraídas: cada visitante despliega las que le interesan */
     function poner(c, abrir) {
       c.classList.toggle("cerrada", !abrir);
       c.querySelector(".serv-toggle").setAttribute("aria-expanded", abrir ? "true" : "false");
