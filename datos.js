@@ -79,12 +79,12 @@ window.CONSULTORIA = {
 
     /* ---- en preparación: sin respaldo publicado hasta que el equipo aporte soportes ---- */
     { id: "bajo", cat: "agro", corto: "Bajo cubierta", estado: "preparacion", linea: ["empresarial", "productor"], icono: "invernadero",
-      titulo: "Cultivos intensivos bajo cubierta (MIPE, MIRFE)", desc: "Plan técnico de manejo para invernaderos y cultivos bajo cubierta." },
-    { id: "suelos", cat: "agro", corto: "Suelos y aguas", estado: "preparacion", linea: ["empresarial", "productor"], icono: "suelo",
+      titulo: "Cultivos intensivos bajo cubierta (MIPE, MIRFE)", desc: "Manejo integrado de plagas y enfermedades (MIPE) y manejo integrado de riego y fertilización (MIRFE) en invernaderos y cultivos bajo cubierta." },
+    { id: "suelos", cat: "agro", corto: "Suelos y aguas", responsables: ["Diego"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "suelo",
       titulo: "Cultivos extensivos: análisis de suelos y aguas", desc: "Análisis de suelos y aguas para cultivos extensivos, con interpretación de resultados." },
-    { id: "praderas", cat: "agro", corto: "Praderas", estado: "preparacion", linea: ["empresarial", "productor"], icono: "pradera",
+    { id: "praderas", cat: "agro", corto: "Praderas", responsables: ["Stiven"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "pradera",
       titulo: "Mejoramiento de praderas", desc: "Diagnóstico y plan de mejoramiento de praderas." },
-    { id: "poscosecha", cat: "agro", corto: "Poscosecha y logística", estado: "preparacion", linea: ["empresarial", "productor"], icono: "poscosecha",
+    { id: "poscosecha", cat: "agro", corto: "Poscosecha y logística", responsables: ["Faiver"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "poscosecha",
       titulo: "Poscosecha y logística", desc: "Manejo poscosecha y logística del producto agrícola." },
     { id: "fincas", cat: "agro", corto: "Diseño de fincas", responsables: ["Faiver"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "geo",
       titulo: "Diseño de fincas", desc: "Diseño y rediseño de fincas." },

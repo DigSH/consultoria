@@ -65,7 +65,7 @@ No se publican números de contrato ni nombres de clientes. La maestría de Zahi
 - Un servicio en preparación **no lleva respaldo** (la web lo dice). Pasa a activo cuando el equipo aporte soportes: añadir `para`, `entrega` y `respaldo` y quitar `estado`.
 - `responsables` sale de lo dicho por el equipo (no son credenciales verificadas). «Piloto certificado», «experto» y similares se publican solo con soporte (certificado, número, proyecto).
 - Tres perfiles en el embudo: investigador, empresa y productor. Cada servicio debe ser alcanzable desde alguna situación.
-- Las siglas MIPE y MIRFE están tal como las envió el equipo, sin expandir, hasta confirmarlas.
+- MIPE = manejo integrado de plagas y enfermedades; MIRFE = manejo integrado de riego y fertilización (confirmado por el equipo).
 
 ## Pendientes
 
