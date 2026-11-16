@@ -416,12 +416,6 @@ h1,h2,h3{color:var(--tinta)}
 .bloque[hidden]{display:none}
 .bloque>h3{color:#fff;font-size:28px;margin:0 0 4px}
 .bloque-lema{color:#bccad6;margin:0 0 22px}
-.proximos{margin-top:20px;border:1px dashed #35516d;border-radius:16px;padding:18px 20px}
-.prox-t{font:600 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--oro);margin:0 0 12px}
-.proximos ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px 26px}
-.proximos li{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding-left:12px;border-left:2px solid #35516d}
-.proximos li b{color:#fff;font-weight:600}
-.proximos li span:not(.lidera span){display:block;color:#bccad6;font-size:14px;line-height:1.45}
 .lidera{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0}
 .lidera span{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#9fb1c1}
 .lidera a{font:600 12.5px var(--sans);color:#fff;background:#1f3a52;border:1px solid #35516d;padding:2px 10px;border-radius:999px;text-decoration:none}
@@ -433,3 +427,11 @@ h1,h2,h3{color:var(--tinta)}
 .lidera-p span{font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta2)}
 .lidera-p em{font-style:normal;font-size:12px;background:var(--papel);border:1px solid var(--linea);border-radius:999px;padding:1px 9px}
 .lidera-p em.prep{opacity:.65;border-style:dashed}
+
+/* tarjetas de servicios en preparación: mismo formato que las demás */
+.serv .tags .tag-prep{border-style:dashed;border-color:var(--oro);color:var(--oro)}
+.serv.prep .resp{color:#9fb1c1}
+
+/* las etiquetas de la tarjeta pasan a otra línea en vez de salirse */
+.serv .tags{flex-wrap:wrap}
+.serv .tags span{white-space:nowrap}

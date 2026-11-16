@@ -213,16 +213,16 @@
         ? '<p class="lidera"><span>Lidera</span>' + s.responsables.map(function (n) { return '<a href="#equipo" data-persona="' + esc(n) + '">' + esc(n) + '</a>'; }).join("") + '</p>' : "";
     }
     function tarjeta(s, box) {
-      h("article", { "class": "serv rev", "data-id": s.id }, box,
+      var prep = s.estado === "preparacion";
+      h("article", { "class": "serv rev" + (prep ? " prep" : ""), "data-id": s.id }, box,
         '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
-        '<p class="tags">' + s.linea.map(function (l) { return '<span>' + perfiles[l] + '</span>'; }).join("") + '</p>' +
+        '<p class="tags">' + s.linea.map(function (l) { return '<span>' + perfiles[l] + '</span>'; }).join("") + (prep ? '<span class="tag-prep">En preparación</span>' : '') + '</p>' +
         '<h3>' + esc(s.titulo) + '</h3>' +
-        '<p class="para">Para: ' + esc(s.para) + '.</p>' +
-        '<p>' + esc(s.entrega) + '</p>' +
+        (prep ? '<p>' + esc(s.desc) + '</p>' : '<p class="para">Para: ' + esc(s.para) + '.</p><p>' + esc(s.entrega) + '</p>') +
         (D[s.id] && D[s.id].items ? '<details class="incl"><summary>Qué incluye (' + D[s.id].items.length + ')</summary><ul class="incluye">' + D[s.id].items.map(function (i) { return '<li><b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span></li>'; }).join("") + '</ul></details><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
         chips(s) +
-        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Pedir cotización →</a>' +
-        '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>');
+        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">' + (prep ? 'Pedir información →' : 'Pedir cotización →') + '</a>' +
+        '<p class="resp"><b>RESPALDO</b> ' + (prep ? 'En preparación: se publicará cuando esté documentado.' : esc(s.respaldo)) + '</p>');
     }
     var bloques = [];
     Object.keys(D.lineasServicio).forEach(function (k) {
@@ -233,14 +233,8 @@
         '<h3 id="h-' + k + '">' + esc(L.titulo) + '</h3><p class="bloque-lema">' + esc(L.lema) + '</p>');
       var grid = h("div", { "class": "rejilla" }, blq);
       act.forEach(function (s) { tarjeta(s, grid); });
-      if (prep.length) {
-        var caja = h("div", { "class": "proximos" }, blq, '<p class="prox-t">En preparación</p>'), ul = h("ul", {}, caja);
-        prep.forEach(function (s) {
-          h("li", { "class": "rev" }, ul, '<div><b>' + esc(s.titulo) + '</b><span>' + esc(s.desc) + '</span></div>' + chips(s) +
-            '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Pedir información →</a>');
-        });
-      }
-      bloques.push({ k: k, titulo: L.titulo, n: act.length, blq: blq });
+      prep.forEach(function (s) { tarjeta(s, grid); });
+      bloques.push({ k: k, titulo: L.titulo, n: act.length + prep.length, blq: blq });
     });
 
     var sel = $("#f-servicio");
@@ -254,7 +248,7 @@
     });
 
     /* filtros por línea */
-    var fil = $("#filtros"), total = D.servicios.filter(function (s) { return s.estado !== "preparacion"; }).length;
+    var fil = $("#filtros"), total = D.servicios.length;
     [{ k: "todas", t: "Todas las líneas (" + total + ")" }].concat(bloques.map(function (b) { return { k: b.k, t: b.titulo + " (" + b.n + ")" }; })).forEach(function (f, i) {
       var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f.t));
       b.addEventListener("click", function () {
