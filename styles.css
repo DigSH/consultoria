@@ -146,6 +146,8 @@ h1,h2,h3{color:var(--tinta)}
 .linea h3{margin:0}
 .linea .d{font:14px var(--mono);color:var(--verde);margin:2px 0 6px}
 .linea p{margin:0;color:var(--tinta2);font-size:16px}
+.trabajo{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+.trabajo .tarjeta p{margin:0;font-size:15.5px}
 .herramientas{background:#fbfdfe;border:1.5px solid var(--linea);border-radius:20px;padding:26px 30px}
 .herramientas ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .herramientas li{font-size:15.5px}
