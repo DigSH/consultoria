@@ -22,7 +22,7 @@ window.CONSULTORIA = {
       respaldo: "2 instrumentos psicométricos diseñados y validados · artículos con PLS-PM publicados (2024 y 2026)" },
     { id: "biblio", icono: "biblio", titulo: "Vigilancia científica y análisis bibliométrico",
       para: "Grupos de investigación, decanaturas y quienes formulan proyectos o estados del arte",
-      entrega: "Ecuaciones de búsqueda calibradas, cribado asistido por agentes de IA con revisión humana y citas verificadas, redes de coautoría y co-citación, informe ejecutivo y base depurada en BibTeX/RIS.",
+      entrega: "Ecuaciones de búsqueda calibradas, redes de coautoría y co-citación, informe ejecutivo y base depurada en BibTeX/RIS.",
       respaldo: "12 reportes de análisis bibliométrico en el observatorio de CTeI de Boyacá · Bibliometrix y VOSviewer avanzado" },
     { id: "bi", icono: "bi", titulo: "Tableros de control y modelos de datos (Power BI)",
       para: "Universidades, colegios, cooperativas y ONG con reportes dispersos en Excel",
