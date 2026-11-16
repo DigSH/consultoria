@@ -76,6 +76,16 @@ window.CONSULTORIA = {
       titulo: "Criminología verde, una disciplina emergente: revisión bibliométrica (2000–2022)" }
   ],
 
+  /* Competencias geoespaciales declaradas en perfil.json (nada de GDAL/rasterio: aún no está documentado) */
+  gis: [
+    { t: "QGIS", d: "Análisis y cartografía de predios y cuencas" },
+    { t: "Google Earth Engine", d: "Series satelitales y cribado a escala" },
+    { t: "Sentinel-1 · RADD", d: "Alertas de deforestación con radar" },
+    { t: "Hansen / UMD", d: "Pérdida de cobertura arbórea posterior a 2020" },
+    { t: "Whisp · Open Foris", d: "Cribado de riesgo por polígono" },
+    { t: "GeoJSON · GPX", d: "Validación y entrega de geometrías" }
+  ],
+
   cifras: [
     { n: 10000, sufijo: "+", etiqueta: "registros de investigación gestionados", fuente: "OCITEB · UPTC" },
     { n: 12, sufijo: "", etiqueta: "reportes de análisis bibliométrico", fuente: "OCITEB · UPTC" },

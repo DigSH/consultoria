@@ -143,22 +143,22 @@
     var cont = $("#g-pubs"), det = $("#detalle-pub");
     var W = 760, H = 300, m = { l: 40, r: 20, t: 20, b: 46 };
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Publicaciones por año, 2023 a 2026" }, cont);
-    var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#2f5d3a", "Bibliometría": "#c8892b", "Complejidad y economía": "#b5532f", "Territorio rural": "#b5532f", "Economía solidaria": "#b5532f" };
+    var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#0b6e8a", "Bibliometría": "#e0533a", "Complejidad y economía": "#6b4fc7", "Territorio rural": "#6b4fc7", "Economía solidaria": "#6b4fc7" };
     var etiquetaTema = function (t) { return /PLS/.test(t) ? "PLS-SEM" : t === "Bibliometría" ? "Bibliometría" : "Territorio y economía"; };
     var xs = function (a) { return m.l + (anios.indexOf(a) + .5) * ((W - m.l - m.r) / anios.length); };
     var base = H - m.b, r = 17;
-    el("line", { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: "#1d2a22", "stroke-width": 2 }, svg);
+    el("line", { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: "#0b1b2b", "stroke-width": 2 }, svg);
     for (var g = 1; g <= 4; g++) {
       var y = base - g * (r * 2 + 4) + r + 2;
-      el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#cfc6ae", "stroke-dasharray": "3 5" }, svg);
+      el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#c5d3dc", "stroke-dasharray": "3 5" }, svg);
     }
     anios.forEach(function (a) { el("text", { x: xs(a), y: H - 16, "text-anchor": "middle", "font-size": 15, "font-weight": 600 }, svg, a); });
     var pila = {};
     D.publicaciones.slice().sort(function (a, b) { return a.anio - b.anio; }).forEach(function (p, idx) {
       pila[p.anio] = (pila[p.anio] || 0) + 1;
       var cx = xs(p.anio), cy = base - 4 - r - (pila[p.anio] - 1) * (r * 2 + 4);
-      var col = colores[p.tema] || "#2f5d3a";
-      var c = el("circle", { cx: cx, cy: cy, r: r, fill: col, "class": "punto-pub", tabindex: 0, role: "button", "aria-label": p.anio + ": " + p.titulo, stroke: "#fffaf0", "stroke-width": 3 }, svg);
+      var col = colores[p.tema] || "#0b6e8a";
+      var c = el("circle", { cx: cx, cy: cy, r: r, fill: col, "class": "punto-pub", tabindex: 0, role: "button", "aria-label": p.anio + ": " + p.titulo, stroke: "#fbfdfe", "stroke-width": 3 }, svg);
       if (!reduce) { c.style.transform = "translateY(" + (base - 4 - r - cy) + "px)"; c.style.opacity = 0; c.style.transition = "transform .7s cubic-bezier(.2,1.4,.4,1) " + (idx * .12) + "s, opacity .3s " + (idx * .12) + "s"; }
       var mostrar = function () {
         det.innerHTML = '<b>' + esc(p.titulo) + '</b><br>' + esc(p.rev) + ' · ' + p.anio + ' · ' + esc(etiquetaTema(p.tema)) + ' <a href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">doi.org/' + esc(p.doi) + '</a>';
@@ -170,7 +170,7 @@
       c._fin = function () { c.style.transform = "none"; c.style.opacity = 1; };
     });
     /* leyenda */
-    var leg = [["PLS-SEM", "#2f5d3a"], ["Bibliometría", "#c8892b"], ["Territorio y economía", "#b5532f"]];
+    var leg = [["PLS-SEM", "#0b6e8a"], ["Bibliometría", "#e0533a"], ["Territorio y economía", "#6b4fc7"]];
     leg.forEach(function (l, i) {
       var x = m.l + 10 + i * 170;
       el("circle", { cx: x, cy: 14, r: 6, fill: l[1] }, svg);
@@ -187,14 +187,14 @@
     var svg = el("svg", { viewBox: "0 0 " + (cols * s) + " " + (filas * s + 30), role: "img", "aria-label": "300 puntos que representan más de 300 productores capacitados" }, cont);
     var dots = [];
     for (var i = 0; i < cols * filas; i++) {
-      var c = el("circle", { cx: (i % cols) * s + s / 2, cy: Math.floor(i / cols) * s + s / 2, r: 7, fill: "#cfc6ae" }, svg);
+      var c = el("circle", { cx: (i % cols) * s + s / 2, cy: Math.floor(i / cols) * s + s / 2, r: 7, fill: "#c5d3dc" }, svg);
       c.style.transition = "fill .3s"; dots.push(c);
     }
     var t = el("text", { x: cols * s, y: filas * s + 22, "text-anchor": "end", "font-size": 13, "font-weight": 600 }, svg, "300+ productores");
     var io = new IntersectionObserver(function (es) {
       if (!es[0].isIntersecting) return; io.disconnect();
       dots.forEach(function (c, i) {
-        var f = function () { c.setAttribute("fill", i % 7 === 3 ? "#c8892b" : "#2f5d3a"); };
+        var f = function () { c.setAttribute("fill", i % 7 === 3 ? "#e0533a" : "#0b6e8a"); };
         reduce ? f() : setTimeout(f, i * 8);
       });
     }, { threshold: .5 }); io.observe(cont);
@@ -217,19 +217,19 @@
     var lo = 25, hi = 75, Y = function (v) { return H - m.b - (v - lo) / (hi - lo) * (H - m.t - m.b); };
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Diagramas de caja de cuatro materiales con datos simulados" }, cont);
     for (var v = 30; v <= 70; v += 10) {
-      el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "#cfc6ae", "stroke-dasharray": "3 5" }, svg);
+      el("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "#c5d3dc", "stroke-dasharray": "3 5" }, svg);
       el("text", { x: m.l - 8, y: Y(v) + 4, "text-anchor": "end", "font-size": 11 }, svg, v);
     }
     var bw = 46, paso = (W - m.l - m.r) / 4;
-    var cols = ["#2f5d3a", "#4f8a5b", "#b5532f", "#c8892b"];
+    var cols = ["#0b6e8a", "#3d9fb8", "#6b4fc7", "#e0533a"];
     grupos.forEach(function (g, i) {
       var cx = m.l + paso * (i + .5), gr = el("g", {}, svg);
-      el("line", { x1: cx, x2: cx, y1: Y(g.xs[0]), y2: Y(g.xs[29]), stroke: "#1d2a22", "stroke-width": 1.5 }, gr);
-      var caja = el("rect", { x: cx - bw / 2, width: bw, y: Y(g.q3), height: Y(g.q1) - Y(g.q3), fill: cols[i], "fill-opacity": .85, stroke: "#1d2a22", "stroke-width": 1.5 }, gr);
-      el("line", { x1: cx - bw / 2, x2: cx + bw / 2, y1: Y(g.med), y2: Y(g.med), stroke: "#fffaf0", "stroke-width": 3 }, gr);
-      g.xs.forEach(function (v, j) { el("circle", { cx: cx + ((j * 37 % 21) - 10) * 1.9 + (j % 2 ? 0 : 0), cy: Y(v), r: 2.4, fill: "#1d2a22", "fill-opacity": .35 }, gr); });
-      el("line", { x1: cx + bw / 2 + 8, x2: cx + bw / 2 + 8, y1: Y(g.mean - g.ci), y2: Y(g.mean + g.ci), stroke: "#1d2a22", "stroke-width": 2 }, gr);
-      el("path", { d: "M" + (cx + bw / 2 + 8) + " " + (Y(g.mean) - 6) + "l6 6-6 6-6-6z", fill: "#e8b04b", stroke: "#1d2a22", "stroke-width": 1.5 }, gr);
+      el("line", { x1: cx, x2: cx, y1: Y(g.xs[0]), y2: Y(g.xs[29]), stroke: "#0b1b2b", "stroke-width": 1.5 }, gr);
+      var caja = el("rect", { x: cx - bw / 2, width: bw, y: Y(g.q3), height: Y(g.q1) - Y(g.q3), fill: cols[i], "fill-opacity": .85, stroke: "#0b1b2b", "stroke-width": 1.5 }, gr);
+      el("line", { x1: cx - bw / 2, x2: cx + bw / 2, y1: Y(g.med), y2: Y(g.med), stroke: "#fbfdfe", "stroke-width": 3 }, gr);
+      g.xs.forEach(function (v, j) { el("circle", { cx: cx + ((j * 37 % 21) - 10) * 1.9 + (j % 2 ? 0 : 0), cy: Y(v), r: 2.4, fill: "#0b1b2b", "fill-opacity": .35 }, gr); });
+      el("line", { x1: cx + bw / 2 + 8, x2: cx + bw / 2 + 8, y1: Y(g.mean - g.ci), y2: Y(g.mean + g.ci), stroke: "#0b1b2b", "stroke-width": 2 }, gr);
+      el("path", { d: "M" + (cx + bw / 2 + 8) + " " + (Y(g.mean) - 6) + "l6 6-6 6-6-6z", fill: "#ff7a59", stroke: "#0b1b2b", "stroke-width": 1.5 }, gr);
       el("text", { x: cx, y: H - 14, "text-anchor": "middle", "font-size": 13, "font-weight": 600 }, svg, "Material " + g.n);
       if (!reduce) { gr.style.transformOrigin = cx + "px " + Y(g.med) + "px"; gr.style.transform = "scaleY(0)"; gr.style.transition = "transform .8s cubic-bezier(.2,1.3,.4,1) " + (i * .12) + "s"; }
       gr._i = i;
@@ -247,12 +247,12 @@
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Ruta del dato: campo o Excel, limpieza, modelo, informe o tablero" }, cont);
     var nodos = [["Campo y Excel", "tus datos como llegan"], ["Limpieza", "Python · SQL · duplicados"], ["Análisis", "R · PLS-SEM · ANOVA"], ["Entrega", "informe · tablero · DAX"]];
     var paso = (W - 260) / 3, y = 60;
-    el("path", { d: "M130 " + y + "H" + (W - 130), stroke: "#c8892b", "stroke-width": 3, "stroke-dasharray": "10 8", fill: "none", style: reduce ? "" : "animation:fluye 1.2s linear infinite" }, svg);
+    el("path", { d: "M130 " + y + "H" + (W - 130), stroke: "#e0533a", "stroke-width": 3, "stroke-dasharray": "10 8", fill: "none", style: reduce ? "" : "animation:fluye 1.2s linear infinite" }, svg);
     nodos.forEach(function (n, i) {
       var x = 130 + paso * i;
-      el("circle", { cx: x, cy: y, r: 26, fill: i === 3 ? "#2f5d3a" : "#fffaf0", stroke: "#1d2a22", "stroke-width": 3 }, svg);
-      el("text", { x: x, y: y + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700, style: "fill:" + (i === 3 ? "#fff" : "#1d2a22") }, svg, i + 1);
-      el("text", { x: x, y: y + 58, "text-anchor": "middle", "font-size": 16, "font-weight": 700, style: "fill:#1d2a22;font-family:Georgia,serif" }, svg, n[0]);
+      el("circle", { cx: x, cy: y, r: 26, fill: i === 3 ? "#0b6e8a" : "#fbfdfe", stroke: "#0b1b2b", "stroke-width": 3 }, svg);
+      el("text", { x: x, y: y + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700, style: "fill:" + (i === 3 ? "#fff" : "#0b1b2b") }, svg, i + 1);
+      el("text", { x: x, y: y + 58, "text-anchor": "middle", "font-size": 16, "font-weight": 700, style: "fill:#0b1b2b;font-family:Georgia,serif" }, svg, n[0]);
       el("text", { x: x, y: y + 80, "text-anchor": "middle", "font-size": 12 }, svg, n[1]);
     });
   })();

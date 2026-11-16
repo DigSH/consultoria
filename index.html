@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Consultoría Sanabria · Estadística y datos para el agro y la academia</title>
-<meta name="description" content="Análisis estadístico para tesis, ecuaciones estructurales, bibliometría, tableros en Power BI, ensayos agronómicos y trazabilidad EUDR. Ingeniero Agrónomo y Especialista en Estadística, Tunja.">
+<meta name="description" content="Análisis estadístico para tesis, ecuaciones estructurales, bibliometría, tableros en Power BI, ensayos agronómicos, análisis geoespacial (QGIS, Earth Engine) y trazabilidad EUDR. Ingeniero Agrónomo y Especialista en Estadística, Tunja.">
 <meta property="og:title" content="Consultoría Sanabria · Estadística y datos para el agro y la academia">
 <meta property="og:description" content="Resultados que resisten al jurado, al comité y al campo. Análisis reproducible, tableros y ensayos.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#f4efe3">
+<meta name="theme-color" content="#eef3f6">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -23,6 +24,7 @@
   <nav aria-label="Principal">
     <a href="#servicios">Servicios</a>
     <a href="#evidencia">Evidencia</a>
+    <a href="#mapas">Mapas</a>
     <a href="#metodo">Método</a>
     <a href="#trayectoria">Trayectoria</a>
     <a href="#voces">Voces</a>
@@ -45,6 +47,7 @@
     <ul class="sellos" aria-label="Credenciales">
       <li>Ingeniero Agrónomo · UPTC</li>
       <li>Especialista en Estadística · UPTC</li>
+      <li>QGIS · Google Earth Engine · EUDR</li>
       <li>7 artículos con DOI verificado</li>
     </ul>
   </div>
@@ -120,6 +123,56 @@
       <div class="lienzo" id="g-ruta"></div>
     </figure>
   </div>
+</section>
+
+<!-- ============ LABORATORIO GIS ============ -->
+<section class="seccion gis" id="mapas">
+  <div class="cab">
+    <p class="sobretitulo">Portafolio GIS</p>
+    <h2>Laboratorio de mapas</h2>
+    <p class="sub">Dos herramientas que funcionan ahora mismo en tu navegador, con datos abiertos y sin instalar nada. Los casos con clientes se sumarán aquí cuando tengan autorización de publicación.</p>
+  </div>
+
+  <div class="gis-comp" id="gis-comp" aria-label="Competencias geoespaciales"></div>
+
+  <article class="tarjeta mapa-tarjeta">
+    <header>
+      <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">datos en vivo</span></h3>
+      <p>Catálogo oficial de estaciones activas, leído en este momento desde datos.gov.co. Haz clic en un punto para ver su categoría, tecnología y altitud. Útil para elegir la estación de referencia de un lote o de un ensayo.</p>
+    </header>
+    <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
+      <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
+      <button type="button" class="chip" data-f="auto" aria-pressed="false">Automáticas</button>
+      <button type="button" class="chip" data-f="conv" aria-pressed="false">Convencionales</button>
+      <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
+    </div>
+    <div class="mapa" id="map-ideam" role="application" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
+    <p class="mapa-fuente">Fuente: IDEAM, Catálogo Nacional de Estaciones (conjunto <code>hp9r-jxuu</code>, datos.gov.co), licencia CC BY-SA 4.0. Mapa base © OpenStreetMap.</p>
+  </article>
+
+  <article class="tarjeta mapa-tarjeta">
+    <header>
+      <h3>Validador de polígonos de predio <span class="etiqueta">estilo EUDR</span></h3>
+      <p>Dibuja el predio con clics sobre el mapa (cambia a vista satélite arriba a la derecha) o pega un GeoJSON. La herramienta revisa lo que más rechazan las plataformas: polígono cerrado, cruces, coordenadas invertidas o fuera de Colombia, decimales y sentido del anillo. Todo ocurre en tu equipo: no se envía ningún dato.</p>
+    </header>
+    <div class="mapa-barra">
+      <button type="button" class="chip" id="v-deshacer">Deshacer punto</button>
+      <button type="button" class="chip" id="v-limpiar">Limpiar</button>
+      <button type="button" class="chip" id="v-ejemplo">Ver ejemplo</button>
+      <button type="button" class="chip chip-fuerte" id="v-descargar" disabled>Descargar GeoJSON</button>
+    </div>
+    <div class="val-grid">
+      <div class="mapa" id="map-predio" role="application" aria-label="Mapa para dibujar el predio"></div>
+      <div class="val-lado">
+        <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haz clic en el mapa para marcar el primer vértice.</p></div>
+        <label class="val-pega">O pega un GeoJSON
+          <textarea id="v-texto" rows="4" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.3553,5.5536],[-73.3540,5.5536],[-73.3540,5.5550],[-73.3553,5.5536]]]}'></textarea>
+        </label>
+        <button type="button" class="chip" id="v-cargar">Validar este GeoJSON</button>
+      </div>
+    </div>
+    <p class="mapa-fuente">Validación geométrica básica del Reglamento (UE) 2023/1115: no reemplaza el cribado satelital de deforestación ni la debida diligencia completa. Mapa base © OpenStreetMap; satélite © Esri, Maxar, Earthstar Geographics.</p>
+  </article>
 </section>
 
 <!-- ============ MÉTODO ============ -->
@@ -212,7 +265,7 @@
 <!-- símbolos reutilizables -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#1d2a22"/><path d="M5 22c4-2 7-2 11 0s7 2 11 0M5 17c4-2 7-2 11 0s7 2 11 0M5 12c4-2 7-2 11 0s7 2 11 0" fill="none" stroke="#e8b04b" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#0b1b2b"/><path d="M5 22c4-2 7-2 11 0s7 2 11 0M5 17c4-2 7-2 11 0s7 2 11 0M5 12c4-2 7-2 11 0s7 2 11 0" fill="none" stroke="#ff7a59" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-tesis" viewBox="0 0 40 40"><path d="M6 32V8M6 32h30" /><rect x="11" y="20" width="5" height="12"/><rect x="19" y="12" width="5" height="20"/><rect x="27" y="17" width="5" height="15"/></symbol>
     <symbol id="i-sem" viewBox="0 0 40 40"><circle cx="9" cy="10" r="4"/><circle cx="9" cy="30" r="4"/><circle cx="31" cy="20" r="5"/><path d="M13 11l13 7M13 29l13-7"/></symbol>
     <symbol id="i-biblio" viewBox="0 0 40 40"><circle cx="17" cy="17" r="9"/><path d="M24 24l10 10M13 17h8M17 13v8"/></symbol>
@@ -225,6 +278,8 @@
 </svg>
 
 <script src="datos.js"></script>
+<script src="vendor/leaflet/leaflet.min.js"></script>
 <script src="app.js"></script>
+<script src="gis.js"></script>
 </body>
 </html>
