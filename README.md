@@ -8,7 +8,7 @@ Sitio estático: HTML + CSS + JS sin dependencias, sin cookies ni rastreadores.
 | Archivo | Qué es |
 |---|---|
 | `index.html` | Estructura de la página |
-| `styles.css` | Diseño (papel, tinta, verde surco, ocre) |
+| `styles.css` | Diseño (azul tinta, cian, coral) |
 | `app.js` | Relieve del hero, buscador, gráficas SVG, formulario |
 | `gis.js` | Laboratorio GIS: mapa de estaciones del IDEAM (datos en vivo) y validador de polígonos de predio |
 | `vendor/leaflet/` | Leaflet 1.9.4 (BSD-2) incluido en el repo, sin CDN |
@@ -47,8 +47,8 @@ Publicada con GitHub Pages (rama `main`, raíz): https://digsh.github.io/consult
 
 ## Pendientes
 
-1. Confirmar el nombre comercial (hoy «Consultoría Sanabria», provisional)
-   Paleta: cian, coral y azul tinta; las variables están al inicio de `styles.css`..
+1. Confirmar el nombre comercial (hoy «Consultoría Sanabria», provisional).
+   La paleta (cian, coral y azul tinta) se cambia en las variables del inicio de `styles.css`.
 2. Conseguir 2 o 3 testimonios reales (ver `docs/TESTIMONIOS.md`) y pasarlos a `datos.js`.
 3. Enlace del repositorio EUDR y de un caso de tablero público, para sumarlos como prueba cuando estén verificados.
 4. Dominio propio (opcional) y correo de la consultoría distinto del personal.
