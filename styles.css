@@ -435,3 +435,6 @@ h1,h2,h3{color:var(--tinta)}
 /* las etiquetas de la tarjeta pasan a otra línea en vez de salirse */
 .serv .tags{flex-wrap:wrap}
 .serv .tags span{white-space:nowrap}
+
+/* dos secciones oscuras seguidas (método y servicios): una línea las separa */
+.oscura + .oscura{border-top:1px solid #28425c}
