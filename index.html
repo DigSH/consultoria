@@ -213,7 +213,12 @@
     <h2>Un equipo, varias miradas</h2>
     <p class="sub">Agronomía, estadística, desarrollo territorial y gestión de proyectos trabajando juntos. Conocemos el surco, la base de datos y el expediente.</p>
   </div>
-  <div class="equipo" id="equipo-lista"></div>
+  <div class="carrusel" id="equipo-car" role="region" aria-roledescription="carrusel" aria-label="Integrantes del equipo">
+    <button type="button" class="car-flecha" id="car-prev" aria-label="Integrante anterior">‹</button>
+    <div class="equipo" id="equipo-lista" tabindex="0"></div>
+    <button type="button" class="car-flecha" id="car-next" aria-label="Integrante siguiente">›</button>
+  </div>
+  <div class="car-pts" id="equipo-pts" aria-label="Posición en el carrusel"></div>
 </section>
 
 <section class="seccion" id="trayectoria">

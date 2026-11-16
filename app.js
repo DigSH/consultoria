@@ -317,6 +317,37 @@
         '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><h3>' + esc(p.nombre) + '</h3>' +
         '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>');
     });
+
+    /* carrusel: scroll-snap nativo + flechas y puntos; sin movimiento automático */
+    var prev = $("#car-prev"), next = $("#car-next"), pts = $("#equipo-pts"), n = cont.children.length;
+    function paso() { return n > 1 ? cont.children[1].offsetLeft - cont.children[0].offsetLeft : cont.clientWidth; }
+    function visibles() { return Math.max(1, Math.round(cont.clientWidth / paso())); }
+    function posiciones() { return Math.max(1, n - visibles() + 1); }
+    function ir(i) { cont.scrollTo({ left: i * paso(), behavior: reduce ? "auto" : "smooth" }); }
+    function puntos() {
+      pts.innerHTML = "";
+      for (var i = 0; i < posiciones(); i++) (function (i) {
+        var b = h("button", { type: "button", "aria-label": "Ir a la posición " + (i + 1) }, pts);
+        b.addEventListener("click", function () { ir(i); });
+      })(i);
+      estado();
+    }
+    function estado() {
+      var max = cont.scrollWidth - cont.clientWidth, i = Math.min(posiciones() - 1, Math.round(cont.scrollLeft / paso()));
+      prev.disabled = cont.scrollLeft <= 2; next.disabled = cont.scrollLeft >= max - 2;
+      [].forEach.call(pts.children, function (b, k) { b.setAttribute("aria-current", k === i ? "true" : "false"); });
+      $("#equipo-car").classList.toggle("sin-desborde", max <= 2);
+      pts.hidden = max <= 2;
+    }
+    prev.addEventListener("click", function () { cont.scrollBy({ left: -paso(), behavior: reduce ? "auto" : "smooth" }); });
+    next.addEventListener("click", function () { cont.scrollBy({ left: paso(), behavior: reduce ? "auto" : "smooth" }); });
+    cont.addEventListener("scroll", estado, { passive: true });
+    cont.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); next.click(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); prev.click(); }
+    });
+    window.addEventListener("resize", puntos);
+    puntos();
   })();
 
   /* ---------- trayectoria ---------- */
