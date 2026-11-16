@@ -16,7 +16,7 @@ window.CONSULTORIA = {
     investigacion: { titulo: "Investigación y academia", lema: "Análisis que resiste al jurado y al revisor." },
     datos: { titulo: "Datos e inteligencia artificial", lema: "Del dato disperso al tablero y al modelo a medida." },
     geo: { titulo: "Geomática y dron", lema: "Mapas, polígonos y vuelos para ver el lote y cumplir la norma." },
-    agro: { titulo: "Agro técnico en campo", lema: "Acompañamiento técnico a fincas, viveros e invernaderos." },
+    agro: { titulo: "Agricultura de precisión", lema: "Acompañamiento técnico a fincas, viveros e invernaderos." },
     proyectos: { titulo: "Proyectos y empresa", lema: "Formular, financiar, organizar y vender mejor." }
   },
 
