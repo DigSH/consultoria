@@ -136,7 +136,10 @@
       var ll = pts.map(function (p) { return [p[1], p[0]]; });
       if (ll.length >= 3) L.polygon(ll, { color: CIAN, weight: 3, fillColor: CIAN, fillOpacity: .22 }).addTo(dib);
       else if (ll.length === 2) L.polyline(ll, { color: CIAN, weight: 3, dashArray: "6 6" }).addTo(dib);
-      ll.forEach(function (p, i) { L.circleMarker(p, { radius: i === 0 ? 7 : 5, color: "#fff", weight: 2, fillColor: i === 0 ? CORAL : CIAN, fillOpacity: 1 }).addTo(dib); });
+      ll.forEach(function (p, i) {
+        var m = L.marker(p, { draggable: true, keyboard: false, icon: L.divIcon({ className: "vert" + (i === 0 ? " ini" : ""), iconSize: i === 0 ? [20, 20] : [16, 16] }) }).addTo(dib);
+        m.on("dragend", function () { var q = m.getLatLng(); pts[i] = [q.lng, q.lat]; decTexto = null; setTimeout(analizar, 0); });
+      });
     }
     function fila(tipo, texto) { return '<li class="' + tipo + '"><span aria-hidden="true">' + (tipo === "ok" ? "✓" : tipo === "mal" ? "✕" : "!") + "</span><span>" + texto + "</span></li>"; }
 
@@ -170,7 +173,8 @@
       items.push(ha > 4 ? fila("ok", "Supera 4 ha: el Reglamento exige <b>polígono</b> (este) y no basta un punto.") : fila("ok", "Hasta 4 ha basta un punto, pero el polígono también es válido."));
 
       res.innerHTML = "<ul>" + items.join("") + "</ul>" +
-        '<p class="val-veredicto ' + (mal ? "mal" : "ok") + '">' + (mal ? "Hay " + mal + " problema(s) bloqueante(s)." : "Geometría válida para presentar.") + "</p>";
+        '<p class="val-veredicto ' + (mal ? "mal" : "ok") + '">' + (mal ? "Hay " + mal + " problema(s) bloqueante(s)." : "Geometría válida para presentar.") + "</p>" +
+        '<p class="val-cta">¿Necesitas cruzar este polígono con alertas satelitales de deforestación y armar el expediente EUDR? <a href="#contacto" data-serv="geo">Solicítalo aquí →</a></p>';
       if (!mal) {
         var ring = pts.slice(); if (cw) ring.reverse();
         ring = ring.map(function (p) { return [+p[0].toFixed(6), +p[1].toFixed(6)]; });

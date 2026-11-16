@@ -39,6 +39,21 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && barra.classList.contains("abierto")) { poner(false); btn.focus(); } });
     window.addEventListener("resize", function () { if (window.innerWidth > 860) poner(false); });
   })();
+  /* indicador de sección activa en la barra */
+  (function espia() {
+    if (!("IntersectionObserver" in window)) return;
+    var links = [].slice.call(document.querySelectorAll("#nav-enlaces a")), mapa = {}, secs = [];
+    links.forEach(function (a) { var s = document.querySelector(a.getAttribute("href")); if (s) { mapa[s.id] = a; secs.push(s); } });
+    var inicio = $("#inicio"); if (inicio) secs.push(inicio);
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.removeAttribute("aria-current"); });
+        if (mapa[e.target.id]) mapa[e.target.id].setAttribute("aria-current", "true");
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    secs.forEach(function (s) { io.observe(s); });
+  })();
 
   /* ---------- relieve del hero (curvas de nivel generadas) ---------- */
   (function relieve() {
@@ -88,6 +103,10 @@
     var est = { linea: null, sit: null, datos: null, plazo: null, todas: false };
     var bl = $("#e-linea"), bs = $("#situaciones"), bd = $("#e-datos"), bp = $("#e-plazo"), res = $("#resultado"), ver = $("#e-ver"), btnTodas = $("#e-todas");
 
+    function icono(it) {
+      var s = it.servicio && serv(it.servicio);
+      return s ? '<svg class="ic" viewBox="0 0 40 40" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' : "";
+    }
     function marcar(box, b) {
       [].forEach.call(box.children, function (x) { x.setAttribute("aria-checked", "false"); });
       b.setAttribute("aria-checked", "true");
@@ -96,7 +115,7 @@
     function grupo(box, items, alElegir, desmarcable) {
       box.innerHTML = "";
       items.forEach(function (it, i) {
-        var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(it.t || it.texto));
+        var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(it.t || it.texto) + icono(it));
         b.addEventListener("click", function () {
           if (desmarcable && b.getAttribute("aria-checked") === "true") { b.setAttribute("aria-checked", "false"); alElegir(null); return; }
           marcar(box, b); alElegir(it);
@@ -133,6 +152,7 @@
     }
     function render() {
       ver.hidden = !(est.linea && est.sit);
+      ["#paso-3", "#paso-4"].forEach(function (id) { $(id).classList.toggle("espera", !(est.linea && est.sit)); });
       if (!est.linea || !est.sit) {
         res.innerHTML = '<p class="vacio">Responde los pasos 1 y 2 y aquí aparece qué te entregamos.</p>';
         return;
@@ -165,26 +185,51 @@
     });
     situaciones();
     [].forEach.call(document.querySelectorAll("[data-linea]"), function (x) {
-      x.addEventListener("click", function () { elegirLinea(x.dataset.linea); });
+      x.addEventListener("click", function (e) {
+        e.preventDefault();
+        elegirLinea(x.dataset.linea);
+        var p1 = $("#paso-1"), p2 = $("#paso-2");
+        p1.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        p2.classList.add("resalta"); setTimeout(function () { p2.classList.remove("resalta"); }, 2200);
+      });
     });
+    render();
   })();
 
   /* ---------- servicios ---------- */
   (function servicios() {
     var rej = $("#rejilla");
     D.servicios.forEach(function (s) {
-      var c = h("article", { "class": "serv rev" }, rej,
+      var c = h("article", { "class": "serv rev", "data-lin": s.linea.join(" ") }, rej,
         '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
         '<p class="tags">' + s.linea.map(function (l) { return '<span>' + (l === "academica" ? "Académico" : "Empresarial") + '</span>'; }).join("") + '</p>' +
         '<h3>' + esc(s.titulo) + '</h3>' +
         '<p class="para">Para: ' + esc(s.para) + '.</p>' +
         '<p>' + esc(s.entrega) + '</p>' +
         (D[s.id] && D[s.id].items ? '<details class="incl"><summary>Qué incluye (' + D[s.id].items.length + ')</summary><ul class="incluye">' + D[s.id].items.map(function (i) { return '<li><b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span></li>'; }).join("") + '</ul></details><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
+        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Pedir cotización →</a>' +
         '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>');
     });
     var sel = $("#f-servicio");
     D.servicios.forEach(function (s) { h("option", { value: s.id }, sel, esc(s.titulo)); });
     h("option", { value: "otro" }, sel, "Otro / no lo sé todavía");
+
+    /* «Pedir cotización» deja el servicio elegido en el formulario (también el enlace del validador GIS) */
+    document.addEventListener("click", function (e) {
+      var l = e.target.closest && e.target.closest("[data-serv]"); if (!l) return;
+      var s = $("#f-servicio"); if (s) s.value = l.dataset.serv;
+    });
+
+    /* filtros por perfil */
+    var fil = $("#filtros"), cartas = [].slice.call(rej.children);
+    function n(lin) { return D.servicios.filter(function (s) { return !lin || s.linea.indexOf(lin) >= 0; }).length; }
+    [["todos", "Todos", n()], ["academica", "Para investigadores y estudiantes", n("academica")], ["empresarial", "Para empresas, asociaciones y agro", n("empresarial")]].forEach(function (f, i) {
+      var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f[1]) + " (" + f[2] + ")");
+      b.addEventListener("click", function () {
+        [].forEach.call(fil.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        cartas.forEach(function (c) { c.hidden = f[0] !== "todos" && c.dataset.lin.split(" ").indexOf(f[0]) < 0; });
+      });
+    });
   })();
 
   /* ---------- cifras con conteo ---------- */
@@ -226,7 +271,7 @@
       el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#c5d3dc", "stroke-dasharray": "3 5" }, svg);
     }
     anios.forEach(function (a) { el("text", { x: xs(a), y: H - 16, "text-anchor": "middle", "font-size": 15, "font-weight": 600 }, svg, a); });
-    var pila = {};
+    var pila = {}, ultima = null;
     D.publicaciones.slice().sort(function (a, b) { return a.anio - b.anio; }).forEach(function (p, idx) {
       pila[p.anio] = (pila[p.anio] || 0) + 1;
       var cx = xs(p.anio), cy = base - 4 - r - (pila[p.anio] - 1) * (r * 2 + 4);
@@ -241,7 +286,9 @@
       c.addEventListener("pointerenter", mostrar); c.addEventListener("focus", mostrar); c.addEventListener("click", mostrar);
       c.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); mostrar(); } });
       c._fin = function () { c.style.transform = "none"; c.style.opacity = 1; };
+      if (!ultima || p.anio >= ultima.anio) ultima = { anio: p.anio, f: mostrar };
     });
+    if (ultima) ultima.f(); /* el artículo más reciente ya aparece leído */
     /* leyenda */
     var leg = [["PLS-SEM", "#0b6e8a"], ["Bibliometría", "#e0533a"], ["Territorio y economía", "#6b4fc7"]];
     leg.forEach(function (l, i) {
@@ -268,11 +315,11 @@
     var io = new IntersectionObserver(function (es) {
       if (!es[0].isIntersecting) return; io.disconnect();
       dots.forEach(function (c, i) {
-        var f = function () { c.setAttribute("fill", i % 7 === 3 ? "#e0533a" : "#0b6e8a"); };
+        var f = function () { c.setAttribute("fill", "#0b6e8a"); };
         reduce ? f() : setTimeout(f, i * 8);
       });
     }, { threshold: .5 }); io.observe(cont);
-    finales.push(function () { dots.forEach(function (c, i) { c.setAttribute("fill", i % 7 === 3 ? "#e0533a" : "#0b6e8a"); }); });
+    finales.push(function () { dots.forEach(function (c, i) { c.setAttribute("fill", "#0b6e8a"); }); });
   })();
 
   /* ---------- gráfica 3: cajas con datos simulados ---------- */
@@ -332,6 +379,9 @@
       el("text", { x: x, y: y + 58, "text-anchor": "middle", "font-size": 16, "font-weight": 700, style: "fill:#0b1b2b;font-family:Georgia,serif" }, svg, n[0]);
       el("text", { x: x, y: y + 80, "text-anchor": "middle", "font-size": 12 }, svg, n[1]);
     });
+    /* en celular el SVG se vuelve ilegible: se muestra la misma ruta como lista */
+    var ol = h("ol", { "class": "ruta-lista" }, cont);
+    nodos.forEach(function (n, i) { h("li", {}, ol, '<span class="n">' + (i + 1) + '</span><div><b>' + esc(n[0]) + '</b><span>' + esc(n[1]) + '</span></div>'); });
   })();
 
   /* ---------- equipo ---------- */

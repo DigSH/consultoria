@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116f">
+<link rel="stylesheet" href="styles.css?v=20261116g">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -67,13 +67,13 @@
     <p class="lema">Consultoría para tesis, grupos de investigación, asociaciones y empresas del agro. Análisis reproducible: cada número con su código, cada gráfica con su origen.</p>
     <div class="hero-acc">
       <a class="boton" href="#buscador" data-linea="academica">Soy investigador o estudiante <span aria-hidden="true">→</span></a>
-      <a class="boton boton-claro" href="#buscador" data-linea="empresarial">Soy empresa, asociación o entidad <span aria-hidden="true">→</span></a>
+      <a class="boton boton-alt" href="#buscador" data-linea="empresarial">Soy empresa, asociación o entidad <span aria-hidden="true">→</span></a>
     </div>
     <ul class="sellos" aria-label="Credenciales">
-      <li>Equipo de 4 profesionales</li>
-      <li>Agronomía · estadística · desarrollo territorial</li>
-      <li>QGIS · Google Earth Engine · EUDR</li>
-      <li>7 artículos con DOI verificado</li>
+      <li><a href="#equipo">Equipo de 4 profesionales</a></li>
+      <li><a href="#servicios">Agronomía · estadística · desarrollo territorial</a></li>
+      <li><a href="#mapas">QGIS · Google Earth Engine · EUDR</a></li>
+      <li><a href="#publicaciones">7 artículos con DOI verificado</a></li>
     </ul>
   </div>
   <div class="hero-nota" aria-hidden="true"><span>Mueve el cursor: el relieve responde.</span></div>
@@ -88,21 +88,21 @@
   </div>
   <div class="buscador embudo">
     <div class="pasos-e">
-      <fieldset class="paso-e">
+      <fieldset class="paso-e" id="paso-1">
         <legend><span>1</span> ¿Quién eres?</legend>
         <div class="situaciones cortas" id="e-linea" role="radiogroup" aria-label="Quién eres"></div>
       </fieldset>
-      <fieldset class="paso-e">
+      <fieldset class="paso-e" id="paso-2">
         <legend><span>2</span> ¿Qué necesitas?</legend>
         <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Qué necesitas"></div>
         <p class="e-mas"><button type="button" class="chip" id="e-todas" aria-pressed="false">Ver todas las situaciones</button>
           <a class="e-ver" id="e-ver" href="#resultado" hidden>Ver tu resultado ↓</a></p>
       </fieldset>
-      <fieldset class="paso-e">
+      <fieldset class="paso-e espera" id="paso-3">
         <legend><span>3</span> ¿Qué tienes hoy? <small>opcional</small></legend>
         <div class="situaciones cortas" id="e-datos" role="radiogroup" aria-label="Qué tienes hoy"></div>
       </fieldset>
-      <fieldset class="paso-e">
+      <fieldset class="paso-e espera" id="paso-4">
         <legend><span>4</span> ¿Para cuándo? <small>opcional</small></legend>
         <div class="situaciones cortas" id="e-plazo" role="radiogroup" aria-label="Para cuándo"></div>
       </fieldset>
@@ -120,6 +120,7 @@
     <h2>Qué podemos hacer por ti</h2>
     <p class="sub">Debajo de cada servicio dice en qué experiencia comprobada se apoya. Sin tarifas de catálogo: cada caso se cotiza con su alcance.</p>
   </div>
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios por perfil"></div>
   <div class="rejilla" id="rejilla"></div>
 
 </section>
@@ -187,8 +188,8 @@
     </header>
     <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
       <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
-      <button type="button" class="chip" data-f="auto" aria-pressed="false">Automáticas</button>
-      <button type="button" class="chip" data-f="conv" aria-pressed="false">Convencionales</button>
+      <button type="button" class="chip" data-f="auto" aria-pressed="false"><i class="pt pt-auto" aria-hidden="true"></i>Automáticas</button>
+      <button type="button" class="chip" data-f="conv" aria-pressed="false"><i class="pt pt-conv" aria-hidden="true"></i>Convencionales</button>
       <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
     </div>
     <div class="mapa" id="map-ideam" role="region" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
@@ -343,9 +344,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116f"></script>
+<script src="datos.js?v=20261116g"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116f"></script>
-<script src="gis.js?v=20261116f"></script>
+<script src="app.js?v=20261116g"></script>
+<script src="gis.js?v=20261116g"></script>
 </body>
 </html>
