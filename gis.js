@@ -73,7 +73,7 @@
           est.push({ lat: lat, lon: lon, nombre: r.nombre, municipio: r.municipio, categoria: r.categoria, tecnologia: r.tecnologia, alt: r.altitud, tipo: /autom/i.test(r.tecnologia || "") ? "auto" : "conv" });
         });
         pintar();
-        if (descartadas) cuenta.textContent += " · " + descartadas + " descartadas por coordenadas fuera de Colombia";
+        if (descartadas) cuenta.textContent += " · " + descartadas + " descartadas por coordenadas fuera del recuadro de Colombia";
         window.__ideam = { total: est.length, descartadas: descartadas };
       })
       .catch(function (e) {
@@ -112,6 +112,16 @@
     return k;
   }
   function decimales(x) { var s = String(x); if (/e-/i.test(s)) return 15; var i = s.indexOf("."); return i < 0 ? 0 : s.length - i - 1; }
+  /* Decimales según el texto pegado: JSON.parse descarta ceros finales (-73.355300 pasa a -73.3553) y daría un falso aviso. */
+  function decimalesTexto(txt) {
+    var i = txt.indexOf('"coordinates"'); if (i < 0) return null;
+    var j = txt.indexOf("[", i); if (j < 0) return null;
+    var nivel = 0, k = j;
+    for (; k < txt.length; k++) { var ch = txt.charAt(k); if (ch === "[") nivel++; else if (ch === "]") { nivel--; if (nivel === 0) break; } }
+    var m = txt.slice(j, k + 1).match(/-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g);
+    if (!m || !m.length) return null;
+    return Math.min.apply(null, m.map(function (s) { if (/e/i.test(s)) return 15; var p = s.indexOf("."); return p < 0 ? 0 : s.length - p - 1; }));
+  }
 
   function iniciarPredio() {
     var b = bases();
@@ -119,7 +129,7 @@
     L.control.layers(b, null, { collapsed: true }).addTo(map);
     map.on("focus", function () { map.scrollWheelZoom.enable(); });
     map.on("blur", function () { map.scrollWheelZoom.disable(); });
-    var dib = L.layerGroup().addTo(map), pts = [], avisos = [], res = $("#val-res"), btnDes = $("#v-descargar"), ultimo = null;
+    var dib = L.layerGroup().addTo(map), pts = [], avisos = [], res = $("#val-res"), btnDes = $("#v-descargar"), ultimo = null, decTexto = null;
 
     function dibujar() {
       dib.clearLayers();
@@ -138,7 +148,9 @@
       }
       var items = [], mal = 0;
       var ha = areaHa(pts), per = perimetroM(pts), cruces = autocruces(pts), n = pts.length;
-      var dec = Math.min.apply(null, pts.map(function (p) { return Math.min(decimales(p[0]), decimales(p[1])); }));
+      var dec = decTexto != null ? decTexto : Math.min.apply(null, pts.map(function (p) { return Math.min(decimales(p[0]), decimales(p[1])); }));
+      var repetidos = 0;
+      for (var u = 0; u < n; u++) { var pu = pts[u], qu = pts[(u + 1) % n]; if (Math.abs(pu[0] - qu[0]) < 1e-7 && Math.abs(pu[1] - qu[1]) < 1e-7) repetidos++; }
       var fuera = pts.filter(function (p) { return !enColombia(p[1], p[0]); }).length;
       var invert = pts.filter(function (p) { return p[0] > COL.latMin && p[0] < COL.latMax && p[1] < -66 && p[1] > -80; }).length === n;
       var cw = areaFirmada(pts) < 0;
@@ -146,11 +158,13 @@
       avisos.forEach(function (a) { items.push(fila("aviso", a)); });
       items.push(fila("ok", "<b>" + n + " vértices</b>, polígono cerrado automáticamente al descargar."));
       items.push(fila("ok", "Área esférica (±0,5 %): <b>" + ha.toLocaleString("es-CO", { maximumFractionDigits: 2 }) + " ha</b> · perímetro " + Math.round(per).toLocaleString("es-CO") + " m."));
+      if (repetidos) { items.push(fila("mal", "<b>" + repetidos + " vértice(s) repetido(s)</b> o a menos de 1 cm del siguiente: separa los puntos.")); mal++; }
+      if (ha < 0.0001) { items.push(fila("mal", "<b>El área es prácticamente cero</b> (menos de 1 m²): los vértices están repetidos o alineados.")); mal++; }
       if (cruces) { items.push(fila("mal", "<b>El contorno se cruza consigo mismo</b> (" + cruces + " cruce(s)). Las plataformas lo rechazan: corrige los vértices."));  mal++; }
       else items.push(fila("ok", "Sin cruces del contorno."));
       if (invert) { items.push(fila("mal", "Las coordenadas parecen <b>invertidas</b> (latitud y longitud intercambiadas). GeoJSON va en orden [longitud, latitud].")); mal++; }
-      else if (fuera) { items.push(fila("mal", "<b>" + fuera + " vértice(s) fuera de Colombia</b>: revisa el signo y el orden de las coordenadas.")); mal++; }
-      else items.push(fila("ok", "Todos los vértices están en Colombia."));
+      else if (fuera) { items.push(fila("mal", "<b>" + fuera + " vértice(s) fuera del recuadro de Colombia</b>: revisa el signo y el orden de las coordenadas.")); mal++; }
+      else items.push(fila("ok", "Todos los vértices están dentro del recuadro geográfico de Colombia (no distingue las fronteras con países vecinos)."));
       items.push(dec >= 6 ? fila("ok", "Precisión de coordenadas suficiente (6 decimales o más).") : fila("aviso", "Algunas coordenadas tienen solo " + dec + " decimal(es). Se recomiendan al menos 6 (≈ 0,1 m)."));
       items.push(cw ? fila("aviso", "El anillo va en sentido horario; al descargar se corrige a antihorario (norma RFC 7946).") : fila("ok", "Sentido del anillo correcto (antihorario)."));
       items.push(ha > 4 ? fila("ok", "Supera 4 ha: el Reglamento exige <b>polígono</b> (este) y no basta un punto.") : fila("ok", "Hasta 4 ha basta un punto, pero el polígono también es válido."));
@@ -167,13 +181,14 @@
       window.__predio = { n: n, ha: ha, cruces: cruces, mal: mal };
     }
 
-    map.on("click", function (e) { avisos = []; pts.push([e.latlng.lng, e.latlng.lat]); analizar(); });
-    $("#v-deshacer").addEventListener("click", function () { avisos = []; pts.pop(); analizar(); });
-    $("#v-limpiar").addEventListener("click", function () { avisos = []; pts = []; analizar(); });
+    map.on("click", function (e) { avisos = []; decTexto = null; pts.push([e.latlng.lng, e.latlng.lat]); analizar(); });
+    $("#v-deshacer").addEventListener("click", function () { avisos = []; decTexto = null; pts.pop(); analizar(); });
+    $("#v-limpiar").addEventListener("click", function () { avisos = []; decTexto = null; pts = []; analizar(); });
     $("#v-ejemplo").addEventListener("click", function () {
       avisos = ["Ejemplo ilustrativo: <b>no corresponde a ningún predio real</b>."];
-      var c = [-73.3553, 5.5536], dx = 0.0016, dy = 0.0011;
-      pts = [[c[0] - dx, c[1] - dy], [c[0] + dx, c[1] - dy], [c[0] + dx, c[1] + dy], [c[0] - dx, c[1] + dy]];
+      var c = [-73.355314, 5.553628], dx = 0.001613, dy = 0.001127, r6 = function (v) { return +v.toFixed(6); };
+      decTexto = null;
+      pts = [[r6(c[0] - dx), r6(c[1] - dy)], [r6(c[0] + dx), r6(c[1] - dy)], [r6(c[0] + dx), r6(c[1] + dy)], [r6(c[0] - dx), r6(c[1] + dy)]];
       analizar(); map.fitBounds(L.latLngBounds(pts.map(function (p) { return [p[1], p[0]]; })).pad(.4));
     });
     $("#v-cargar").addEventListener("click", function () {
@@ -184,14 +199,20 @@
       if (g.type === "FeatureCollection") g = (g.features || [])[0]; if (g && g.type === "Feature") g = g.geometry;
       if (!g || (g.type !== "Polygon" && g.type !== "MultiPolygon")) { res.innerHTML = "<ul>" + fila("mal", "Se esperaba un Polygon o MultiPolygon.") + "</ul>"; return; }
       var ring;
-      if (g.type === "MultiPolygon") { ring = g.coordinates[0][0]; avisos.push("Es un MultiPolygon con " + g.coordinates.length + " partes: se valida solo la primera."); }
-      else ring = g.coordinates[0];
+      try {
+        if (!Array.isArray(g.coordinates)) throw new Error("sin coordenadas");
+        if (g.type === "MultiPolygon") { ring = g.coordinates[0][0]; avisos.push("Es un MultiPolygon con " + g.coordinates.length + " partes: se valida solo la primera."); }
+        else ring = g.coordinates[0];
+      } catch (e) { res.innerHTML = "<ul>" + fila("mal", "La geometría no trae coordenadas con la forma esperada.") + "</ul>"; return; }
       if (g.type === "Polygon" && g.coordinates.length > 1) avisos.push("Tiene " + (g.coordinates.length - 1) + " hueco(s): se valida solo el contorno exterior.");
-      if (!ring || ring.length < 4) { res.innerHTML = "<ul>" + fila("mal", "El anillo necesita al menos 4 posiciones (3 vértices y el cierre).") + "</ul>"; return; }
+      if (!Array.isArray(ring) || ring.length < 4) { res.innerHTML = "<ul>" + fila("mal", "El anillo necesita al menos 4 posiciones (3 vértices y el cierre).") + "</ul>"; return; }
+      var numericos = ring.every(function (p) { return Array.isArray(p) && p.length >= 2 && typeof p[0] === "number" && isFinite(p[0]) && typeof p[1] === "number" && isFinite(p[1]); });
+      if (!numericos) { res.innerHTML = "<ul>" + fila("mal", "Todas las posiciones deben ser pares numéricos [longitud, latitud]: hay valores vacíos o con texto.") + "</ul>"; return; }
       var a = ring[0], z = ring[ring.length - 1];
       if (a[0] !== z[0] || a[1] !== z[1]) avisos.push("El anillo <b>no estaba cerrado</b> (primer y último punto distintos); se cierra al validar.");
       else ring = ring.slice(0, -1);
       pts = ring.map(function (p) { return [p[0], p[1]]; });
+      decTexto = decimalesTexto(txt);
       analizar();
       var ll = pts.map(function (p) { return [p[1], p[0]]; }).filter(function (p) { return isFinite(p[0]) && isFinite(p[1]); });
       if (ll.length) try { map.fitBounds(L.latLngBounds(ll).pad(.4)); } catch (e) { }

@@ -8,13 +8,33 @@
 <meta property="og:title" content="Consultoría · Estadística, datos y proyectos para el agro y la academia">
 <meta property="og:description" content="Resultados que resisten al jurado, al comité y al campo. Análisis reproducible, tableros y ensayos.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://digsh.github.io/consultoria/">
+<meta property="og:image" content="https://digsh.github.io/consultoria/og-portada.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Consultoría: estadística, datos y proyectos para el agro y la academia">
+<meta property="og:locale" content="es_CO">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://digsh.github.io/consultoria/">
 <meta name="theme-color" content="#eef3f6">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"Consultoría","url":"https://digsh.github.io/consultoria/",
+ "description":"Consultoría académica y empresarial: estadística, datos, proyectos, dron e inteligencia artificial para el agro y la academia.",
+ "areaServed":{"@type":"Country","name":"Colombia"},
+ "address":{"@type":"PostalAddress","addressLocality":"Tunja","addressRegion":"Boyacá","addressCountry":"CO"},
+ "knowsAbout":["Estadística","Bibliometría","Power BI","Análisis geoespacial","Trazabilidad EUDR","Inteligencia artificial aplicada al agro"],
+ "employee":[
+  {"@type":"Person","name":"Diego Sanabria Higuera","jobTitle":"Ingeniero Agrónomo y Especialista en Estadística","sameAs":"https://orcid.org/0009-0007-3157-6140"},
+  {"@type":"Person","name":"Zahira Rodríguez Bautista","jobTitle":"Administradora de Empresas","sameAs":"https://orcid.org/0009-0004-4188-8488"},
+  {"@type":"Person","name":"Stiven Santana","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"},
+  {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
+</script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116d">
+<link rel="stylesheet" href="styles.css?v=20261116e">
 </head>
 <body>
-<a class="saltar" href="#servicios">Saltar al contenido</a>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
 
 <header class="barra" id="barra">
   <a class="marca" href="#inicio" aria-label="Consultoría, inicio">
@@ -22,17 +42,22 @@
     <span>Consultoría</span>
   </a>
   <nav aria-label="Principal">
-    <a href="#servicios">Servicios</a>
-    <a href="#evidencia">Evidencia</a>
-    <a href="#mapas">Mapas</a>
-    <a href="#metodo">Método</a>
-    <a href="#equipo">Equipo</a>
-    <a href="#voces">Voces</a>
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-enlaces">Menú</button>
+    <div class="enlaces" id="nav-enlaces">
+      <a href="#buscador">Empieza</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#evidencia">Evidencia</a>
+      <a href="#mapas">Mapas</a>
+      <a href="#metodo">Método</a>
+      <a href="#equipo">Equipo</a>
+      <a href="#publicaciones">Artículos</a>
+      <a href="#voces">Voces</a>
+    </div>
     <a class="boton boton-chico" href="#contacto">Escríbenos</a>
   </nav>
 </header>
 
-<main>
+<main id="contenido" tabindex="-1">
 <!-- ============ INICIO ============ -->
 <section class="hero" id="inicio">
   <svg class="relieve" id="relieve" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
@@ -70,6 +95,8 @@
       <fieldset class="paso-e">
         <legend><span>2</span> ¿Qué necesitas?</legend>
         <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Qué necesitas"></div>
+        <p class="e-mas"><button type="button" class="chip" id="e-todas" aria-pressed="false">Ver todas las situaciones</button>
+          <a class="e-ver" id="e-ver" href="#resultado" hidden>Ver tu resultado ↓</a></p>
       </fieldset>
       <fieldset class="paso-e">
         <legend><span>3</span> ¿Qué tienes hoy? <small>opcional</small></legend>
@@ -164,7 +191,7 @@
       <button type="button" class="chip" data-f="conv" aria-pressed="false">Convencionales</button>
       <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
     </div>
-    <div class="mapa" id="map-ideam" role="application" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
+    <div class="mapa" id="map-ideam" role="region" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
     <p class="mapa-fuente">Fuente: IDEAM, Catálogo Nacional de Estaciones (conjunto <code>hp9r-jxuu</code>, datos.gov.co), licencia CC BY-SA 4.0. Mapa base © OpenStreetMap.</p>
   </article>
 
@@ -180,11 +207,11 @@
       <button type="button" class="chip chip-fuerte" id="v-descargar" disabled>Descargar GeoJSON</button>
     </div>
     <div class="val-grid">
-      <div class="mapa" id="map-predio" role="application" aria-label="Mapa para dibujar el predio"></div>
+      <div class="mapa" id="map-predio" role="region" aria-label="Mapa para dibujar el predio"></div>
       <div class="val-lado">
         <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haz clic en el mapa para marcar el primer vértice.</p></div>
         <label class="val-pega">O pega un GeoJSON
-          <textarea id="v-texto" rows="4" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.3553,5.5536],[-73.3540,5.5536],[-73.3540,5.5550],[-73.3553,5.5536]]]}'></textarea>
+          <textarea id="v-texto" rows="4" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.356927,5.552501],[-73.353701,5.552501],[-73.353701,5.554755],[-73.356927,5.552501]]]}'></textarea>
         </label>
         <button type="button" class="chip" id="v-cargar">Validar este GeoJSON</button>
       </div>
@@ -224,9 +251,9 @@
 
 <section class="seccion" id="trayectoria">
   <div class="cab">
-    <p class="sobretitulo">Trayectoria de Diego</p>
+    <p class="sobretitulo">Trayectoria del equipo</p>
     <h2>Del lote al tablero</h2>
-    <p class="sub">Agrónomo de formación, estadístico de especialización. Conoce el surco y la base de datos, y por eso traduce entre ambos.</p>
+    <p class="sub">Agronomía, estadística y gestión de proyectos. Los hitos salen de las hojas de vida de cada integrante.</p>
   </div>
   <ol class="linea" id="linea"></ol>
   <div class="herramientas">
@@ -248,6 +275,8 @@
     <p class="sub">Cada enlace lleva al registro oficial del artículo. Verificados en Crossref el 16 de noviembre de 2026.</p>
   </div>
   <ul class="pubs" id="lista-pubs"></ul>
+  <h3 class="sub-pubs">Cartillas y divulgación técnica</h3>
+  <ul class="pubs" id="lista-cartillas"></ul>
 </section>
 
 <!-- ============ VOCES ============ -->
@@ -277,6 +306,7 @@
         <button class="boton" type="submit" data-via="whatsapp">Enviar por WhatsApp</button>
         <button class="boton boton-claro" type="submit" data-via="correo">Enviar por correo</button>
       </div>
+      <p class="formu-aviso" id="formu-aviso" role="status" aria-live="polite"></p>
       <p class="formu-nota">No guardamos nada en esta página: el botón abre tu WhatsApp o tu correo con el mensaje escrito.</p>
     </form>
     <div class="datos-contacto">
@@ -312,9 +342,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116d"></script>
+<script src="datos.js?v=20261116e"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116d"></script>
-<script src="gis.js?v=20261116d"></script>
+<script src="app.js?v=20261116e"></script>
+<script src="gis.js?v=20261116e"></script>
 </body>
 </html>

@@ -195,7 +195,6 @@ h1,h2,h3{color:var(--tinta)}
 @keyframes fluye{to{stroke-dashoffset:-28}}
 
 @media (max-width:860px){
-  .barra nav a:not(.boton){display:none}
   .buscador,.contacto-grid,.graficas{grid-template-columns:1fr}
   .resultado{position:static}
   .linea::before{left:6px}
@@ -209,7 +208,16 @@ h1,h2,h3{color:var(--tinta)}
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .rev{opacity:1;transform:none}
 }
-@media print{.barra,.hero-nota{display:none}.rev{opacity:1;transform:none}}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .barra,.hero-nota,.saltar,.car-flecha,.car-pts,#buscador,.mapa-barra,.val-pega,.formu,.e-mas{display:none!important}
+  .rev{opacity:1!important;transform:none!important}
+  .contacto-grid{grid-template-columns:1fr}
+  .equipo{flex-wrap:wrap;overflow:visible}
+  .equipo>.persona{flex:0 0 calc(50% - 10px)!important}
+  .serv,.persona,.tarjeta,.voz{break-inside:avoid}
+  .mapa{height:300px}
+}
 
 @media (max-width:860px){
   .relieve path{stroke-opacity:.16}
@@ -244,7 +252,7 @@ h1,h2,h3{color:var(--tinta)}
 .val-res li{display:grid;grid-template-columns:20px 1fr;gap:8px;line-height:1.4}
 .val-res li>span:first-child{font-weight:800}
 .val-res li.ok>span:first-child{color:var(--verde)}
-.val-res li.aviso>span:first-child{color:#b45f06}
+.val-res li.aviso>span:first-child{color:#944900}
 .val-res li.mal>span:first-child{color:#c23b24}
 .val-veredicto{margin:12px 0 0;padding:8px 12px;border-radius:10px;font-weight:700;font-size:14px}
 .val-veredicto.ok{background:#d6eef4;color:#07566d}
@@ -301,3 +309,53 @@ h1,h2,h3{color:var(--tinta)}
 .serv .incluye li{position:relative;padding-left:16px}
 .serv .incluye li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--oro)}
 .serv .lim{font:12px/1.5 var(--mono);color:#9fb1c1;border-left:2px solid #35516d;padding-left:10px}
+
+/* ---------- menú móvil ---------- */
+.menu-btn{display:none;font:600 14px var(--sans);background:transparent;color:var(--tinta);border:1.5px solid var(--tinta);border-radius:999px;padding:6px 14px;cursor:pointer}
+.enlaces{display:flex;gap:clamp(10px,2vw,24px);align-items:center}
+.barra.sol .menu-btn,.barra.abierto .menu-btn{color:#fff;border-color:#ffffff88}
+.barra.abierto{background:rgba(11,27,43,.97);box-shadow:0 1px 0 #28425c}
+.barra.abierto .marca{color:#fff}
+.barra.abierto .marca svg{background:#dbe6ee;border-radius:50%}
+.barra.abierto .boton{background:var(--oro);border-color:var(--oro);color:var(--tinta)}
+@media (max-width:860px){
+  .menu-btn{display:inline-block}
+  .enlaces{display:none}
+  .barra nav{gap:8px}
+  .boton-chico{padding:6px 12px;font-size:13.5px}
+  .barra.abierto .enlaces{display:flex;flex-direction:column;align-items:stretch;gap:0;position:absolute;top:100%;left:0;right:0;background:rgba(11,27,43,.97);padding:6px clamp(16px,4vw,40px) 16px;box-shadow:0 12px 24px #0b1b2b55}
+  .barra.abierto .enlaces a{color:#dbe6ee;padding:12px 0;border-bottom:1px solid #28425c;font-size:17px;text-decoration:none}
+}
+
+/* ---------- equipo: las 4 tarjetas a la vista en pantallas anchas ---------- */
+@media (min-width:1000px){.equipo>.persona{flex-basis:calc((100% - 60px) / 4)}}
+.persona .resp-p{font:12px/1.5 var(--mono);color:var(--tinta2);border-top:1px dashed var(--linea);margin-top:10px;padding-top:10px}
+.persona .orcid{font:600 12px var(--mono);margin-top:6px;overflow-wrap:anywhere}
+
+/* ---------- detalle visible en las tarjetas de servicio ---------- */
+.serv .incl{margin:0}
+.serv .incl summary{cursor:pointer;font:600 12.5px var(--mono);letter-spacing:.04em;color:var(--oro);list-style:none;padding:6px 0}
+.serv .incl summary::-webkit-details-marker{display:none}
+.serv .incl summary::before{content:"+ "}
+.serv .incl[open] summary::before{content:"\2212 "}
+.serv .incl .incluye{margin-top:8px}
+.serv .incluye li b{font-weight:600;color:#fff}
+.serv .incluye li span{display:block;color:#bccad6;font-size:13.5px;line-height:1.45}
+
+/* ---------- trayectoria, artículos y cartillas ---------- */
+.quien{display:inline-block;font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--papel);border:1px solid var(--linea);color:var(--tinta2);padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.pubs .eq{display:block;font:12px var(--mono);color:var(--tinta2);margin-top:4px}
+.sub-pubs{margin:44px auto 8px;max-width:var(--max);font-size:22px}
+
+/* ---------- embudo: ver todas y enlace al resultado ---------- */
+.e-mas{margin:12px 0 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.e-ver{display:none;font-weight:600}
+@media (max-width:860px){.e-ver:not([hidden]){display:inline-block}}
+
+/* ---------- formulario: aviso de validación ---------- */
+.formu-aviso{margin:8px 0 0;min-height:1.4em;color:#ffd9cf;font-size:14.5px}
+.formu [aria-invalid=true]{border-color:var(--oro);outline:2px solid var(--oro)}
+
+/* evita el desborde horizontal del formulario en pantallas estrechas */
+.contacto-grid>*{min-width:0}
+.formu input,.formu select,.formu textarea{width:100%;max-width:100%}

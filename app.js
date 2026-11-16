@@ -6,6 +6,7 @@
   var NS = "http://www.w3.org/2000/svg";
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finales = []; /* funciones que fijan el estado final de gráficas y contadores (impresión) */
 
   function el(tag, attrs, parent, text) {
     var n = document.createElementNS(NS, tag);
@@ -30,6 +31,14 @@
   var barra = $("#barra");
   function scrollBarra() { barra.classList.toggle("sol", window.scrollY > 40); }
   window.addEventListener("scroll", scrollBarra, { passive: true }); scrollBarra();
+  (function menu() {
+    var btn = $("#menu-btn"), panel = $("#nav-enlaces");
+    function poner(abierto) { barra.classList.toggle("abierto", abierto); btn.setAttribute("aria-expanded", abierto ? "true" : "false"); btn.textContent = abierto ? "Cerrar" : "Menú"; }
+    btn.addEventListener("click", function () { poner(!barra.classList.contains("abierto")); });
+    panel.addEventListener("click", function (e) { if (e.target.closest("a")) poner(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && barra.classList.contains("abierto")) { poner(false); btn.focus(); } });
+    window.addEventListener("resize", function () { if (window.innerWidth > 860) poner(false); });
+  })();
 
   /* ---------- relieve del hero (curvas de nivel generadas) ---------- */
   (function relieve() {
@@ -76,18 +85,22 @@
 
   /* ---------- embudo guiado (4 pasos) ---------- */
   (function embudo() {
-    var est = { linea: null, sit: null, datos: null, plazo: null };
-    var bl = $("#e-linea"), bs = $("#situaciones"), bd = $("#e-datos"), bp = $("#e-plazo"), res = $("#resultado");
+    var est = { linea: null, sit: null, datos: null, plazo: null, todas: false };
+    var bl = $("#e-linea"), bs = $("#situaciones"), bd = $("#e-datos"), bp = $("#e-plazo"), res = $("#resultado"), ver = $("#e-ver"), btnTodas = $("#e-todas");
 
     function marcar(box, b) {
       [].forEach.call(box.children, function (x) { x.setAttribute("aria-checked", "false"); });
       b.setAttribute("aria-checked", "true");
     }
-    function grupo(box, items, alElegir) {
+    /* desmarcable: los pasos opcionales se pueden volver a pulsar para quitar la respuesta */
+    function grupo(box, items, alElegir, desmarcable) {
       box.innerHTML = "";
       items.forEach(function (it, i) {
         var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(it.t || it.texto));
-        b.addEventListener("click", function () { marcar(box, b); alElegir(it); });
+        b.addEventListener("click", function () {
+          if (desmarcable && b.getAttribute("aria-checked") === "true") { b.setAttribute("aria-checked", "false"); alElegir(null); return; }
+          marcar(box, b); alElegir(it);
+        });
         b.addEventListener("keydown", function (e) {
           var k = e.key, n = null, c = box.children;
           if (k === "ArrowDown" || k === "ArrowRight") n = c[(i + 1) % c.length];
@@ -99,7 +112,7 @@
     function situaciones() {
       est.sit = null;
       if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elige primero quién eres (paso 1).</p>'; return; }
-      var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
+      var lista = est.todas ? D.situaciones : D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
       grupo(bs, lista, function (s) { est.sit = s; render(); });
     }
     function elegirLinea(id) {
@@ -107,11 +120,11 @@
       if (i < 0 || !bl.children[i]) return;
       marcar(bl, bl.children[i]); est.linea = id; situaciones(); render();
     }
+    function opcion(lista, id) { return lista.filter(function (o) { return o.id === id; })[0]; }
 
     function resumen() {
       var L = D.lineas[est.linea], sv = est.sit.servicio ? serv(est.sit.servicio) : null;
-      var datos = D.opcionesDatos.filter(function (o) { return o.id === est.datos; })[0];
-      var plazo = D.opcionesPlazo.filter(function (o) { return o.id === est.plazo; })[0];
+      var datos = opcion(D.opcionesDatos, est.datos), plazo = opcion(D.opcionesPlazo, est.plazo);
       var p = ["Soy " + L.frase + ".", "Mi situación: " + est.sit.texto.toLowerCase() + "."];
       if (sv) p.push("Me interesa: " + sv.titulo + ".");
       if (datos) p.push("Datos: " + datos.t.toLowerCase() + ".");
@@ -119,14 +132,14 @@
       return p.join(" ");
     }
     function render() {
+      ver.hidden = !(est.linea && est.sit);
       if (!est.linea || !est.sit) {
         res.innerHTML = '<p class="vacio">Responde los pasos 1 y 2 y aquí aparece qué te entregamos.</p>';
         return;
       }
       var sv = est.sit.servicio ? serv(est.sit.servicio) : null, txt = resumen();
       var sel = $("#f-servicio"); if (sel) sel.value = sv ? sv.id : "otro";
-      var datos = D.opcionesDatos.filter(function (o) { return o.id === est.datos; })[0];
-      var plazo = D.opcionesPlazo.filter(function (o) { return o.id === est.plazo; })[0];
+      var datos = opcion(D.opcionesDatos, est.datos), plazo = opcion(D.opcionesPlazo, est.plazo);
       var extra = (datos || plazo) ? '<p class="e-extra">' + (datos ? esc(datos.t) : "") + (datos && plazo ? " · " : "") + (plazo ? esc(plazo.t) : "") + "</p>" : "";
       var cuerpo = sv
         ? '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Te entregamos</dt><dd>' + esc(sv.entrega) + '</dd><dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>'
@@ -142,11 +155,17 @@
     }
 
     grupo(bl, Object.keys(D.lineas).map(function (k) { return { id: k, t: D.lineas[k].texto }; }), function (it) { est.linea = it.id; situaciones(); render(); });
-    grupo(bd, D.opcionesDatos, function (o) { est.datos = o.id; render(); });
-    grupo(bp, D.opcionesPlazo, function (o) { est.plazo = o.id; render(); });
+    grupo(bd, D.opcionesDatos, function (o) { est.datos = o ? o.id : null; render(); }, true);
+    grupo(bp, D.opcionesPlazo, function (o) { est.plazo = o ? o.id : null; render(); }, true);
+    btnTodas.addEventListener("click", function () {
+      est.todas = !est.todas;
+      btnTodas.setAttribute("aria-pressed", est.todas ? "true" : "false");
+      btnTodas.textContent = est.todas ? "Ver solo las de mi perfil" : "Ver todas las situaciones";
+      situaciones(); render();
+    });
     situaciones();
-    [].forEach.call(document.querySelectorAll("[data-linea]"), function (a) {
-      a.addEventListener("click", function () { elegirLinea(a.dataset.linea); });
+    [].forEach.call(document.querySelectorAll("[data-linea]"), function (x) {
+      x.addEventListener("click", function () { elegirLinea(x.dataset.linea); });
     });
   })();
 
@@ -160,7 +179,7 @@
         '<h3>' + esc(s.titulo) + '</h3>' +
         '<p class="para">Para: ' + esc(s.para) + '.</p>' +
         '<p>' + esc(s.entrega) + '</p>' +
-        (D[s.id] && D[s.id].items ? '<ul class="incluye">' + D[s.id].items.map(function (i) { return '<li title="' + esc(i.d) + '">' + esc(i.t) + '</li>'; }).join("") + '</ul><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
+        (D[s.id] && D[s.id].items ? '<details class="incl"><summary>Qué incluye (' + D[s.id].items.length + ')</summary><ul class="incluye">' + D[s.id].items.map(function (i) { return '<li><b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span></li>'; }).join("") + '</ul></details><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
         '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>');
     });
     var sel = $("#f-servicio");
@@ -189,6 +208,7 @@
       es.forEach(function (e) { if (e.isIntersecting) { cuenta(e.target); io.unobserve(e.target); } });
     }, { threshold: .6 });
     [].forEach.call(box.querySelectorAll(".n"), function (n) { io.observe(n); });
+    finales.push(function () { [].forEach.call(box.querySelectorAll(".n"), function (n) { n.textContent = Math.round(+n.dataset.n).toLocaleString("es-CO") + n.dataset.s; }); });
   })();
 
   /* ---------- gráfica 1: publicaciones por año ---------- */
@@ -232,6 +252,7 @@
     var io = new IntersectionObserver(function (es) {
       if (es[0].isIntersecting) { [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (c) { c._fin(); }); io.disconnect(); }
     }, { threshold: .4 }); io.observe(cont);
+    finales.push(function () { [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (c) { c.style.transition = "none"; c._fin(); }); });
   })();
 
   /* ---------- gráfica 2: 300 puntos ---------- */
@@ -251,6 +272,7 @@
         reduce ? f() : setTimeout(f, i * 8);
       });
     }, { threshold: .5 }); io.observe(cont);
+    finales.push(function () { dots.forEach(function (c, i) { c.setAttribute("fill", i % 7 === 3 ? "#e0533a" : "#0b6e8a"); }); });
   })();
 
   /* ---------- gráfica 3: cajas con datos simulados ---------- */
@@ -292,6 +314,7 @@
       if (!es[0].isIntersecting) return; io.disconnect();
       [].forEach.call(svg.querySelectorAll("g"), function (g) { g.style.transform = "scaleY(1)"; });
     }, { threshold: .4 }); io.observe(cont);
+    finales.push(function () { [].forEach.call(svg.querySelectorAll("g"), function (g) { g.style.transition = "none"; g.style.transform = "scaleY(1)"; }); });
   })();
 
   /* ---------- gráfica 4: ruta del dato ---------- */
@@ -300,7 +323,8 @@
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Ruta del dato: campo o Excel, limpieza, modelo, informe o tablero" }, cont);
     var nodos = [["Campo y Excel", "tus datos como llegan"], ["Limpieza", "Python · SQL · duplicados"], ["Análisis", "R · PLS-SEM · ANOVA"], ["Entrega", "informe · tablero · DAX"]];
     var paso = (W - 260) / 3, y = 60;
-    el("path", { d: "M130 " + y + "H" + (W - 130), stroke: "#e0533a", "stroke-width": 3, "stroke-dasharray": "10 8", fill: "none", style: reduce ? "" : "animation:fluye 1.2s linear infinite" }, svg);
+    var flujo = el("path", { d: "M130 " + y + "H" + (W - 130), stroke: "#e0533a", "stroke-width": 3, "stroke-dasharray": "10 8", fill: "none", style: reduce ? "" : "animation:fluye 1.2s linear infinite;animation-play-state:paused" }, svg);
+    if (!reduce && "IntersectionObserver" in window) new IntersectionObserver(function (es) { flujo.style.animationPlayState = es[0].isIntersecting ? "running" : "paused"; }).observe(cont);
     nodos.forEach(function (n, i) {
       var x = 130 + paso * i;
       el("circle", { cx: x, cy: y, r: 26, fill: i === 3 ? "#0b6e8a" : "#fbfdfe", stroke: "#0b1b2b", "stroke-width": 3 }, svg);
@@ -316,7 +340,9 @@
     D.equipo.forEach(function (p) {
       h("article", { "class": "persona rev" }, cont,
         '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><h3>' + esc(p.nombre) + '</h3>' +
-        '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>');
+        '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>' +
+        (p.respaldo ? '<p class="resp-p">' + esc(p.respaldo) + '</p>' : '') +
+        (p.orcid ? '<a class="orcid" href="https://orcid.org/' + esc(p.orcid) + '" target="_blank" rel="noopener">ORCID ' + esc(p.orcid) + '</a>' : ''));
     });
 
     /* carrusel: scroll-snap nativo + flechas y puntos; sin movimiento automático */
@@ -355,7 +381,7 @@
   (function trayectoria() {
     var ol = $("#linea");
     D.trayectoria.forEach(function (t) {
-      h("li", { "class": "rev" }, ol, '<span class="f">' + esc(t.fecha) + '</span><div><h3>' + esc(t.cargo) + '</h3><div class="d">' + esc(t.donde) + '</div><p>' + esc(t.texto) + '</p></div>');
+      h("li", { "class": "rev" }, ol, '<span class="f">' + esc(t.fecha) + '</span><div><h3>' + esc(t.cargo) + (t.quien ? ' <span class="quien">' + esc(t.quien) + '</span>' : '') + '</h3><div class="d">' + esc(t.donde) + '</div><p>' + esc(t.texto) + '</p></div>');
     });
   })();
 
@@ -363,7 +389,11 @@
   (function listaPubs() {
     var ul = $("#lista-pubs");
     D.publicaciones.forEach(function (p) {
-      h("li", { "class": "rev" }, ul, '<span class="y">' + p.anio + '</span><div><p class="t">' + esc(p.titulo) + '</p><span class="r"><span class="tema">' + esc(p.tema) + '</span>' + esc(p.rev) + ' <a href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">doi.org/' + esc(p.doi) + '</a></span></div>');
+      h("li", { "class": "rev" }, ul, '<span class="y">' + p.anio + '</span><div><p class="t">' + esc(p.titulo) + '</p><span class="r"><span class="tema">' + esc(p.tema) + '</span>' + esc(p.rev) + ' <a href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">doi.org/' + esc(p.doi) + '</a></span>' + (p.equipo ? '<span class="eq">Del equipo: ' + esc(p.equipo.join(" · ")) + '</span>' : '') + '</div>');
+    });
+    var cu = $("#lista-cartillas");
+    (D.cartillas || []).forEach(function (c) {
+      h("li", { "class": "rev" }, cu, '<span class="y">' + c.anio + '</span><div><p class="t">' + esc(c.titulo) + '</p><span class="r">' + esc(c.ed) + ' · <a href="' + esc(c.url) + '" target="_blank" rel="noopener">Ver en el repositorio</a></span><span class="eq">Del equipo: ' + esc(c.equipo.join(" · ")) + '</span></div>');
     });
   })();
 
@@ -394,15 +424,42 @@
     var ma = $("#c-mail"); ma.textContent = c.correo; ma.href = "mailto:" + c.correo;
     var f = $("#formu"), via = "whatsapp";
     [].forEach.call(f.querySelectorAll("button"), function (b) { b.addEventListener("click", function () { via = b.dataset.via; }); });
+    var aviso = $("#formu-aviso");
+    function marca(campo, ok) { if (ok) campo.removeAttribute("aria-invalid"); else campo.setAttribute("aria-invalid", "true"); }
+    [f.nombre, f.caso].forEach(function (x) { x.addEventListener("input", function () { if (x.value.trim()) marca(x, true); }); });
     f.addEventListener("submit", function (e) {
       e.preventDefault();
-      var nombre = f.nombre.value.trim(), caso = f.caso.value.trim();
-      if (!nombre || !caso) { (nombre ? f.caso : f.nombre).focus(); return; }
+      var nombre = f.nombre.value.trim(), caso = f.caso.value.trim(), falta = [];
+      marca(f.nombre, !!nombre); marca(f.caso, !!caso);
+      if (!nombre) falta.push("tu nombre"); if (!caso) falta.push("tu caso en pocas líneas");
+      if (falta.length) { aviso.textContent = "Falta " + falta.join(" y ") + "."; (nombre ? f.caso : f.nombre).focus(); return; }
+      aviso.textContent = "";
       var sv = serv(f.servicio.value), t = sv ? sv.titulo : "otro tema";
       var msg = "Hola, equipo de Consultoría. Soy " + nombre + ". Me interesa: " + t + ".\n\n" + caso;
-      if (via === "correo") location.href = "mailto:" + c.correo + "?subject=" + encodeURIComponent("Consulta: " + t) + "&body=" + encodeURIComponent(msg);
-      else window.open(waLink(msg), "_blank", "noopener");
+      if (via === "correo") {
+        var copiado = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(msg).then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
+        copiado.then(function (ok) {
+          aviso.textContent = ok ? "Abriendo tu programa de correo. Si no se abre, el mensaje ya quedó copiado: pégalo en un correo a " + c.correo + "."
+                                 : "Abriendo tu programa de correo. Si no se abre, escribe a " + c.correo + ".";
+        });
+        location.href = "mailto:" + c.correo + "?subject=" + encodeURIComponent("Consulta: " + t) + "&body=" + encodeURIComponent(msg);
+      } else window.open(waLink(msg), "_blank", "noopener");
     });
+  })();
+
+  /* ---------- impresión: fija el estado final de contadores y gráficas, y abre los detalles ---------- */
+  (function impresion() {
+    var abiertos = [];
+    function antes() {
+      finales.forEach(function (f) { try { f(); } catch (e) { } });
+      [].forEach.call(document.querySelectorAll("details.incl"), function (d) { if (!d.open) { d.open = true; abiertos.push(d); } });
+    }
+    function despues() { abiertos.forEach(function (d) { d.open = false; }); abiertos = []; }
+    window.addEventListener("beforeprint", antes); window.addEventListener("afterprint", despues);
+    if (window.matchMedia) {
+      var mq = window.matchMedia("print"), fn = function (e) { if (e.matches) antes(); else despues(); };
+      if (mq.addEventListener) mq.addEventListener("change", fn); else if (mq.addListener) mq.addListener(fn);
+    }
   })();
 
   /* ---------- aparición al hacer scroll ---------- */

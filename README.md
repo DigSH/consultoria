@@ -28,7 +28,7 @@ Con `?demo=1` al final de la dirección se ven tarjetas de testimonio de ejemplo
   Quedó fuera *Cultura* (2024): solo se encontró un preprint en Zenodo, no el artículo de revista.
   Se sumará cuando haya enlace a la revista.
 - **No se publican precios.** Los del plan de ingresos (13/11/2026) eran supuestos.
-- La gráfica «Así te entrego un resultado» usa **datos simulados** y lo dice en la página.
+- La gráfica «Así te entregamos un resultado» usa **datos simulados** y lo dice en la página.
 - **Testimonios**: solo con `autorizado: true` y permiso por escrito. Nunca se inventan.
 
 ## Laboratorio GIS
@@ -51,6 +51,13 @@ Publicada con GitHub Pages (rama `main`, raíz): https://digsh.github.io/consult
 - Fase 2 (pendiente): chat con LLM. La clave de la API **no puede ir en esta página estática**; necesita un intermediario (p. ej. Cloudflare Workers), catálogo cerrado de servicios, aviso de tratamiento de datos (Ley 1581 de 2012) y traspaso final a una persona.
 - `equipo/` (hojas de vida con teléfono y correo) está en `.gitignore`: **nunca se sube** a este repositorio público.
 - Equipo en `datos.js`: el enfoque en papa y arándano está como «enfoque», no «experto», hasta tener evidencia. La maestría de Zahira no figura en su hoja de vida: se añade cuando ella la confirme.
+
+## Auditoría del 16/11/2026
+
+Implementada tras comprobar cada punto contra el código y los documentos: validador GIS (ejemplo y ceros finales, polígonos de área cero, JSON no numérico, texto del recuadro de Colombia), contraste del aviso, menú móvil, 4 integrantes a la vista, pasos opcionales desmarcables, respaldo de correo, impresión a PDF (contadores y gráficas en su estado final), detalle visible en las tarjetas de dron e IA, hechos del CV de Diego y de la hoja de vida de Zahira, autoría del equipo en cada artículo (comprobada en Crossref), imagen y metadatos para compartir.
+Se **descartó** cambiar el DOI de Yachana: el registrado (con prefijo repetido) resuelve (HTTP 200) y el «corregido» da 404.
+No se publican números de contrato ni nombres de clientes. La maestría de Zahira no se incluye mientras no figure en su hoja de vida.
+`AUDITORIA_WEB.md` y `equipo/` están en `.gitignore`.
 
 ## Pendientes
 

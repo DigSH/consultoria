@@ -5,18 +5,19 @@ por escrito. Mientras `testimonios` esté vacío en `datos.js`, la página muest
 
 ## A quién pedírselos primero (personas reales de tu trayectoria)
 
-Quienes recibieron un servicio tuyo, no quienes te dan referencias académicas:
+Quienes recibieron un servicio del equipo, no quienes dan referencias académicas:
 
-- Los 3 proyectos que asesoraste en el grupo IDEAS (doctoral, maestría, pregrado).
+- Las tesis y proyectos asesorados (doctoral, maestría y pregrado) y los del grupo IDEAS.
 - Asociaciones o líderes de los talleres de Epsea UPTC y ADR.
 - Colegas de la Dirección de Investigaciones que usan los reportes o tableros del OCITEB.
+- Entidades o fincas que recibieron mapas con dron o modelos de IA, cuando existan esos casos.
 
 Cada uno puede decidir si firma con nombre y cargo, o solo con el rol. Sin permiso, no se publica.
 
 ## Mensaje para enviar por WhatsApp
 
-> Hola [nombre], estoy armando la página de mi consultoría y me ayudaría mucho una frase tuya sobre cómo
-> te sirvió [el análisis / el taller / el tablero]. Dos o tres líneas bastan: qué necesitabas, qué entregué
+> Hola [nombre], estamos armando la página de nuestra consultoría y nos ayudaría mucho una frase tuya sobre cómo
+> te sirvió [el análisis / el taller / el tablero]. Dos o tres líneas bastan: qué necesitabas, qué entregamos
 > y qué cambió. ¿Me autorizas a publicarla con tu nombre y cargo? Si prefieres, la dejo solo con tu rol.
 
 ## Cómo guardarlo
@@ -29,7 +30,7 @@ Luego agrega la entrada en `datos.js`, dentro de `testimonios`:
   servicio: "tesis", autorizado: true }
 ```
 
-`servicio` es el `id` de uno de los 8 servicios (`tesis`, `sem`, `biblio`, `bi`, `geo`, `talleres`, `ensayos`, `etl`).
+`servicio` es el `id` de uno de los 11 servicios (`tesis`, `sem`, `biblio`, `bi`, `geo`, `talleres`, `ensayos`, `etl`, `proyectos`, `dron`, `ia`).
 
 ## Reglas
 

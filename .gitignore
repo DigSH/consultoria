@@ -6,3 +6,6 @@ __pycache__/
 
 # Documentos personales del equipo (hojas de vida): nunca se publican
 equipo/
+
+# Auditorías internas (traen datos de contratos y de personas): no se publican
+AUDITORIA_WEB.md
