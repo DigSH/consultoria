@@ -61,7 +61,7 @@ No se publican números de contrato ni nombres de clientes. La maestría de Zahi
 
 ## Líneas de servicio, responsables y servicios en preparación
 
-- `datos.js` define 5 líneas (`lineasServicio`) y 21 servicios: 13 activos y 8 con `estado: "preparacion"`.
+- `datos.js` define 4 líneas (`lineasServicio`) y 12 servicios consolidados: 8 activos y 4 con `estado: "preparacion"`. Un servicio activo puede traer una parte «en preparación» dentro de `incluye` (con `prep: true`).
 - Un servicio en preparación **no lleva respaldo** (la web lo dice). Pasa a activo cuando el equipo aporte soportes: añadir `para`, `entrega` y `respaldo` y quitar `estado`.
 - `responsables` sale de lo dicho por el equipo (no son credenciales verificadas). «Piloto certificado», «experto» y similares se publican solo con soporte (certificado, número, proyecto).
 - Tres perfiles en el embudo: investigador, empresa y productor. Cada servicio debe ser alcanzable desde alguna situación.

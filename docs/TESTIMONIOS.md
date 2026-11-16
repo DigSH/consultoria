@@ -30,7 +30,7 @@ Luego agrega la entrada en `datos.js`, dentro de `testimonios`:
   servicio: "tesis", autorizado: true }
 ```
 
-`servicio` es el `id` de uno de los 12 servicios (`tesis`, `sem`, `biblio`, `bi`, `geo`, `talleres`, `ensayos`, `etl`, `proyectos`, `dron`, `bpa`, `ia`).
+`servicio` es el `id` de uno de los 12 servicios (`estadistica`, `cienciometria`, `tableros`, `gobernanza`, `ia`, `geomatica`, `bajo`, `suelos`, `bpa`, `semilla`, `proyectos`, `empresa`).
 
 ## Reglas
 

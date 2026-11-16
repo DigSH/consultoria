@@ -438,3 +438,6 @@ h1,h2,h3{color:var(--tinta)}
 
 /* dos secciones oscuras seguidas (método y servicios): una línea las separa */
 .oscura + .oscura{border-top:1px solid #28425c}
+
+/* parte «en preparación» dentro de un servicio activo */
+.serv .incluye li.prep b{color:#bccad6;font-weight:500}
