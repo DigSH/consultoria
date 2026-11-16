@@ -178,8 +178,8 @@ window.CONSULTORIA = {
     { ini: "ZR", corto: "Zahira", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos",
       titulo: "Administradora de Empresas (UPTC)",
       respaldo: "Coautora de 2 de los artículos de esta página · joven investigadora en la Vicerrectoría de Investigación y Extensión y apoyo en la OTRI (UPTC)", orcid: "0009-0004-4188-8488" },
-    { ini: "SS", corto: "Stiven", nombre: "Stiven Santana", rol: "Agronomía y desarrollo territorial, con enfoque en papa", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" },
-    { ini: "FS", corto: "Faiver", nombre: "Faiver Salcedo", rol: "Agronomía y desarrollo territorial, con enfoque en arándano", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" }
+    { ini: "SS", corto: "Stiven", nombre: "Stiven Santana", rol: "Agronomía y desarrollo territorial, con enfoque en papa", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial (UPTC)" },
+    { ini: "FS", corto: "Faiver", nombre: "Faiver Salcedo", rol: "Agronomía y desarrollo territorial, con enfoque en arándano", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial (UPTC)" }
   ],
 
   /* Solo artículos con DOI verificado en Crossref el 16/11/2026.
