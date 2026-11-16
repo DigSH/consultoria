@@ -10,57 +10,90 @@ window.CONSULTORIA = {
     ciudad: "Tunja, Boyacá"
   },
 
+  /* Cinco líneas de trabajo. Cada servicio declara su línea (`cat`), quién lo lidera (`responsables`, según lo
+     dicho por el equipo) y su estado: los de `estado: "preparacion"` NO llevan respaldo hasta que esté documentado. */
+  lineasServicio: {
+    investigacion: { titulo: "Investigación y academia", lema: "Análisis que resiste al jurado y al revisor." },
+    datos: { titulo: "Datos e inteligencia artificial", lema: "Del dato disperso al tablero y al modelo a medida." },
+    geo: { titulo: "Geomática y dron", lema: "Mapas, polígonos y vuelos para ver el lote y cumplir la norma." },
+    agro: { titulo: "Agro técnico en campo", lema: "Acompañamiento técnico a fincas, viveros e invernaderos." },
+    proyectos: { titulo: "Proyectos y empresa", lema: "Formular, financiar, organizar y vender mejor." }
+  },
+
   /* Servicios del plan de ingresos (13/11/2026) y los sumados después (proyectos, dron, IA). Los precios NO se publican (eran supuestos). */
   servicios: [
-    { id: "tesis", linea: ["academica"], icono: "tesis", titulo: "Análisis estadístico y diseño experimental para tesis",
+    { id: "tesis", cat: "investigacion", corto: "Tesis", responsables: ["Diego"], linea: ["academica"], icono: "tesis", titulo: "Análisis estadístico y diseño experimental para tesis",
       para: "Tesistas de maestría y doctorado en ciencias agrarias, biológicas y ambientales",
       entrega: "Plan de análisis, script reproducible en R, tablas y gráficos con calidad de publicación, y una sesión de 2 h para sustentar el método.",
       respaldo: "Asesoría estadística y metodológica a 4 tesis entre 2023 y 2025 (1 doctoral, 2 de maestría y 1 de pregrado) · R avanzado" },
-    { id: "sem", linea: ["academica"], icono: "sem", titulo: "Ecuaciones estructurales (PLS-SEM) y psicometría",
+    { id: "sem", cat: "investigacion", corto: "Ecuaciones estructurales", responsables: ["Diego"], linea: ["academica"], icono: "sem", titulo: "Ecuaciones estructurales (PLS-SEM) y psicometría",
       para: "Grupos de investigación y doctorandos en administración, economía, educación y ciencias sociales",
       entrega: "Modelo de medida (fiabilidad, AVE, HTMT), modelo estructural con bootstrapping, reporte de hipótesis y sección de resultados lista para artículo.",
       respaldo: "2 instrumentos psicométricos diseñados y validados · artículos con PLS-PM publicados (2024 y 2026)" },
-    { id: "biblio", linea: ["academica"], icono: "biblio", titulo: "Vigilancia científica y análisis bibliométrico",
+    { id: "biblio", cat: "investigacion", corto: "Cienciometría", responsables: ["Diego", "Zahira"], linea: ["academica"], icono: "biblio", titulo: "Vigilancia científica, bibliometría y cienciometría",
       para: "Grupos de investigación, decanaturas y quienes formulan proyectos o estados del arte",
       entrega: "Ecuaciones de búsqueda calibradas, redes de coautoría y co-citación, informe ejecutivo y base depurada en BibTeX/RIS.",
       respaldo: "12 reportes de análisis bibliométrico en el observatorio de CTeI de Boyacá · Bibliometrix y VOSviewer avanzado" },
-    { id: "bi", linea: ["empresarial"], icono: "bi", titulo: "Tableros de control y modelos de datos (Power BI)",
+    { id: "bi", cat: "datos", corto: "Tableros", responsables: ["Diego"], linea: ["empresarial"], icono: "bi", titulo: "Tableros de control y modelos de datos (Power BI)",
       para: "Universidades, colegios, cooperativas y ONG con reportes dispersos en Excel",
       entrega: "Pipeline de datos, modelo relacional en estrella, medidas DAX, tablero interactivo y manual de actualización.",
       respaldo: "Tableros públicos de indicadores de CTeI · PostgreSQL y ETL en Python en producción" },
-    { id: "geo", linea: ["empresarial"], icono: "geo", titulo: "Geolocalización de predios y cribado de deforestación (EUDR)",
+    { id: "geo", cat: "geo", corto: "EUDR y GIS", responsables: ["Diego", "Stiven"], linea: ["empresarial", "productor"], icono: "geo", titulo: "Geolocalización de predios y cribado de deforestación (EUDR)",
       para: "Cooperativas y asociaciones de productores que venden a mercados europeos",
       entrega: "Polígonos prediales validados (GeoJSON), cruce satelital de deforestación y expediente de debida diligencia auditable.",
       respaldo: "Prototipo de debida diligencia EUDR con Whisp, Hansen/UMD y RADD-Sentinel-1 · QGIS y Google Earth Engine" },
-    { id: "talleres", linea: ["empresarial"], icono: "talleres", titulo: "Talleres de asociatividad y formalización rural",
+    { id: "talleres", cat: "proyectos", corto: "Asociatividad", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "talleres", titulo: "Talleres de asociatividad y formalización rural",
       para: "Alcaldías, UMATA, fundaciones y asociaciones agropecuarias en formación",
       entrega: "Diseño pedagógico y facilitación de 2 a 3 jornadas, memorias técnicas y documentación para el registro en cámara de comercio.",
       respaldo: "Talleres para más de 300 productores en Boyacá · acompañamiento a 3 a 5 asociaciones hasta su registro" },
-    { id: "ensayos", linea: ["empresarial"], icono: "ensayos", titulo: "Ensayos agronómicos de eficacia de insumos",
+    { id: "ensayos", cat: "agro", corto: "Ensayos de eficacia", responsables: ["Diego"], linea: ["empresarial"], icono: "ensayos", titulo: "Ensayos agronómicos de eficacia de insumos",
       para: "Casas comerciales de bioinsumos, fertilizantes y laboratorios agrícolas",
       entrega: "Protocolo de ensayo, planilla móvil de captura fenológica (BBCH), seguimiento y reporte estadístico formal.",
       respaldo: "Ensayo propio: 120 unidades experimentales en diseño factorial con testigo, de la siembra a la cosecha, analizado en R · evaluación agronómica de biofertilizantes (2024)" },
-    { id: "etl", linea: ["empresarial"], icono: "etl", titulo: "Auditoría y limpieza de bases de datos (ETL)",
+    { id: "etl", cat: "datos", corto: "Limpieza de datos", responsables: ["Diego"], linea: ["academica", "empresarial"], icono: "etl", titulo: "Auditoría y limpieza de bases de datos (ETL)",
       para: "Pymes, centros de diagnóstico y entidades con registros dispersos y con errores",
       entrega: "Diagnóstico de calidad (duplicados, nulos, integridad), script de depuración automática y base relacional limpia en PostgreSQL.",
       respaldo: "Base de 10 000+ registros con criterios de calidad · procesos ETL que consolidan reportes de varios sistemas" },
-    { id: "proyectos", linea: ["academica", "empresarial"], icono: "proyectos", titulo: "Formulación y seguimiento de proyectos",
+    { id: "proyectos", cat: "proyectos", corto: "Proyectos", responsables: ["Zahira", "Faiver"], linea: ["academica", "empresarial", "productor"], icono: "proyectos", titulo: "Formulación, evaluación y seguimiento de proyectos",
       para: "Grupos de investigación, asociaciones y empresas que se presentan a convocatorias o deben rendir cuentas",
-      entrega: "Estructuración técnica y administrativa de la propuesta, cronograma y entregables, informes de avance y un informe final técnico y financiero.",
+      entrega: "Estructuración técnica y administrativa de la propuesta, cronograma y entregables, informes de avance y un informe final técnico y financiero. También evaluamos proyectos ajenos: coherencia técnica y presupuestal.",
       respaldo: "Formulación y seguimiento administrativo de proyectos universidad-empresa en la OTRI y la Vicerrectoría de Investigación y Extensión de la UPTC · informes técnicos y financieros (Zahira Rodríguez)" }
     ,
-    { id: "dron", linea: ["academica", "empresarial"], icono: "dron", titulo: "Mapeo y monitoreo de lotes con dron",
+    { id: "dron", cat: "geo", corto: "Dron", responsables: ["Stiven"], linea: ["academica", "empresarial", "productor"], icono: "dron", titulo: "Mapeo y monitoreo de lotes con dron",
       para: "Productores, asociaciones, empresas del agro y grupos que necesitan ver el lote desde arriba",
       entrega: "Ortomosaico georreferenciado y modelo de superficie del predio, conteo de plantas, cobertura e índices de vegetación en RGB, y registro fotográfico, a cielo abierto o bajo cubierta, con mapas listos para QGIS.",
       respaldo: "Equipo propio de vuelo (cámara de 48 MP y video 4K) · análisis geoespacial en QGIS y Google Earth Engine" },
-    { id: "bpa", linea: ["empresarial"], icono: "bpa", titulo: "Buenas Prácticas Agrícolas y planes de manejo agronómico",
+    { id: "bpa", cat: "agro", corto: "BPA y manejo", responsables: ["Faiver", "Diego"], linea: ["empresarial", "productor"], icono: "bpa", titulo: "Buenas Prácticas Agrícolas y planes de manejo agronómico",
       para: "Fincas, viveros, asociaciones y cooperativas que quieren certificarse o ordenar el manejo técnico de su cultivo",
       entrega: "Diagnóstico de la finca frente a la norma de BPA, plan de adecuación con registros y formatos, preparación para la auditoría de certificación y plan de manejo del cultivo con calendario de labores.",
       respaldo: "Acompañamiento a la certificación en BPA de un vivero en Tunja (2025) · coautoría del plan de manejo tecnológico del cultivo de la pitahaya (Repositorio UPTC, 2022) · tres ingenieros agrónomos en el equipo, con enfoque en papa y arándano" },
-    { id: "ia", linea: ["empresarial"], icono: "ia", titulo: "Modelos de inteligencia artificial a medida para fincas",
+    { id: "ia", cat: "datos", corto: "IA a medida", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "ia", titulo: "Modelos de inteligencia artificial a medida para fincas",
       para: "Fincas, empresas agrícolas y asociaciones que quieren contar, medir o anticipar con sus propios datos",
       entrega: "Modelo entrenado con imágenes y registros de tu finca, validado con su error medido, y una herramienta sencilla (tablero) para usarlo. Conteo de fruta, proyección de cosecha y otros casos.",
       respaldo: "Diagnóstico de enfermedades por imagen en 7 cultivos (arándano, cacao, uchuva, papa, tomate, cebolla y cebada) con YOLOv8 y EfficientNet, en Surco AgTech · Python y aprendizaje automático · Certificación Profesional en Inteligencia Artificial (MinTIC, 2024)" }
+    ,
+    { id: "articulos", cat: "investigacion", corto: "Artículos científicos", responsables: ["Diego"], linea: ["academica"], icono: "articulo", titulo: "Producción de artículos científicos",
+      para: "Investigadores, docentes y tesistas que quieren publicar sus resultados",
+      entrega: "Estructura del manuscrito, análisis y figuras reproducibles, redacción de métodos y resultados, y apoyo en la respuesta a los revisores.",
+      respaldo: "7 artículos con DOI verificado en Crossref (2023 a 2026) y 2 cartillas técnicas del Repositorio UPTC" },
+
+    /* ---- en preparación: sin respaldo publicado hasta que el equipo aporte soportes ---- */
+    { id: "bajo", cat: "agro", corto: "Bajo cubierta", estado: "preparacion", linea: ["empresarial", "productor"], icono: "invernadero",
+      titulo: "Cultivos intensivos bajo cubierta (MIPE, MIRFE)", desc: "Plan técnico de manejo para invernaderos y cultivos bajo cubierta." },
+    { id: "suelos", cat: "agro", corto: "Suelos y aguas", estado: "preparacion", linea: ["empresarial", "productor"], icono: "suelo",
+      titulo: "Cultivos extensivos: análisis de suelos y aguas", desc: "Análisis de suelos y aguas para cultivos extensivos, con interpretación de resultados." },
+    { id: "praderas", cat: "agro", corto: "Praderas", estado: "preparacion", linea: ["empresarial", "productor"], icono: "pradera",
+      titulo: "Mejoramiento de praderas", desc: "Diagnóstico y plan de mejoramiento de praderas." },
+    { id: "poscosecha", cat: "agro", corto: "Poscosecha y logística", estado: "preparacion", linea: ["empresarial", "productor"], icono: "poscosecha",
+      titulo: "Poscosecha y logística", desc: "Manejo poscosecha y logística del producto agrícola." },
+    { id: "fincas", cat: "agro", corto: "Diseño de fincas", responsables: ["Faiver"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "geo",
+      titulo: "Diseño de fincas", desc: "Diseño y rediseño de fincas." },
+    { id: "semilla", cat: "agro", corto: "Semilla de papa", responsables: ["Stiven"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "semilla",
+      titulo: "Producción de semilla certificada de papa", desc: "Acompañamiento en la producción de semilla certificada de papa." },
+    { id: "financiero", cat: "proyectos", corto: "Análisis financiero", responsables: ["Zahira"], estado: "preparacion", linea: ["empresarial"], icono: "financiero",
+      titulo: "Análisis financiero y consultoría empresarial", desc: "Análisis financiero y consultoría para empresas y asociaciones." },
+    { id: "marca", cat: "proyectos", corto: "Marca y mercadeo", responsables: ["Zahira"], estado: "preparacion", linea: ["empresarial", "productor"], icono: "marca",
+      titulo: "Diseño de marca, marketing y mercadeo", desc: "Diseño de marca y estrategia de mercadeo." }
   ],
 
   /* Detalle de los modelos a medida. Los casos de fruta y cosecha se ofrecen a medida: no se afirma
@@ -94,24 +127,34 @@ window.CONSULTORIA = {
   /* Embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo */
   lineas: {
     academica:   { texto: "Soy investigador o estudiante", frase: "investigador o estudiante" },
-    empresarial: { texto: "Soy empresa, asociación o entidad", frase: "una empresa, asociación o entidad" }
+    empresarial: { texto: "Soy empresa, asociación o entidad", frase: "una empresa, asociación o entidad" },
+    productor: { texto: "Soy productor o tengo una finca", frase: "productor o con una finca" }
   },
   situaciones: [
     { texto: "Tengo datos de un experimento y no sé cómo analizarlos", servicio: "tesis", linea: ["academica"] },
     { texto: "Mi modelo teórico tiene variables que no se miden directamente", servicio: "sem", linea: ["academica"] },
     { texto: "Necesito el estado del arte o mapear un tema de investigación o de tecnología", servicio: "biblio", linea: ["academica", "empresarial"] },
     { texto: "Quiero diseñar y analizar una encuesta o una escala de medición", servicio: "sem", linea: ["academica", "empresarial"] },
-    { texto: "Debo formular un proyecto o presentarme a una convocatoria", servicio: "proyectos", linea: ["academica", "empresarial"] },
+    { texto: "Quiero convertir mi investigación en un artículo científico", servicio: "articulos", linea: ["academica"] },
+    { texto: "Debo formular o evaluar un proyecto, o presentarme a una convocatoria", servicio: "proyectos", linea: ["academica", "empresarial", "productor"] },
+    { texto: "Debo rendir informes técnicos y financieros de un proyecto", servicio: "proyectos", linea: ["academica", "empresarial", "productor"] },
     { texto: "Mis reportes viven en Excel y nadie los entiende", servicio: "bi", linea: ["empresarial"] },
     { texto: "Mi base de datos tiene errores y duplicados", servicio: "etl", linea: ["academica", "empresarial"] },
-    { texto: "Mi asociación quiere exportar a Europa", servicio: "geo", linea: ["empresarial"] },
-    { texto: "Quiero capacitar o formalizar a una asociación", servicio: "talleres", linea: ["empresarial"] },
+    { texto: "Mi asociación quiere exportar a Europa", servicio: "geo", linea: ["empresarial", "productor"] },
+    { texto: "Quiero capacitar o formalizar a una asociación", servicio: "talleres", linea: ["empresarial", "productor"] },
     { texto: "Debo probar si mi producto funciona en campo", servicio: "ensayos", linea: ["empresarial"] },
-    { texto: "Debo rendir informes técnicos y financieros de un proyecto", servicio: "proyectos", linea: ["academica", "empresarial"] },
-    { texto: "Quiero ver, mapear o contar plantas de mis lotes desde el aire", servicio: "dron", linea: ["academica", "empresarial"] },
-    { texto: "Quiero certificar mi finca o vivero en Buenas Prácticas Agrícolas, u ordenar el manejo de mi cultivo", servicio: "bpa", linea: ["empresarial"] },
-    { texto: "Quiero contar fruta o proyectar mi cosecha con inteligencia artificial", servicio: "ia", linea: ["empresarial"] },
-    { texto: "Todavía no sé cuál es mi problema, quiero conversarlo", servicio: null, linea: ["academica", "empresarial"] }
+    { texto: "Quiero analizar mis finanzas o el modelo de negocio de mi empresa", servicio: "financiero", linea: ["empresarial"] },
+    { texto: "Quiero mejorar mi marca y mis ventas", servicio: "marca", linea: ["empresarial", "productor"] },
+    { texto: "Quiero ver, mapear o contar plantas de mis lotes desde el aire", servicio: "dron", linea: ["academica", "empresarial", "productor"] },
+    { texto: "Quiero contar fruta o proyectar mi cosecha con inteligencia artificial", servicio: "ia", linea: ["empresarial", "productor"] },
+    { texto: "Quiero certificar mi finca o vivero en Buenas Prácticas Agrícolas, u ordenar el manejo de mi cultivo", servicio: "bpa", linea: ["empresarial", "productor"] },
+    { texto: "Tengo plagas o enfermedades en mi invernadero o cultivo bajo cubierta", servicio: "bajo", linea: ["empresarial", "productor"] },
+    { texto: "Quiero analizar mi suelo y mi agua", servicio: "suelos", linea: ["empresarial", "productor"] },
+    { texto: "Mis praderas están degradadas o producen poco", servicio: "praderas", linea: ["empresarial", "productor"] },
+    { texto: "Pierdo producto después de cosechar o no sé cómo transportarlo", servicio: "poscosecha", linea: ["empresarial", "productor"] },
+    { texto: "Quiero diseñar o rediseñar mi finca", servicio: "fincas", linea: ["empresarial", "productor"] },
+    { texto: "Quiero producir semilla certificada de papa", servicio: "semilla", linea: ["empresarial", "productor"] },
+    { texto: "Todavía no sé cuál es mi problema, quiero conversarlo", servicio: null, linea: ["academica", "empresarial", "productor"] }
   ],
   opcionesDatos: [
     { id: "tengo", t: "Ya tengo datos" },
@@ -129,14 +172,14 @@ window.CONSULTORIA = {
   /* Equipo. Titulación según lo dicho por Diego y la hoja de vida de Zahira. «Enfoque en papa/arándano» queda
      como enfoque (no «experto») hasta tener evidencia: proyectos, años o publicaciones. */
   equipo: [
-    { ini: "DS", nombre: "Diego Sanabria Higuera", rol: "Estadística, datos y análisis territorial",
+    { ini: "DS", corto: "Diego", nombre: "Diego Sanabria Higuera", rol: "Estadística, datos y análisis territorial",
       titulo: "Ingeniero Agrónomo y Especialista en Estadística (UPTC). Maestría en Ciencias Agrarias en curso.",
       respaldo: "Autor de los 7 artículos con DOI de esta página · 12 reportes bibliométricos en el OCITEB · cofundador de Surco AgTech", orcid: "0009-0007-3157-6140" },
-    { ini: "ZR", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos",
+    { ini: "ZR", corto: "Zahira", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos",
       titulo: "Administradora de Empresas (UPTC)",
       respaldo: "Coautora de 2 de los artículos de esta página · joven investigadora en la Vicerrectoría de Investigación y Extensión y apoyo en la OTRI (UPTC)", orcid: "0009-0004-4188-8488" },
-    { ini: "SS", nombre: "Stiven Santana", rol: "Agronomía y desarrollo territorial, con enfoque en papa", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" },
-    { ini: "FS", nombre: "Faiver Salcedo", rol: "Agronomía y desarrollo territorial, con enfoque en arándano", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" }
+    { ini: "SS", corto: "Stiven", nombre: "Stiven Santana", rol: "Agronomía y desarrollo territorial, con enfoque en papa", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" },
+    { ini: "FS", corto: "Faiver", nombre: "Faiver Salcedo", rol: "Agronomía y desarrollo territorial, con enfoque en arándano", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" }
   ],
 
   /* Solo artículos con DOI verificado en Crossref el 16/11/2026.

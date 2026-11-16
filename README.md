@@ -59,6 +59,14 @@ Se **descartó** cambiar el DOI de Yachana: el registrado (con prefijo repetido)
 No se publican números de contrato ni nombres de clientes. La maestría de Zahira no se incluye mientras no figure en su hoja de vida.
 `AUDITORIA_WEB.md` y `equipo/` están en `.gitignore`.
 
+## Líneas de servicio, responsables y servicios en preparación
+
+- `datos.js` define 5 líneas (`lineasServicio`) y 21 servicios: 13 activos y 8 con `estado: "preparacion"`.
+- Un servicio en preparación **no lleva respaldo** (la web lo dice). Pasa a activo cuando el equipo aporte soportes: añadir `para`, `entrega` y `respaldo` y quitar `estado`.
+- `responsables` sale de lo dicho por el equipo (no son credenciales verificadas). «Piloto certificado», «experto» y similares se publican solo con soporte (certificado, número, proyecto).
+- Tres perfiles en el embudo: investigador, empresa y productor. Cada servicio debe ser alcanzable desde alguna situación.
+- Las siglas MIPE y MIRFE están tal como las envió el equipo, sin expandir, hasta confirmarlas.
+
 ## Pendientes
 
 1. Confirmar el nombre comercial (hoy «Consultoría Sanabria», provisional).

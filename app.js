@@ -132,6 +132,12 @@
       est.sit = null;
       if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elige primero quién eres (paso 1).</p>'; return; }
       var lista = est.todas ? D.situaciones : D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
+      /* al productor se le muestran primero los problemas de campo */
+      if (est.linea === "productor") {
+        var orden = ["agro", "geo", "datos", "proyectos", "investigacion"];
+        var peso = function (s) { var sv = s.servicio && serv(s.servicio); return sv ? orden.indexOf(sv.cat) : 99; };
+        lista = lista.slice().sort(function (x, y) { return peso(x) - peso(y); });
+      }
       grupo(bs, lista, function (s) { est.sit = s; render(); });
     }
     function elegirLinea(id) {
@@ -145,7 +151,7 @@
       var L = D.lineas[est.linea], sv = est.sit.servicio ? serv(est.sit.servicio) : null;
       var datos = opcion(D.opcionesDatos, est.datos), plazo = opcion(D.opcionesPlazo, est.plazo);
       var p = ["Soy " + L.frase + ".", "Mi situación: " + est.sit.texto.toLowerCase() + "."];
-      if (sv) p.push("Me interesa: " + sv.titulo + ".");
+      if (sv) p.push("Me interesa: " + sv.titulo + (sv.estado === "preparacion" ? " (servicio en preparación)" : "") + ".");
       if (datos) p.push("Datos: " + datos.t.toLowerCase() + ".");
       if (plazo) p.push("Plazo: " + plazo.t.toLowerCase() + ".");
       return p.join(" ");
@@ -161,9 +167,12 @@
       var sel = $("#f-servicio"); if (sel) sel.value = sv ? sv.id : "otro";
       var datos = opcion(D.opcionesDatos, est.datos), plazo = opcion(D.opcionesPlazo, est.plazo);
       var extra = (datos || plazo) ? '<p class="e-extra">' + (datos ? esc(datos.t) : "") + (datos && plazo ? " · " : "") + (plazo ? esc(plazo.t) : "") + "</p>" : "";
-      var cuerpo = sv
-        ? '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Te entregamos</dt><dd>' + esc(sv.entrega) + '</dd><dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>'
-        : '<h3>Conversemos tu caso</h3><p>Con tu caso en pocas líneas te decimos si lo resolvemos, con quién del equipo y cómo empezar.</p>';
+      var lider = sv && sv.responsables && sv.responsables.length ? '<dt>Lo lidera</dt><dd>' + esc(sv.responsables.join(" y ")) + '</dd>' : '';
+      var cuerpo = !sv
+        ? '<h3>Conversemos tu caso</h3><p>Con tu caso en pocas líneas te decimos si lo resolvemos, con quién del equipo y cómo empezar.</p>'
+        : sv.estado === "preparacion"
+          ? '<h3>' + esc(sv.titulo) + '</h3><p class="e-prep"><b>En preparación.</b> ' + esc(sv.desc) + ' Cuéntanos tu caso y te decimos si podemos atenderlo ya y con quién del equipo.</p>' + (lider ? '<dl>' + lider + '</dl>' : '')
+          : '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Te entregamos</dt><dd>' + esc(sv.entrega) + '</dd>' + lider + '<dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>';
       res.innerHTML = '<div class="entra">' + cuerpo + extra +
         '<div class="e-acc"><a class="boton" target="_blank" rel="noopener" href="' + waLink("Hola, equipo de Consultoría. Vi su página. " + txt) + '">Enviar por WhatsApp</a>' +
         '<button type="button" class="boton boton-claro" id="e-form">Completar en el formulario</button></div></div>';
@@ -196,22 +205,46 @@
     render();
   })();
 
-  /* ---------- servicios ---------- */
+  /* ---------- servicios: cinco líneas, tarjetas y servicios en preparación ---------- */
   (function servicios() {
-    var rej = $("#rejilla");
-    D.servicios.forEach(function (s) {
-      var c = h("article", { "class": "serv rev", "data-lin": s.linea.join(" ") }, rej,
+    var rej = $("#rejilla"), perfiles = { academica: "Académico", empresarial: "Empresarial", productor: "Productor" };
+    function chips(s) {
+      return (s.responsables && s.responsables.length)
+        ? '<p class="lidera"><span>Lidera</span>' + s.responsables.map(function (n) { return '<a href="#equipo" data-persona="' + esc(n) + '">' + esc(n) + '</a>'; }).join("") + '</p>' : "";
+    }
+    function tarjeta(s, box) {
+      h("article", { "class": "serv rev", "data-id": s.id }, box,
         '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
-        '<p class="tags">' + s.linea.map(function (l) { return '<span>' + (l === "academica" ? "Académico" : "Empresarial") + '</span>'; }).join("") + '</p>' +
+        '<p class="tags">' + s.linea.map(function (l) { return '<span>' + perfiles[l] + '</span>'; }).join("") + '</p>' +
         '<h3>' + esc(s.titulo) + '</h3>' +
         '<p class="para">Para: ' + esc(s.para) + '.</p>' +
         '<p>' + esc(s.entrega) + '</p>' +
         (D[s.id] && D[s.id].items ? '<details class="incl"><summary>Qué incluye (' + D[s.id].items.length + ')</summary><ul class="incluye">' + D[s.id].items.map(function (i) { return '<li><b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span></li>'; }).join("") + '</ul></details><p class="lim">' + esc(D[s.id].limites) + '</p>' : '') +
+        chips(s) +
         '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Pedir cotización →</a>' +
         '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>');
+    }
+    var bloques = [];
+    Object.keys(D.lineasServicio).forEach(function (k) {
+      var L = D.lineasServicio[k];
+      var act = D.servicios.filter(function (s) { return s.cat === k && s.estado !== "preparacion"; });
+      var prep = D.servicios.filter(function (s) { return s.cat === k && s.estado === "preparacion"; });
+      var blq = h("section", { "class": "bloque", "data-cat": k, "aria-labelledby": "h-" + k }, rej,
+        '<h3 id="h-' + k + '">' + esc(L.titulo) + '</h3><p class="bloque-lema">' + esc(L.lema) + '</p>');
+      var grid = h("div", { "class": "rejilla" }, blq);
+      act.forEach(function (s) { tarjeta(s, grid); });
+      if (prep.length) {
+        var caja = h("div", { "class": "proximos" }, blq, '<p class="prox-t">En preparación</p>'), ul = h("ul", {}, caja);
+        prep.forEach(function (s) {
+          h("li", { "class": "rev" }, ul, '<div><b>' + esc(s.titulo) + '</b><span>' + esc(s.desc) + '</span></div>' + chips(s) +
+            '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Pedir información →</a>');
+        });
+      }
+      bloques.push({ k: k, titulo: L.titulo, n: act.length, blq: blq });
     });
+
     var sel = $("#f-servicio");
-    D.servicios.forEach(function (s) { h("option", { value: s.id }, sel, esc(s.titulo)); });
+    D.servicios.forEach(function (s) { h("option", { value: s.id }, sel, esc(s.titulo) + (s.estado === "preparacion" ? " (en preparación)" : "")); });
     h("option", { value: "otro" }, sel, "Otro / no lo sé todavía");
 
     /* «Pedir cotización» deja el servicio elegido en el formulario (también el enlace del validador GIS) */
@@ -220,14 +253,13 @@
       var s = $("#f-servicio"); if (s) s.value = l.dataset.serv;
     });
 
-    /* filtros por perfil */
-    var fil = $("#filtros"), cartas = [].slice.call(rej.children);
-    function n(lin) { return D.servicios.filter(function (s) { return !lin || s.linea.indexOf(lin) >= 0; }).length; }
-    [["todos", "Todos", n()], ["academica", "Para investigadores y estudiantes", n("academica")], ["empresarial", "Para empresas, asociaciones y agro", n("empresarial")]].forEach(function (f, i) {
-      var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f[1]) + " (" + f[2] + ")");
+    /* filtros por línea */
+    var fil = $("#filtros"), total = D.servicios.filter(function (s) { return s.estado !== "preparacion"; }).length;
+    [{ k: "todas", t: "Todas las líneas (" + total + ")" }].concat(bloques.map(function (b) { return { k: b.k, t: b.titulo + " (" + b.n + ")" }; })).forEach(function (f, i) {
+      var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f.t));
       b.addEventListener("click", function () {
         [].forEach.call(fil.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-        cartas.forEach(function (c) { c.hidden = f[0] !== "todos" && c.dataset.lin.split(" ").indexOf(f[0]) < 0; });
+        bloques.forEach(function (bl) { bl.blq.hidden = f.k !== "todas" && bl.k !== f.k; });
       });
     });
   })();
@@ -387,10 +419,14 @@
   /* ---------- equipo ---------- */
   (function equipo() {
     var cont = $("#equipo-lista");
+    function lidera(p) {
+      var lid = D.servicios.filter(function (s) { return (s.responsables || []).indexOf(p.corto) >= 0; });
+      return lid.length ? '<p class="lidera-p"><span>Lidera</span>' + lid.map(function (s) { return '<em' + (s.estado === "preparacion" ? ' class="prep" title="En preparación"' : '') + '>' + esc(s.corto) + '</em>'; }).join("") + '</p>' : "";
+    }
     D.equipo.forEach(function (p) {
       h("article", { "class": "persona rev" }, cont,
         '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><h3>' + esc(p.nombre) + '</h3>' +
-        '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>' +
+        '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>' + lidera(p) +
         (p.respaldo ? '<p class="resp-p">' + esc(p.respaldo) + '</p>' : '') +
         (p.orcid ? '<a class="orcid" href="https://orcid.org/' + esc(p.orcid) + '" target="_blank" rel="noopener">ORCID ' + esc(p.orcid) + '</a>' : ''));
     });
@@ -425,6 +461,12 @@
     });
     window.addEventListener("resize", puntos);
     puntos();
+    /* desde el chip de un servicio: lleva el carrusel a esa persona */
+    document.addEventListener("click", function (e) {
+      var l = e.target.closest && e.target.closest("[data-persona]"); if (!l) return;
+      var i = D.equipo.map(function (p) { return p.corto; }).indexOf(l.dataset.persona);
+      if (i >= 0 && cont.children[i]) setTimeout(function () { cont.scrollTo({ left: cont.children[i].offsetLeft - cont.children[0].offsetLeft, behavior: reduce ? "auto" : "smooth" }); }, 350);
+    });
   })();
 
   /* ---------- trayectoria ---------- */
