@@ -441,3 +441,17 @@ h1,h2,h3{color:var(--tinta)}
 
 /* parte «en preparación» dentro de un servicio activo */
 .serv .incluye li.prep b{color:#bccad6;font-weight:500}
+
+/* ---------- tarjetas de servicio que se pueden contraer ---------- */
+.serv-toggle{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;width:100%;background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.serv-toggle:hover .chev{border-color:var(--oro)}
+.chev{flex:none;display:grid;place-items:center;width:26px;height:26px;margin-top:2px;border:1.5px solid #35516d;border-radius:50%;color:var(--oro);font:600 16px/1 var(--mono);font-style:normal}
+.chev::before{content:"\2212"}
+.serv-toggle[aria-expanded=false] .chev::before{content:"+"}
+.serv-cuerpo{display:flex;flex-direction:column;gap:10px;flex:1}
+.serv-cuerpo[hidden]{display:none}
+.chip-acc{margin-left:auto}
+@media print{.serv-cuerpo[hidden]{display:flex!important}.serv-toggle .chev,#serv-todas{display:none!important}}
+
+/* una tarjeta contraída ocupa solo su altura, sin estirarse a la de su vecina */
+.serv.cerrada{align-self:start}

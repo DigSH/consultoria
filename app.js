@@ -212,19 +212,33 @@
       return (s.responsables && s.responsables.length)
         ? '<p class="lidera"><span>Lidera</span>' + s.responsables.map(function (n) { return '<a href="#equipo" data-persona="' + esc(n) + '">' + esc(n) + '</a>'; }).join("") + '</p>' : "";
     }
+    /* cada tarjeta se puede contraer: contraída muestra icono, etiquetas, título y quién la lidera */
+    var cerrarInicial = window.innerWidth <= 860, todas = null;
+    function poner(c, abrir) {
+      c.classList.toggle("cerrada", !abrir);
+      c.querySelector(".serv-toggle").setAttribute("aria-expanded", abrir ? "true" : "false");
+      c.querySelector(".serv-cuerpo").hidden = !abrir;
+    }
+    function etiquetaTodas() { if (todas) todas.textContent = rej.querySelector('.serv-toggle[aria-expanded="true"]') ? "Contraer todas" : "Expandir todas"; }
     function tarjeta(s, box) {
-      var prep = s.estado === "preparacion";
-      h("article", { "class": "serv rev" + (prep ? " prep" : ""), "data-id": s.id }, box,
+      var prep = s.estado === "preparacion", abierta = !cerrarInicial;
+      h("article", { "class": "serv rev" + (prep ? " prep" : "") + (abierta ? "" : " cerrada"), "data-id": s.id }, box,
         '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
         '<p class="tags">' + s.linea.map(function (l) { return '<span>' + perfiles[l] + '</span>'; }).join("") + (prep ? '<span class="tag-prep">En preparación</span>' : '') + '</p>' +
-        '<h3>' + esc(s.titulo) + '</h3>' +
+        '<h3><button type="button" class="serv-toggle" aria-expanded="' + abierta + '" aria-controls="sc-' + esc(s.id) + '"><span>' + esc(s.titulo) + '</span><i class="chev" aria-hidden="true"></i></button></h3>' +
+        chips(s) +
+        '<div class="serv-cuerpo" id="sc-' + esc(s.id) + '"' + (abierta ? '' : ' hidden') + '>' +
         (prep ? '<p>' + esc(s.desc) + '</p>' : '<p class="para">Para: ' + esc(s.para) + '.</p><p>' + esc(s.entrega) + '</p>') +
         (s.incluye && s.incluye.length ? '<details class="incl"><summary>Qué incluye (' + s.incluye.length + ')</summary><ul class="incluye">' + s.incluye.map(function (i) { return '<li' + (i.prep ? ' class="prep"' : '') + '><b>' + esc(i.t) + '</b><span>' + esc(i.d) + '</span></li>'; }).join("") + '</ul></details>' : '') +
         (s.limites ? '<p class="lim">' + esc(s.limites) + '</p>' : '') +
-        chips(s) +
         '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">' + (prep ? 'Pedir información →' : 'Pedir cotización →') + '</a>' +
-        '<p class="resp"><b>RESPALDO</b> ' + (prep ? 'En preparación: se publicará cuando esté documentado.' : esc(s.respaldo)) + '</p>');
+        '<p class="resp"><b>RESPALDO</b> ' + (prep ? 'En preparación: se publicará cuando esté documentado.' : esc(s.respaldo)) + '</p>' +
+        '</div>');
     }
+    rej.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest(".serv-toggle"); if (!b) return;
+      var c = b.closest(".serv"); poner(c, c.classList.contains("cerrada")); etiquetaTodas();
+    });
     var bloques = [];
     Object.keys(D.lineasServicio).forEach(function (k) {
       var L = D.lineasServicio[k];
@@ -257,6 +271,13 @@
         bloques.forEach(function (bl) { bl.blq.hidden = f.k !== "todas" && bl.k !== f.k; });
       });
     });
+    todas = h("button", { type: "button", "class": "chip chip-acc", id: "serv-todas" }, fil, "");
+    todas.addEventListener("click", function () {
+      var abrir = !rej.querySelector('.serv-toggle[aria-expanded="true"]');
+      [].forEach.call(rej.querySelectorAll(".serv"), function (c) { poner(c, abrir); });
+      etiquetaTodas();
+    });
+    etiquetaTodas();
   })();
 
   /* ---------- cifras con conteo ---------- */
