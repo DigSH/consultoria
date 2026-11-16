@@ -3,3 +3,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 __pycache__/
+
+# Documentos personales del equipo (hojas de vida): nunca se publican
+equipo/

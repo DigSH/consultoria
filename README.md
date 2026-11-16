@@ -1,6 +1,6 @@
 # consultoria
 
-Web piloto de la consultoría de Diego Sanabria (estadística y datos para el agro y la academia).
+Web piloto de la consultoría (Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo): consultoría académica y empresarial, estadística, datos y proyectos para el agro y la academia.
 Sitio estático: HTML + CSS + JS sin dependencias, sin cookies ni rastreadores.
 
 ## Archivos
@@ -44,6 +44,13 @@ Con `?demo=1` al final de la dirección se ven tarjetas de testimonio de ejemplo
 ## Publicar
 
 Publicada con GitHub Pages (rama `main`, raíz): https://digsh.github.io/consultoria/ . Cada `git push` la actualiza en ~1 minuto.
+
+## Embudo (fase 1) y equipo
+
+- El inicio tiene dos entradas (investigador o estudiante / empresa, asociación o entidad) que alimentan un embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo. Todo corre en el navegador; el resultado abre WhatsApp o rellena el formulario. No se guarda nada.
+- Fase 2 (pendiente): chat con LLM. La clave de la API **no puede ir en esta página estática**; necesita un intermediario (p. ej. Cloudflare Workers), catálogo cerrado de servicios, aviso de tratamiento de datos (Ley 1581 de 2012) y traspaso final a una persona.
+- `equipo/` (hojas de vida con teléfono y correo) está en `.gitignore`: **nunca se sube** a este repositorio público.
+- Equipo en `datos.js`: el enfoque en papa y arándano está como «enfoque», no «experto», hasta tener evidencia. La maestría de Zahira no figura en su hoja de vida: se añade cuando ella la confirme.
 
 ## Pendientes
 

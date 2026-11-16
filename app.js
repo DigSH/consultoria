@@ -1,4 +1,4 @@
-/* Consultoría Sanabria · comportamiento de la página. Sin dependencias.
+/* Consultoría · comportamiento de la página. Sin dependencias.
    Datos: datos.js. Las gráficas se dibujan en SVG a partir de esos datos. */
 (function () {
   "use strict";
@@ -74,28 +74,79 @@
     }, { passive: true });
   })();
 
-  /* ---------- buscador de servicio ---------- */
-  (function buscador() {
-    var box = $("#situaciones"), res = $("#resultado");
-    D.situaciones.forEach(function (s, i) {
-      var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(s.texto));
-      b.addEventListener("click", function () {
-        [].forEach.call(box.children, function (x) { x.setAttribute("aria-checked", "false"); });
-        b.setAttribute("aria-checked", "true");
-        var sv = serv(s.servicio);
-        var msg = "Hola Diego, vi tu página. Mi situación: " + s.texto.toLowerCase() + ". Me interesa: " + sv.titulo + ".";
-        res.innerHTML = '<div class="entra"><h3>' + esc(sv.titulo) + '</h3><dl>' +
-          '<dt>Te entrego</dt><dd>' + esc(sv.entrega) + '</dd>' +
-          '<dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>' +
-          '<a class="boton" target="_blank" rel="noopener" href="' + waLink(msg) + '">Escribirme por WhatsApp</a></div>';
-        var sel = $("#f-servicio"); if (sel) sel.value = sv.id;
+  /* ---------- embudo guiado (4 pasos) ---------- */
+  (function embudo() {
+    var est = { linea: null, sit: null, datos: null, plazo: null };
+    var bl = $("#e-linea"), bs = $("#situaciones"), bd = $("#e-datos"), bp = $("#e-plazo"), res = $("#resultado");
+
+    function marcar(box, b) {
+      [].forEach.call(box.children, function (x) { x.setAttribute("aria-checked", "false"); });
+      b.setAttribute("aria-checked", "true");
+    }
+    function grupo(box, items, alElegir) {
+      box.innerHTML = "";
+      items.forEach(function (it, i) {
+        var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(it.t || it.texto));
+        b.addEventListener("click", function () { marcar(box, b); alElegir(it); });
+        b.addEventListener("keydown", function (e) {
+          var k = e.key, n = null, c = box.children;
+          if (k === "ArrowDown" || k === "ArrowRight") n = c[(i + 1) % c.length];
+          if (k === "ArrowUp" || k === "ArrowLeft") n = c[(i - 1 + c.length) % c.length];
+          if (n) { e.preventDefault(); n.focus(); n.click(); }
+        });
       });
-      b.addEventListener("keydown", function (e) {
-        var k = e.key, n = null;
-        if (k === "ArrowDown" || k === "ArrowRight") n = box.children[(i + 1) % box.children.length];
-        if (k === "ArrowUp" || k === "ArrowLeft") n = box.children[(i - 1 + box.children.length) % box.children.length];
-        if (n) { e.preventDefault(); n.focus(); n.click(); }
+    }
+    function situaciones() {
+      est.sit = null;
+      if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elige primero quién eres (paso 1).</p>'; return; }
+      var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
+      grupo(bs, lista, function (s) { est.sit = s; render(); });
+    }
+    function elegirLinea(id) {
+      var i = Object.keys(D.lineas).indexOf(id);
+      if (i < 0 || !bl.children[i]) return;
+      marcar(bl, bl.children[i]); est.linea = id; situaciones(); render();
+    }
+
+    function resumen() {
+      var L = D.lineas[est.linea], sv = est.sit.servicio ? serv(est.sit.servicio) : null;
+      var datos = D.opcionesDatos.filter(function (o) { return o.id === est.datos; })[0];
+      var plazo = D.opcionesPlazo.filter(function (o) { return o.id === est.plazo; })[0];
+      var p = ["Soy " + L.frase + ".", "Mi situación: " + est.sit.texto.toLowerCase() + "."];
+      if (sv) p.push("Me interesa: " + sv.titulo + ".");
+      if (datos) p.push("Datos: " + datos.t.toLowerCase() + ".");
+      if (plazo) p.push("Plazo: " + plazo.t.toLowerCase() + ".");
+      return p.join(" ");
+    }
+    function render() {
+      if (!est.linea || !est.sit) {
+        res.innerHTML = '<p class="vacio">Responde los pasos 1 y 2 y aquí aparece qué te entregamos.</p>';
+        return;
+      }
+      var sv = est.sit.servicio ? serv(est.sit.servicio) : null, txt = resumen();
+      var sel = $("#f-servicio"); if (sel) sel.value = sv ? sv.id : "otro";
+      var datos = D.opcionesDatos.filter(function (o) { return o.id === est.datos; })[0];
+      var plazo = D.opcionesPlazo.filter(function (o) { return o.id === est.plazo; })[0];
+      var extra = (datos || plazo) ? '<p class="e-extra">' + (datos ? esc(datos.t) : "") + (datos && plazo ? " · " : "") + (plazo ? esc(plazo.t) : "") + "</p>" : "";
+      var cuerpo = sv
+        ? '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Te entregamos</dt><dd>' + esc(sv.entrega) + '</dd><dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>'
+        : '<h3>Conversemos tu caso</h3><p>Con tu caso en pocas líneas te decimos si lo resolvemos, con quién del equipo y cómo empezar.</p>';
+      res.innerHTML = '<div class="entra">' + cuerpo + extra +
+        '<div class="e-acc"><a class="boton" target="_blank" rel="noopener" href="' + waLink("Hola, equipo de Consultoría. Vi su página. " + txt) + '">Enviar por WhatsApp</a>' +
+        '<button type="button" class="boton boton-claro" id="e-form">Completar en el formulario</button></div></div>';
+      $("#e-form").addEventListener("click", function () {
+        var f = $("#formu"); if (!f.caso.value.trim() || f.caso.dataset.auto === "1") { f.caso.value = txt; f.caso.dataset.auto = "1"; }
+        location.hash = "#contacto";
+        setTimeout(function () { f.nombre.focus({ preventScroll: true }); }, 400);
       });
+    }
+
+    grupo(bl, Object.keys(D.lineas).map(function (k) { return { id: k, t: D.lineas[k].texto }; }), function (it) { est.linea = it.id; situaciones(); render(); });
+    grupo(bd, D.opcionesDatos, function (o) { est.datos = o.id; render(); });
+    grupo(bp, D.opcionesPlazo, function (o) { est.plazo = o.id; render(); });
+    situaciones();
+    [].forEach.call(document.querySelectorAll("[data-linea]"), function (a) {
+      a.addEventListener("click", function () { elegirLinea(a.dataset.linea); });
     });
   })();
 
@@ -105,6 +156,7 @@
     D.servicios.forEach(function (s) {
       var c = h("article", { "class": "serv rev" }, rej,
         '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
+        '<p class="tags">' + s.linea.map(function (l) { return '<span>' + (l === "academica" ? "Académico" : "Empresarial") + '</span>'; }).join("") + '</p>' +
         '<h3>' + esc(s.titulo) + '</h3>' +
         '<p class="para">Para: ' + esc(s.para) + '.</p>' +
         '<p>' + esc(s.entrega) + '</p>' +
@@ -257,6 +309,16 @@
     });
   })();
 
+  /* ---------- equipo ---------- */
+  (function equipo() {
+    var cont = $("#equipo-lista");
+    D.equipo.forEach(function (p) {
+      h("article", { "class": "persona rev" }, cont,
+        '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><h3>' + esc(p.nombre) + '</h3>' +
+        '<p class="rol">' + esc(p.rol) + '</p><p class="tit">' + esc(p.titulo) + '</p>');
+    });
+  })();
+
   /* ---------- trayectoria ---------- */
   (function trayectoria() {
     var ol = $("#linea");
@@ -280,7 +342,7 @@
     if (demo) lista = D.testimoniosDemo;
     if (!lista.length) {
       h("div", { "class": "voces-vacio" }, cont,
-        '<h3>Aquí van las voces de quienes ya trabajaron conmigo</h3>' +
+        '<h3>Aquí van las voces de quienes ya trabajaron con nosotros</h3>' +
         '<p>Esta sección solo publica frases textuales, con nombre y con permiso por escrito. Los primeros proyectos de esta etapa piloto serán los primeros en aparecer.</p>' +
         '<p><a class="boton" href="#contacto">Sé el primer caso</a></p>');
       return;
@@ -305,7 +367,7 @@
       var nombre = f.nombre.value.trim(), caso = f.caso.value.trim();
       if (!nombre || !caso) { (nombre ? f.caso : f.nombre).focus(); return; }
       var sv = serv(f.servicio.value), t = sv ? sv.titulo : "otro tema";
-      var msg = "Hola Diego, soy " + nombre + ". Me interesa: " + t + ".\n\n" + caso;
+      var msg = "Hola, equipo de Consultoría. Soy " + nombre + ". Me interesa: " + t + ".\n\n" + caso;
       if (via === "correo") location.href = "mailto:" + c.correo + "?subject=" + encodeURIComponent("Consulta: " + t) + "&body=" + encodeURIComponent(msg);
       else window.open(waLink(msg), "_blank", "noopener");
     });

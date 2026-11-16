@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Consultoría Sanabria · Estadística y datos para el agro y la academia</title>
-<meta name="description" content="Análisis estadístico para tesis, ecuaciones estructurales, bibliometría, tableros en Power BI, ensayos agronómicos, análisis geoespacial (QGIS, Earth Engine) y trazabilidad EUDR. Ingeniero Agrónomo y Especialista en Estadística, Tunja.">
-<meta property="og:title" content="Consultoría Sanabria · Estadística y datos para el agro y la academia">
+<title>Consultoría · Estadística, datos y proyectos para el agro y la academia</title>
+<meta name="description" content="Consultoría académica y empresarial: análisis estadístico para tesis, bibliometría, tableros en Power BI, ensayos agronómicos, formulación de proyectos, análisis geoespacial y trazabilidad EUDR. Equipo de agronomía, estadística y gestión de proyectos, Tunja.">
+<meta property="og:title" content="Consultoría · Estadística, datos y proyectos para el agro y la academia">
 <meta property="og:description" content="Resultados que resisten al jurado, al comité y al campo. Análisis reproducible, tableros y ensayos.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#eef3f6">
@@ -17,18 +17,18 @@
 <a class="saltar" href="#servicios">Saltar al contenido</a>
 
 <header class="barra" id="barra">
-  <a class="marca" href="#inicio" aria-label="Consultoría Sanabria, inicio">
+  <a class="marca" href="#inicio" aria-label="Consultoría, inicio">
     <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><use href="#logo"/></svg>
-    <span>Consultoría <b>Sanabria</b></span>
+    <span>Consultoría</span>
   </a>
   <nav aria-label="Principal">
     <a href="#servicios">Servicios</a>
     <a href="#evidencia">Evidencia</a>
     <a href="#mapas">Mapas</a>
     <a href="#metodo">Método</a>
-    <a href="#trayectoria">Trayectoria</a>
+    <a href="#equipo">Equipo</a>
     <a href="#voces">Voces</a>
-    <a class="boton boton-chico" href="#contacto">Escríbeme</a>
+    <a class="boton boton-chico" href="#contacto">Escríbenos</a>
   </nav>
 </header>
 
@@ -37,16 +37,16 @@
 <section class="hero" id="inicio">
   <svg class="relieve" id="relieve" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="hero-in">
-    <p class="sobretitulo">Estadística · datos · agro · Tunja, Boyacá</p>
+    <p class="sobretitulo">Consultoría académica y empresarial · agro · Tunja, Boyacá</p>
     <h1>Tu dato, <em>cultivado</em><br>hasta que aguante el jurado.</h1>
-    <p class="lema">Análisis reproducible para tesis, grupos de investigación, asociaciones y empresas del agro. Cada número con su código, cada gráfica con su origen.</p>
+    <p class="lema">Consultoría para tesis, grupos de investigación, asociaciones y empresas del agro. Análisis reproducible: cada número con su código, cada gráfica con su origen.</p>
     <div class="hero-acc">
-      <a class="boton" href="#buscador">Encuentra tu servicio <span aria-hidden="true">→</span></a>
-      <a class="boton boton-claro" href="#evidencia">Ver la evidencia</a>
+      <a class="boton" href="#buscador" data-linea="academica">Soy investigador o estudiante <span aria-hidden="true">→</span></a>
+      <a class="boton boton-claro" href="#buscador" data-linea="empresarial">Soy empresa, asociación o entidad <span aria-hidden="true">→</span></a>
     </div>
     <ul class="sellos" aria-label="Credenciales">
-      <li>Ingeniero Agrónomo · UPTC</li>
-      <li>Especialista en Estadística · UPTC</li>
+      <li>Equipo de 4 profesionales</li>
+      <li>Agronomía · estadística · desarrollo territorial</li>
       <li>QGIS · Google Earth Engine · EUDR</li>
       <li>7 artículos con DOI verificado</li>
     </ul>
@@ -54,17 +54,34 @@
   <div class="hero-nota" aria-hidden="true"><span>Mueve el cursor: el relieve responde.</span></div>
 </section>
 
-<!-- ============ BUSCADOR ============ -->
+<!-- ============ EMBUDO (4 pasos guiados) ============ -->
 <section class="seccion" id="buscador">
   <div class="cab">
-    <p class="sobretitulo">Empieza por tu problema</p>
-    <h2>¿Cuál es tu situación?</h2>
-    <p class="sub">Elige la frase que más se parezca a lo que te pasa. Te digo qué entrego y te dejo el mensaje listo para enviar.</p>
+    <p class="sobretitulo">Empieza por tu caso</p>
+    <h2>Cuéntanos tu situación en 4 pasos</h2>
+    <p class="sub">Responde cuatro preguntas cortas. Te decimos qué entregamos y te dejamos el mensaje listo para enviar. Nada se guarda ni se envía hasta que tú lo mandes.</p>
   </div>
-  <div class="buscador">
-    <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Tu situación"></div>
+  <div class="buscador embudo">
+    <div class="pasos-e">
+      <fieldset class="paso-e">
+        <legend><span>1</span> ¿Quién eres?</legend>
+        <div class="situaciones cortas" id="e-linea" role="radiogroup" aria-label="Quién eres"></div>
+      </fieldset>
+      <fieldset class="paso-e">
+        <legend><span>2</span> ¿Qué necesitas?</legend>
+        <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Qué necesitas"></div>
+      </fieldset>
+      <fieldset class="paso-e">
+        <legend><span>3</span> ¿Qué tienes hoy? <small>opcional</small></legend>
+        <div class="situaciones cortas" id="e-datos" role="radiogroup" aria-label="Qué tienes hoy"></div>
+      </fieldset>
+      <fieldset class="paso-e">
+        <legend><span>4</span> ¿Para cuándo? <small>opcional</small></legend>
+        <div class="situaciones cortas" id="e-plazo" role="radiogroup" aria-label="Para cuándo"></div>
+      </fieldset>
+    </div>
     <aside class="resultado" id="resultado" aria-live="polite">
-      <p class="vacio">Elige una situación de la izquierda.</p>
+      <p class="vacio">Responde los pasos 1 y 2 y aquí aparece qué te entregamos.</p>
     </aside>
   </div>
 </section>
@@ -72,8 +89,8 @@
 <!-- ============ SERVICIOS ============ -->
 <section class="seccion oscura" id="servicios">
   <div class="cab">
-    <p class="sobretitulo">Ocho servicios, cada uno con respaldo</p>
-    <h2>Qué puedo hacer por ti</h2>
+    <p class="sobretitulo">Nueve servicios, cada uno con respaldo</p>
+    <h2>Qué podemos hacer por ti</h2>
     <p class="sub">Debajo de cada servicio dice en qué experiencia comprobada se apoya. Sin tarifas de catálogo: cada caso se cotiza con su alcance.</p>
   </div>
   <div class="rejilla" id="rejilla"></div>
@@ -84,7 +101,7 @@
   <div class="cab">
     <p class="sobretitulo">Evidencia, no adjetivos</p>
     <h2>Lo que ya está hecho, en cifras</h2>
-    <p class="sub">Todas las cifras salen de mi hoja de vida verificada. Las gráficas marcadas como ilustración usan datos simulados y lo dicen.</p>
+    <p class="sub">Las cifras salen de la hoja de vida verificada de Diego. Las gráficas marcadas como ilustración usan datos simulados y lo dicen.</p>
   </div>
 
   <div class="cifras" id="cifras"></div>
@@ -109,7 +126,7 @@
 
     <figure class="tarjeta">
       <figcaption>
-        <h3>Así te entrego un resultado <span class="etiqueta">ilustración · datos simulados</span></h3>
+        <h3>Así te entregamos un resultado <span class="etiqueta">ilustración · datos simulados</span></h3>
         <p>Cuatro materiales, 30 repeticiones cada uno. Caja: cuartiles. Rombo: media con intervalo de confianza del 95 %.</p>
       </figcaption>
       <div class="lienzo" id="g-cajas"></div>
@@ -182,19 +199,28 @@
     <h2>Cuatro pasos, todos con entregable</h2>
   </div>
   <ol class="pasos">
-    <li><span class="num">01</span><h3>Conversación y alcance</h3><p>Me cuentas el problema, los datos que tienes y la fecha límite. Te respondo con un alcance escrito: qué entrego, en qué formato y cuándo.</p></li>
-    <li><span class="num">02</span><h3>Auditoría de los datos</h3><p>Reviso duplicados, valores faltantes y supuestos antes de modelar. Lo que está mal en la base se dice desde el inicio.</p></li>
+    <li><span class="num">01</span><h3>Conversación y alcance</h3><p>Nos cuentas el problema, los datos que tienes y la fecha límite. Te respondemos con un alcance escrito: qué entregamos, en qué formato y cuándo.</p></li>
+    <li><span class="num">02</span><h3>Auditoría de los datos</h3><p>Revisamos duplicados, valores faltantes y supuestos antes de modelar. Lo que está mal en la base se dice desde el inicio.</p></li>
     <li><span class="num">03</span><h3>Análisis reproducible</h3><p>Script en R o Python que cualquiera puede volver a correr. Si cambian los datos, cambian los resultados sin rehacer nada a mano.</p></li>
     <li><span class="num">04</span><h3>Entrega y sustentación</h3><p>Informe, gráficos con calidad de publicación y una sesión para explicarte el método con las palabras que necesitarás ante tu jurado o tu junta.</p></li>
   </ol>
 </section>
 
 <!-- ============ TRAYECTORIA ============ -->
+<section class="seccion" id="equipo">
+  <div class="cab">
+    <p class="sobretitulo">Quiénes somos</p>
+    <h2>Un equipo, varias miradas</h2>
+    <p class="sub">Agronomía, estadística, desarrollo territorial y gestión de proyectos trabajando juntos. Conocemos el surco, la base de datos y el expediente.</p>
+  </div>
+  <div class="equipo" id="equipo-lista"></div>
+</section>
+
 <section class="seccion" id="trayectoria">
   <div class="cab">
-    <p class="sobretitulo">Quién está detrás</p>
+    <p class="sobretitulo">Trayectoria de Diego</p>
     <h2>Del lote al tablero</h2>
-    <p class="sub">Agrónomo de formación, estadístico de especialización. Conozco el surco y la base de datos, y por eso traduzco entre ambos.</p>
+    <p class="sub">Agrónomo de formación, estadístico de especialización. Conoce el surco y la base de datos, y por eso traduce entre ambos.</p>
   </div>
   <ol class="linea" id="linea"></ol>
   <div class="herramientas">
@@ -222,7 +248,7 @@
 <section class="seccion" id="voces">
   <div class="cab">
     <p class="sobretitulo">Voces</p>
-    <h2>Lo que dicen quienes ya trabajaron conmigo</h2>
+    <h2>Lo que dicen quienes ya trabajaron con nosotros</h2>
   </div>
   <div class="voces" id="voces-lista"></div>
 </section>
@@ -231,8 +257,8 @@
 <section class="seccion oscura cierre" id="contacto">
   <div class="cab">
     <p class="sobretitulo">Hablemos</p>
-    <h2>Cuéntame tu caso</h2>
-    <p class="sub">Con una frase basta: qué quieres lograr, qué datos tienes y para cuándo. Te respondo con un alcance concreto.</p>
+    <h2>Cuéntanos tu caso</h2>
+    <p class="sub">Con una frase basta: qué quieres lograr, qué datos tienes y para cuándo. Te respondemos con un alcance concreto.</p>
   </div>
   <div class="contacto-grid">
     <form class="formu" id="formu" novalidate>
@@ -245,20 +271,20 @@
         <button class="boton" type="submit" data-via="whatsapp">Enviar por WhatsApp</button>
         <button class="boton boton-claro" type="submit" data-via="correo">Enviar por correo</button>
       </div>
-      <p class="formu-nota">No guardo nada en esta página: el botón abre tu WhatsApp o tu correo con el mensaje escrito.</p>
+      <p class="formu-nota">No guardamos nada en esta página: el botón abre tu WhatsApp o tu correo con el mensaje escrito.</p>
     </form>
     <div class="datos-contacto">
       <p><b>WhatsApp</b><br><a id="c-wa" href="#"></a></p>
       <p><b>Correo</b><br><a id="c-mail" href="#"></a></p>
       <p><b>Ubicación</b><br>Tunja, Boyacá · trabajo remoto en toda Colombia</p>
-      <p><b>ORCID</b><br><a href="https://orcid.org/0009-0007-3157-6140" target="_blank" rel="noopener">0009-0007-3157-6140</a></p>
+      <p><b>ORCID de Diego</b><br><a href="https://orcid.org/0009-0007-3157-6140" target="_blank" rel="noopener">0009-0007-3157-6140</a></p>
     </div>
   </div>
 </section>
 </main>
 
 <footer class="pie">
-  <p>© 2026 Diego Israel Sanabria Higuera · Ingeniero Agrónomo y Especialista en Estadística (UPTC) · Tunja, Boyacá</p>
+  <p>© 2026 Consultoría · Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo</p>
   <p class="pie-s">Sitio estático, sin cookies ni rastreadores. Código abierto en el repositorio <code>consultoria</code>.</p>
 </footer>
 
@@ -273,6 +299,7 @@
     <symbol id="i-geo" viewBox="0 0 40 40"><path d="M20 35s11-10 11-18a11 11 0 1 0-22 0c0 8 11 18 11 18z"/><circle cx="20" cy="17" r="4"/></symbol>
     <symbol id="i-talleres" viewBox="0 0 40 40"><circle cx="20" cy="11" r="5"/><circle cx="8" cy="15" r="3.5"/><circle cx="32" cy="15" r="3.5"/><path d="M10 33c0-7 5-11 10-11s10 4 10 11M2 30c0-5 3-8 6-8M38 30c0-5-3-8-6-8"/></symbol>
     <symbol id="i-ensayos" viewBox="0 0 40 40"><path d="M20 34V16M20 22c-6 0-9-4-9-9 6 0 9 3 9 9zM20 18c0-5 3-8 9-8 0 5-3 8-9 8zM8 34h24"/></symbol>
+    <symbol id="i-proyectos" viewBox="0 0 40 40"><rect x="9" y="6" width="22" height="28" rx="2"/><path d="M14 14h12M14 20h12M14 26h7"/></symbol>
     <symbol id="i-etl" viewBox="0 0 40 40"><ellipse cx="20" cy="9" rx="11" ry="4"/><path d="M9 9v10c0 2 5 4 11 4s11-2 11-4V9M9 19v10c0 2 5 4 11 4s11-2 11-4V19"/></symbol>
   </defs>
 </svg>

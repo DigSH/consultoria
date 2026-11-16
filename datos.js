@@ -12,50 +12,82 @@ window.CONSULTORIA = {
 
   /* Los 8 servicios del plan de ingresos (13/11/2026). Los precios NO se publican (eran supuestos). */
   servicios: [
-    { id: "tesis", icono: "tesis", titulo: "Análisis estadístico y diseño experimental para tesis",
+    { id: "tesis", linea: ["academica"], icono: "tesis", titulo: "Análisis estadístico y diseño experimental para tesis",
       para: "Tesistas de maestría y doctorado en ciencias agrarias, biológicas y ambientales",
       entrega: "Plan de análisis, script reproducible en R, tablas y gráficos con calidad de publicación, y una sesión de 2 h para sustentar el método.",
       respaldo: "Asesoría estadística a 3 proyectos simultáneos (doctoral, maestría y pregrado) · R avanzado" },
-    { id: "sem", icono: "sem", titulo: "Ecuaciones estructurales (PLS-SEM) y psicometría",
+    { id: "sem", linea: ["academica"], icono: "sem", titulo: "Ecuaciones estructurales (PLS-SEM) y psicometría",
       para: "Grupos de investigación y doctorandos en administración, economía, educación y ciencias sociales",
       entrega: "Modelo de medida (fiabilidad, AVE, HTMT), modelo estructural con bootstrapping, reporte de hipótesis y sección de resultados lista para artículo.",
       respaldo: "2 instrumentos psicométricos diseñados y validados · artículos con PLS-PM publicados (2024 y 2026)" },
-    { id: "biblio", icono: "biblio", titulo: "Vigilancia científica y análisis bibliométrico",
+    { id: "biblio", linea: ["academica"], icono: "biblio", titulo: "Vigilancia científica y análisis bibliométrico",
       para: "Grupos de investigación, decanaturas y quienes formulan proyectos o estados del arte",
       entrega: "Ecuaciones de búsqueda calibradas, redes de coautoría y co-citación, informe ejecutivo y base depurada en BibTeX/RIS.",
       respaldo: "12 reportes de análisis bibliométrico en el observatorio de CTeI de Boyacá · Bibliometrix y VOSviewer avanzado" },
-    { id: "bi", icono: "bi", titulo: "Tableros de control y modelos de datos (Power BI)",
+    { id: "bi", linea: ["empresarial"], icono: "bi", titulo: "Tableros de control y modelos de datos (Power BI)",
       para: "Universidades, colegios, cooperativas y ONG con reportes dispersos en Excel",
       entrega: "Pipeline de datos, modelo relacional en estrella, medidas DAX, tablero interactivo y manual de actualización.",
       respaldo: "Tableros públicos de indicadores de CTeI · PostgreSQL y ETL en Python en producción" },
-    { id: "geo", icono: "geo", titulo: "Geolocalización de predios y cribado de deforestación (EUDR)",
+    { id: "geo", linea: ["empresarial"], icono: "geo", titulo: "Geolocalización de predios y cribado de deforestación (EUDR)",
       para: "Cooperativas y asociaciones de productores que venden a mercados europeos",
       entrega: "Polígonos prediales validados (GeoJSON), cruce satelital de deforestación y expediente de debida diligencia auditable.",
       respaldo: "Prototipo de debida diligencia EUDR con Whisp, Hansen/UMD y RADD-Sentinel-1 · QGIS y Google Earth Engine" },
-    { id: "talleres", icono: "talleres", titulo: "Talleres de asociatividad y formalización rural",
+    { id: "talleres", linea: ["empresarial"], icono: "talleres", titulo: "Talleres de asociatividad y formalización rural",
       para: "Alcaldías, UMATA, fundaciones y asociaciones agropecuarias en formación",
       entrega: "Diseño pedagógico y facilitación de 2 a 3 jornadas, memorias técnicas y documentación para el registro en cámara de comercio.",
       respaldo: "Talleres para más de 300 productores en Boyacá · acompañamiento a 3 a 5 asociaciones hasta su registro" },
-    { id: "ensayos", icono: "ensayos", titulo: "Ensayos agronómicos de eficacia de insumos",
+    { id: "ensayos", linea: ["empresarial"], icono: "ensayos", titulo: "Ensayos agronómicos de eficacia de insumos",
       para: "Casas comerciales de bioinsumos, fertilizantes y laboratorios agrícolas",
       entrega: "Protocolo de ensayo, planilla móvil de captura fenológica (BBCH), seguimiento y reporte estadístico formal.",
       respaldo: "Ensayo propio: 120 unidades experimentales en diseño factorial con testigo, de la siembra a la cosecha, analizado en R" },
-    { id: "etl", icono: "etl", titulo: "Auditoría y limpieza de bases de datos (ETL)",
+    { id: "etl", linea: ["empresarial"], icono: "etl", titulo: "Auditoría y limpieza de bases de datos (ETL)",
       para: "Pymes, centros de diagnóstico y entidades con registros dispersos y con errores",
       entrega: "Diagnóstico de calidad (duplicados, nulos, integridad), script de depuración automática y base relacional limpia en PostgreSQL.",
-      respaldo: "Base de 10 000+ registros con criterios de calidad · procesos ETL que consolidan reportes de varios sistemas" }
+      respaldo: "Base de 10 000+ registros con criterios de calidad · procesos ETL que consolidan reportes de varios sistemas" },
+    { id: "proyectos", linea: ["academica", "empresarial"], icono: "proyectos", titulo: "Formulación y seguimiento de proyectos",
+      para: "Grupos de investigación, asociaciones y empresas que se presentan a convocatorias o deben rendir cuentas",
+      entrega: "Estructuración técnica y administrativa de la propuesta, cronograma y entregables, informes de avance y un informe final técnico y financiero.",
+      respaldo: "Formulación y seguimiento administrativo de proyectos universidad-empresa en la OTRI y la Vicerrectoría de Investigación y Extensión de la UPTC · informes técnicos y financieros (Zahira Rodríguez)" }
   ],
 
-  /* Buscador: situación → servicio recomendado */
+  /* Embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo */
+  lineas: {
+    academica:   { texto: "Soy investigador o estudiante", frase: "investigador o estudiante" },
+    empresarial: { texto: "Soy empresa, asociación o entidad", frase: "una empresa, asociación o entidad" }
+  },
   situaciones: [
-    { texto: "Tengo datos de un experimento y no sé cómo analizarlos", servicio: "tesis" },
-    { texto: "Mi modelo teórico tiene variables que no se miden directamente", servicio: "sem" },
-    { texto: "Necesito el estado del arte o mapear un tema de investigación", servicio: "biblio" },
-    { texto: "Mis reportes viven en Excel y nadie los entiende", servicio: "bi" },
-    { texto: "Mi asociación quiere exportar a Europa", servicio: "geo" },
-    { texto: "Quiero capacitar o formalizar a una asociación", servicio: "talleres" },
-    { texto: "Debo probar si mi producto funciona en campo", servicio: "ensayos" },
-    { texto: "Mi base de datos tiene errores y duplicados", servicio: "etl" }
+    { texto: "Tengo datos de un experimento y no sé cómo analizarlos", servicio: "tesis", linea: ["academica"] },
+    { texto: "Mi modelo teórico tiene variables que no se miden directamente", servicio: "sem", linea: ["academica"] },
+    { texto: "Necesito el estado del arte o mapear un tema de investigación", servicio: "biblio", linea: ["academica"] },
+    { texto: "Debo formular un proyecto o presentarme a una convocatoria", servicio: "proyectos", linea: ["academica", "empresarial"] },
+    { texto: "Mis reportes viven en Excel y nadie los entiende", servicio: "bi", linea: ["empresarial"] },
+    { texto: "Mi base de datos tiene errores y duplicados", servicio: "etl", linea: ["empresarial"] },
+    { texto: "Mi asociación quiere exportar a Europa", servicio: "geo", linea: ["empresarial"] },
+    { texto: "Quiero capacitar o formalizar a una asociación", servicio: "talleres", linea: ["empresarial"] },
+    { texto: "Debo probar si mi producto funciona en campo", servicio: "ensayos", linea: ["empresarial"] },
+    { texto: "Debo rendir informes técnicos y financieros de un proyecto", servicio: "proyectos", linea: ["academica", "empresarial"] },
+    { texto: "Todavía no sé cuál es mi problema, quiero conversarlo", servicio: null, linea: ["academica", "empresarial"] }
+  ],
+  opcionesDatos: [
+    { id: "tengo", t: "Ya tengo datos" },
+    { id: "sucios", t: "Tengo datos dispersos o con errores" },
+    { id: "diseno", t: "Aún no hay datos: hay que diseñar el estudio" },
+    { id: "idea", t: "Solo tengo la idea" }
+  ],
+  opcionesPlazo: [
+    { id: "urgente", t: "Menos de 2 semanas" },
+    { id: "mes", t: "Entre 2 semanas y 2 meses" },
+    { id: "largo", t: "Más de 2 meses" },
+    { id: "libre", t: "Sin fecha definida" }
+  ],
+
+  /* Equipo. Titulación según lo dicho por Diego y la hoja de vida de Zahira. «Enfoque en papa/arándano» queda
+     como enfoque (no «experto») hasta tener evidencia: proyectos, años o publicaciones. */
+  equipo: [
+    { ini: "DS", nombre: "Diego Sanabria Higuera", rol: "Estadística, datos y análisis territorial", titulo: "Ingeniero Agrónomo y Especialista en Estadística (UPTC)" },
+    { ini: "ZR", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos", titulo: "Administradora de Empresas (UPTC)" },
+    { ini: "SS", nombre: "Stiven Santana", rol: "Agronomía y desarrollo territorial, con enfoque en papa", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" },
+    { ini: "FS", nombre: "Faiver Salcedo", rol: "Agronomía y desarrollo territorial, con enfoque en arándano", titulo: "Ingeniero Agrónomo, Especialista en Desarrollo Territorial" }
   ],
 
   /* Solo artículos con DOI verificado en Crossref el 16/11/2026 */
