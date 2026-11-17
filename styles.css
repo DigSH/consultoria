@@ -635,3 +635,8 @@ section[hidden]{display:none!important}
   .hero::after{background:linear-gradient(180deg,rgba(244,248,250,.86) 0,rgba(244,248,250,.8) 55%,rgba(244,248,250,.35) 80%,rgba(244,248,250,0) 100%)}
 }
 @media print{.hero::after{display:none}}
+.relieve text.lbl-dist{font-size:12.5px;fill:#9a2c19;stroke-width:4.5px}
+/* blancos táctiles cómodos en pantallas sin ratón */
+@media (hover:none){.hud-chip{padding:8px 12px;font-size:11.5px}.chip{min-height:40px}}
+/* chips del visor en varias filas en teléfono, para que «Limpiar A-B» no quede cortado */
+@media (max-width:560px){.hud-capas{flex-wrap:wrap;overflow:visible}}

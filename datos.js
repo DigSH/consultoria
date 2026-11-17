@@ -61,9 +61,9 @@ window.CONSULTORIA = {
   ],
 
   lineas: {
-    academica:   { texto: "Investigación o tesis", frase: "investigador o estudiante" },
+    productor:   { texto: "Productor o finca", frase: "productor o con una finca" },
     empresarial: { texto: "Empresa o entidad", frase: "una empresa, asociación o entidad" },
-    productor:   { texto: "Productor o finca", frase: "productor o con una finca" }
+    academica:   { texto: "Investigación o tesis", frase: "investigador o estudiante" }
   },
 
   situaciones: [

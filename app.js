@@ -389,13 +389,13 @@
 
     /* 8. Capa 4: Polígonos prediales georreferenciados */
     var lotes = [
-      { id: "LOTE P-01", uso: "Papa · 6,4 ha", col: "#0b6e8a",
+      { id: "EJEMPLO 1", uso: "Lote de ejemplo · papa · 6,4 ha", col: "#0b6e8a",
         pts: [[760, 155], [855, 140], [870, 215], [775, 235]] },
-      { id: "LOTE A-04", uso: "Arándano · 3,8 ha", col: "#6b4fc7",
+      { id: "EJEMPLO 2", uso: "Lote de ejemplo · arándano · 3,8 ha", col: "#6b4fc7",
         pts: [[945, 325], [1035, 310], [1050, 385], [955, 395]] },
-      { id: "ENSAYO E-12", uso: "DBCA 120 UE · 2,1 ha", col: "#e0533a",
+      { id: "EJEMPLO 3", uso: "Lote de ejemplo · ensayo · 2,1 ha", col: "#e0533a",
         pts: [[615, 420], [705, 405], [720, 470], [625, 485]] },
-      { id: "RESERVA R-02", uso: "EUDR conforme · 11,2 ha", col: "#1b8a5a",
+      { id: "EJEMPLO 4", uso: "Lote de ejemplo · reserva · 11,2 ha", col: "#1b8a5a",
         pts: [[1020, 145], [1135, 130], [1150, 235], [1040, 245]] }
     ];
     lotes.forEach(function (lt) {
@@ -430,6 +430,7 @@
     var cPtoB = el("circle", { cx: -20, cy: -20, r: 5.5, "class": "pto-ab", hidden: "" }, gSonda);
     var tLblA = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "A");
     var tLblB = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "B");
+    var tLblDist = el("text", { x: -20, y: -20, "text-anchor": "middle", "class": "lbl-ab lbl-dist", hidden: "" }, gSonda, "");
 
     var gCursor = el("g", { transform: "translate(880,280)" }, gSonda);
     el("circle", { cx: 0, cy: 0, r: 42, "class": "sonda-anillo" }, gCursor);
@@ -478,6 +479,7 @@
         hTit.textContent = "Transecto A-B (" + distM + " m)";
         hDes.textContent = "ΔZ " + (dZ >= 0 ? "+" : "") + dZ + " m";
       }
+      return { dist: distM, dz: dZ };
     }
 
     function actualizarSonda(x, y) {
@@ -495,7 +497,8 @@
 
       var txtSonda = Math.round(z) + " msnm · " + gr.deg.toFixed(1).replace(".", ",") + "° " + gr.rum;
       tTag.textContent = txtSonda;
-      var tagIzq = x > W - 170;
+      var angosto = window.innerWidth <= 860;
+      var tagIzq = x > (angosto ? 600 : W - 170); /* en teléfono solo se ve la franja central del mapa */
       rTag.setAttribute("x", tagIzq ? -162 : 14);
       tTag.setAttribute("x", tagIzq ? -156 : 20);
 
@@ -550,8 +553,13 @@
         cPtoB.setAttribute("cx", dest[0].toFixed(1)); cPtoB.setAttribute("cy", dest[1].toFixed(1));
         tLblB.setAttribute("x", (dest[0] + 8).toFixed(1)); tLblB.setAttribute("y", (dest[1] - 8).toFixed(1));
         cPtoB.removeAttribute("hidden"); tLblB.removeAttribute("hidden");
-        dibujarPerfil(ptoA, dest, false);
-        if (hObj) hObj.textContent = ptoB ? "Transecto A-B fijado (clic: reiniciar)" : "Mueva y haga clic para fijar B";
+        var med = dibujarPerfil(ptoA, dest, false);
+        var txtMed = med.dist.toLocaleString("es-CO") + " m · ΔZ " + (med.dz >= 0 ? "+" : "") + med.dz + " m";
+        tLblDist.textContent = med.dist.toLocaleString("es-CO") + " m";
+        tLblDist.setAttribute("x", ((ptoA[0] + dest[0]) / 2).toFixed(1)); tLblDist.setAttribute("y", ((ptoA[1] + dest[1]) / 2 - 10).toFixed(1));
+        tLblDist.removeAttribute("hidden");
+        if (!ptoB && med.dist === 0) { tLblDist.setAttribute("hidden", ""); if (hObj) hObj.textContent = "A fijado · marque el punto B"; }
+        else if (hObj) hObj.textContent = "A-B: " + txtMed;
       } else {
         var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
         dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP], true);
@@ -562,7 +570,7 @@
     function limpiarAB() {
       ptoA = null; ptoB = null;
       lTransecto.setAttribute("hidden", ""); cPtoA.setAttribute("hidden", ""); cPtoB.setAttribute("hidden", "");
-      tLblA.setAttribute("hidden", ""); tLblB.setAttribute("hidden", "");
+      tLblA.setAttribute("hidden", ""); tLblB.setAttribute("hidden", ""); tLblDist.setAttribute("hidden", "");
       if (btnLimpiar) btnLimpiar.hidden = true;
     }
 
@@ -634,8 +642,8 @@
     (function orbita(t) {
       if (heroVis && !manual && !ptoA) {
         var s = t * 0.00045;
-        var mov = window.innerWidth <= 860, cxO = mov ? 690 : 865, rxO = mov ? 115 : 195;
-        var ox = cxO + Math.cos(s) * rxO + Math.sin(s * 2.1) * 40;
+        var mov = window.innerWidth <= 860, cxO = mov ? 600 : 865, rxO = mov ? 70 : 195;
+        var ox = cxO + Math.cos(s) * rxO + Math.sin(s * 2.1) * (mov ? 15 : 40);
         var oy = 330 + Math.sin(s * 1.3) * 155 + Math.cos(s * 0.7) * 40;
         ultPt = [ox, oy];
         actualizarSonda(ox, oy);
