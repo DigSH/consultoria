@@ -534,7 +534,7 @@
         /* Perfil local en la dirección de máxima pendiente (±60 px ≈ ±250 m) */
         var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
         dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP], true);
-        if (hObj) hObj.textContent = loteActivo ? loteActivo.id + " · " + loteActivo.uso : "Clic en el mapa: medir perfil A-B";
+        if (hObj) hObj.textContent = loteActivo ? loteActivo.id + " · " + loteActivo.uso : "Clic: medir perfil A-B";
       }
     }
 

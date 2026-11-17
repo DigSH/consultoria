@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116y">
+<link rel="stylesheet" href="styles.css?v=20261116z">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -62,13 +62,13 @@
 <section class="hero" id="inicio">
   <svg class="relieve" id="relieve" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="hero-in">
-    <p class="sobretitulo">Consultoría académica y empresarial · agro · Tunja, Boyacá</p>
+    <p class="sobretitulo">Estadística · datos · agro · Tunja, Boyacá</p>
     <h1>Tu dato, <em>cultivado</em><br>hasta que aguante el jurado.</h1>
-    <p class="lema">Consultoría para tesis, grupos de investigación, asociaciones y empresas del agro. Análisis reproducible: cada número con su código, cada gráfica con su origen.</p>
+    <p class="lema">Estadística, geomática y proyectos para la academia y el agro. Análisis reproducible: cada cifra con su código, cada mapa con su fuente.</p>
     <div class="hero-acc">
-      <a class="boton" href="#buscador" data-linea="academica">Soy investigador o estudiante <span aria-hidden="true">→</span></a>
-      <a class="boton boton-alt" href="#buscador" data-linea="empresarial">Soy empresa, asociación o entidad <span aria-hidden="true">→</span></a>
-      <a class="boton boton-pro" href="#buscador" data-linea="productor">Soy productor o tengo una finca <span aria-hidden="true">→</span></a>
+      <a class="boton" href="#buscador" data-linea="academica">Investigación o tesis <span aria-hidden="true">→</span></a>
+      <a class="boton boton-alt" href="#buscador" data-linea="empresarial">Empresa o entidad <span aria-hidden="true">→</span></a>
+      <a class="boton boton-pro" href="#buscador" data-linea="productor">Productor o finca <span aria-hidden="true">→</span></a>
     </div>
     <ul class="sellos" aria-label="Credenciales">
       <li><a href="#equipo">Equipo de 4 profesionales</a></li>
@@ -79,21 +79,21 @@
   </div>
   <aside class="hero-nota gis-hud" id="gis-hud" aria-label="Consola GIS del modelo digital de elevación">
     <div class="hud-bar">
-      <span class="hud-crs"><b>QGIS · DEM ALTIPLANO</b> EPSG:9377 · 1:15 000</span>
+      <span class="hud-crs"><b>DEM · ALTIPLANO</b> EPSG:9377 · 1:15 000</span>
       <div class="hud-capas" role="group" aria-label="Capas del visor topográfico">
-        <button type="button" class="hud-chip" data-capa="curvas" aria-pressed="true">Curvas DEM</button>
-        <button type="button" class="hud-chip" data-capa="pendiente" aria-pressed="true">Pendiente / TIN</button>
-        <button type="button" class="hud-chip" data-capa="hidro" aria-pressed="true">Escorrentía</button>
-        <button type="button" class="hud-chip" data-capa="lotes" aria-pressed="true">Lotes / NDVI</button>
+        <button type="button" class="hud-chip" data-capa="curvas" aria-pressed="true">Curvas</button>
+        <button type="button" class="hud-chip" data-capa="pendiente" aria-pressed="true">Pendiente</button>
+        <button type="button" class="hud-chip" data-capa="hidro" aria-pressed="true">Drenaje</button>
+        <button type="button" class="hud-chip" data-capa="lotes" aria-pressed="true">Lotes</button>
         <button type="button" class="hud-chip hud-limpiar" id="hud-limpiar" hidden>Limpiar A-B</button>
       </div>
     </div>
     <div class="hud-cuerpo">
       <div class="hud-tele">
         <div><span class="k">COORD</span><span class="v" id="hud-coord">5°33'18"N · 73°20'42"O</span></div>
-        <div><span class="k">COTA DEM</span><span class="v" id="hud-cota">2.948 msnm</span></div>
-        <div><span class="k">PEND / ASP</span><span class="v" id="hud-pend">16,8° (30,2 %) · NO</span></div>
-        <div><span class="k">INSPECCIÓN</span><span class="v" id="hud-obj">Clic en el mapa: perfil A-B</span></div>
+        <div><span class="k">ALTITUD</span><span class="v" id="hud-cota">2.948 msnm</span></div>
+        <div><span class="k">PENDIENTE</span><span class="v" id="hud-pend">16,8° (30,2 %) · NO</span></div>
+        <div><span class="k">INSPECCIÓN</span><span class="v" id="hud-obj">Clic: medir perfil A-B</span></div>
       </div>
       <div class="hud-visor">
         <div class="hud-visor-cab"><span id="hud-perfil-tit">Perfil transversal (±250 m)</span><span id="hud-perfil-des">ΔZ 42 m</span></div>
@@ -108,7 +108,7 @@
   <div class="cab">
     <p class="sobretitulo">Empieza por tu caso</p>
     <h2>Cuéntanos tu situación en 4 pasos</h2>
-    <p class="sub">Responde cuatro preguntas cortas. Te decimos qué entregamos y te dejamos el mensaje listo para enviar. Nada se guarda ni se envía hasta que tú lo mandes.</p>
+    <p class="sub">Elige tu caso y revisa el entregable y el respaldo. Nada se guarda en esta página.</p>
   </div>
   <div class="buscador embudo">
     <div class="pasos-e">
@@ -144,10 +144,10 @@
     <h2>Cuatro pasos, todos con entregable</h2>
   </div>
   <ol class="pasos">
-    <li><span class="num">01</span><h3>Conversación y alcance</h3><p>Nos cuentas el problema, los datos que tienes y la fecha límite. Te respondemos con un alcance escrito: qué entregamos, en qué formato y cuándo.</p></li>
-    <li><span class="num">02</span><h3>Auditoría de los datos</h3><p>Revisamos duplicados, valores faltantes y supuestos antes de modelar. Lo que está mal en la base se dice desde el inicio.</p></li>
-    <li><span class="num">03</span><h3>Análisis reproducible</h3><p>Script en R o Python que cualquiera puede volver a correr. Si cambian los datos, cambian los resultados sin rehacer nada a mano.</p></li>
-    <li><span class="num">04</span><h3>Entrega y sustentación</h3><p>Informe, gráficos con calidad de publicación y una sesión para explicarte el método con las palabras que necesitarás ante tu jurado o tu junta.</p></li>
+    <li><span class="num">01</span><h3>Alcance</h3><p>Definimos por escrito qué entregamos, en qué formato y en qué fecha.</p></li>
+    <li><span class="num">02</span><h3>Auditoría</h3><p>Revisamos duplicados, faltantes y supuestos estadísticos antes de modelar.</p></li>
+    <li><span class="num">03</span><h3>Código reproducible</h3><p>Scripts en R o Python listos para volver a correr si cambian los datos.</p></li>
+    <li><span class="num">04</span><h3>Sustentación</h3><p>Informe, figuras de publicación y sesión para preparar tu defensa o comité.</p></li>
   </ol>
 </section>
 
@@ -156,7 +156,7 @@
   <div class="cab">
     <p class="sobretitulo">Doce servicios en cuatro líneas</p>
     <h2>Qué podemos hacer por ti</h2>
-    <p class="sub">Despliega los servicios que te interesen para ver qué entregamos y en qué experiencia comprobada se apoyan. Los que están en preparación lo dicen y no muestran respaldo todavía. Sin tarifas de catálogo: cada caso se cotiza con su alcance.</p>
+    <p class="sub">Toca un servicio para ver entregables y respaldo verificado. Cada caso se cotiza según su alcance.</p>
   </div>
   <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios por línea"></div>
   <div class="bloques" id="rejilla"></div>
@@ -168,7 +168,7 @@
   <div class="cab">
     <p class="sobretitulo">Evidencia, no adjetivos</p>
     <h2>Lo que ya está hecho, en cifras</h2>
-    <p class="sub">Las cifras salen de la hoja de vida verificada de Diego. Las gráficas marcadas como ilustración usan datos simulados y lo dicen.</p>
+    <p class="sub">Cifras tomadas de soportes verificados del equipo. La gráfica de cajas usa datos simulados como ejemplo.</p>
   </div>
 
   <div class="cifras" id="cifras"></div>
@@ -214,7 +214,7 @@
   <div class="cab">
     <p class="sobretitulo">Portafolio GIS</p>
     <h2>Laboratorio de mapas</h2>
-    <p class="sub">Dos herramientas que funcionan ahora mismo en tu navegador, con datos abiertos y sin instalar nada. Los casos con clientes se sumarán aquí cuando tengan autorización de publicación.</p>
+    <p class="sub">Dos herramientas abiertas que corren en tu navegador, sin enviar datos.</p>
   </div>
 
   <div class="gis-comp" id="gis-comp" aria-label="Competencias geoespaciales"></div>
@@ -222,7 +222,7 @@
   <article class="tarjeta mapa-tarjeta">
     <header>
       <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">datos en vivo</span></h3>
-      <p>Catálogo oficial de estaciones activas, leído en este momento desde datos.gov.co. Haz clic en un punto para ver su categoría, tecnología y altitud. Útil para elegir la estación de referencia de un lote o de un ensayo.</p>
+      <p>Consulta en vivo desde datos.gov.co. Toca un punto para ver municipio, categoría, tecnología y altitud.</p>
     </header>
     <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
       <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
@@ -237,7 +237,7 @@
   <article class="tarjeta mapa-tarjeta">
     <header>
       <h3>Validador de polígonos de predio <span class="etiqueta">estilo EUDR</span></h3>
-      <p>Dibuja el predio con clics sobre el mapa (cambia a vista satélite arriba a la derecha) o pega un GeoJSON. La herramienta revisa lo que más rechazan las plataformas: polígono cerrado, cruces, coordenadas invertidas o fuera de Colombia, decimales y sentido del anillo. Todo ocurre en tu equipo: no se envía ningún dato.</p>
+      <p>Marca los vértices en el mapa o pega un GeoJSON. Verifica cierre, cruces, coordenadas, decimales y umbral de 4 ha en tu navegador.</p>
     </header>
     <div class="mapa-barra">
       <button type="button" class="chip" id="v-deshacer">Deshacer punto</button>
@@ -264,7 +264,7 @@
   <div class="cab">
     <p class="sobretitulo">Quiénes somos</p>
     <h2>Un equipo, varias miradas</h2>
-    <p class="sub">Todos somos de la UPTC. Agronomía, estadística, desarrollo territorial y gestión de proyectos trabajando juntos: conocemos el surco, la base de datos y el expediente.</p>
+    <p class="sub">Egresados de la UPTC en agronomía, estadística, desarrollo territorial y administración.</p>
   </div>
   <div class="carrusel" id="equipo-car" role="region" aria-roledescription="carrusel" aria-label="Integrantes del equipo">
     <button type="button" class="car-flecha" id="car-prev" aria-label="Integrante anterior">‹</button>
@@ -278,7 +278,7 @@
   <div class="cab">
     <p class="sobretitulo">Trayectoria del equipo</p>
     <h2>Del lote al tablero</h2>
-    <p class="sub">Agronomía, estadística y gestión de proyectos. Los hitos salen de las hojas de vida de cada integrante.</p>
+    <p class="sub">Hitos verificados en las hojas de vida del equipo.</p>
   </div>
   <ol class="linea" id="linea"></ol>
   <div class="herramientas">
@@ -318,7 +318,7 @@
   <div class="cab">
     <p class="sobretitulo">Hablemos</p>
     <h2>Cuéntanos tu caso</h2>
-    <p class="sub">Con una frase basta: qué quieres lograr, qué datos tienes y para cuándo. Te respondemos con un alcance concreto.</p>
+    <p class="sub">Dinos qué quieres lograr, qué datos tienes y para cuándo.</p>
   </div>
   <div class="contacto-grid">
     <form class="formu" id="formu" novalidate>
@@ -332,7 +332,7 @@
         <button class="boton boton-claro" type="submit" data-via="correo">Enviar por correo</button>
       </div>
       <p class="formu-aviso" id="formu-aviso" role="status" aria-live="polite"></p>
-      <p class="formu-nota">No guardamos nada en esta página: el botón abre tu WhatsApp o tu correo con el mensaje escrito.</p>
+      <p class="formu-nota">Sin rastreadores: el botón abre tu WhatsApp o tu correo.</p>
     </form>
     <div class="datos-contacto">
       <p><b>WhatsApp</b><br><a id="c-wa" href="#"></a></p>
@@ -376,9 +376,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116y"></script>
+<script src="datos.js?v=20261116z"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116y"></script>
-<script src="gis.js?v=20261116y"></script>
+<script src="app.js?v=20261116z"></script>
+<script src="gis.js?v=20261116z"></script>
 </body>
 </html>
