@@ -595,3 +595,15 @@ h1,h2,h3{color:var(--tinta)}
 @media (max-width:380px){
   .sellos,.situaciones.cortas,.gis-comp{grid-template-columns:1fr}
 }
+
+
+/* ---------- diseño minimalista de secciones y listado desplegable de publicaciones ---------- */
+.seccion{padding:clamp(48px,7vw,84px) clamp(16px,4vw,40px)}
+.cab{margin-bottom:28px}
+.mas-pubs{margin-top:16px;border-top:1px solid var(--linea);padding-top:12px}
+.mas-pubs summary{cursor:pointer;font:600 13.5px var(--mono);color:var(--verde);list-style:none}
+.mas-pubs summary::-webkit-details-marker{display:none}
+.mas-pubs summary::before{content:"+ "}
+.mas-pubs[open] summary::before{content:"\2212 "}
+.mas-pubs .pubs{margin-top:12px}
+section[hidden]{display:none!important}

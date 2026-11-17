@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116m">
+<link rel="stylesheet" href="styles.css?v=20261116s">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -45,13 +45,10 @@
     <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-enlaces">Menú</button>
     <div class="enlaces" id="nav-enlaces">
       <a href="#buscador">Empieza</a>
-      <a href="#metodo">Método</a>
       <a href="#servicios">Servicios</a>
-      <a href="#evidencia">Evidencia</a>
       <a href="#mapas">Mapas</a>
+      <a href="#evidencia">Evidencia</a>
       <a href="#equipo">Equipo</a>
-      <a href="#publicaciones">Artículos</a>
-      <a href="#voces">Voces</a>
     </div>
     <a class="boton boton-chico" href="#contacto">Escríbenos</a>
   </nav>
@@ -72,9 +69,9 @@
     </div>
     <ul class="sellos" aria-label="Credenciales">
       <li><a href="#equipo">Equipo de 4 profesionales</a></li>
-      <li><a href="#servicios">Agronomía · estadística · desarrollo territorial</a></li>
+      <li><a href="#servicios">8 servicios con respaldo</a></li>
       <li><a href="#mapas">QGIS · Google Earth Engine · EUDR</a></li>
-      <li><a href="#publicaciones">7 artículos con DOI verificado</a></li>
+      <li><a href="#publicaciones">7 artículos con DOI</a></li>
     </ul>
   </div>
   <aside class="hero-nota gis-hud" id="gis-hud" aria-label="Consola GIS del modelo digital de elevación">
@@ -103,126 +100,47 @@
   </aside>
 </section>
 
-<!-- ============ EMBUDO (4 pasos guiados) ============ -->
+<!-- ============ EMBUDO (2 pasos directos) ============ -->
 <section class="seccion" id="buscador">
   <div class="cab">
-    <p class="sobretitulo">Empieza por tu caso</p>
-    <h2>Cuéntanos tu situación en 4 pasos</h2>
-    <p class="sub">Elige tu caso y revisa el entregable y el respaldo. Nada se guarda en esta página.</p>
+    <h2>¿En qué te ayudamos?</h2>
   </div>
   <div class="buscador embudo">
     <div class="pasos-e">
       <fieldset class="paso-e" id="paso-1">
-        <legend><span>1</span> ¿Quién eres?</legend>
-        <div class="situaciones cortas" id="e-linea" role="radiogroup" aria-label="Quién eres"></div>
+        <legend><span>1</span> Perfil</legend>
+        <div class="situaciones cortas" id="e-linea" role="radiogroup" aria-label="Perfil"></div>
       </fieldset>
       <fieldset class="paso-e" id="paso-2">
-        <legend><span>2</span> ¿Qué necesitas?</legend>
-        <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Qué necesitas"></div>
-        <p class="e-mas"><button type="button" class="chip" id="e-todas" aria-pressed="false">Ver todas las situaciones</button>
-          <a class="e-ver" id="e-ver" href="#resultado" hidden>Ver tu resultado ↓</a></p>
-      </fieldset>
-      <fieldset class="paso-e espera" id="paso-3">
-        <legend><span>3</span> ¿Qué tienes hoy? <small>opcional</small></legend>
-        <div class="situaciones cortas" id="e-datos" role="radiogroup" aria-label="Qué tienes hoy"></div>
-      </fieldset>
-      <fieldset class="paso-e espera" id="paso-4">
-        <legend><span>4</span> ¿Para cuándo? <small>opcional</small></legend>
-        <div class="situaciones cortas" id="e-plazo" role="radiogroup" aria-label="Para cuándo"></div>
+        <legend><span>2</span> Necesidad</legend>
+        <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Necesidad"></div>
+        <p class="e-mas"><a class="e-ver" id="e-ver" href="#resultado" hidden>Ver entregable ↓</a></p>
       </fieldset>
     </div>
     <aside class="resultado" id="resultado" aria-live="polite">
-      <p class="vacio">Responde los pasos 1 y 2 y aquí aparece qué te entregamos.</p>
+      <p class="vacio">Elige tu perfil y tu necesidad para ver qué te entregamos.</p>
     </aside>
   </div>
 </section>
 
-<!-- ============ MÉTODO ============ -->
-<section class="seccion oscura" id="metodo">
-  <div class="cab">
-    <p class="sobretitulo">Cómo trabajamos</p>
-    <h2>Cuatro pasos, todos con entregable</h2>
-  </div>
-  <ol class="pasos">
-    <li><span class="num">01</span><h3>Alcance</h3><p>Definimos por escrito qué entregamos, en qué formato y en qué fecha.</p></li>
-    <li><span class="num">02</span><h3>Auditoría</h3><p>Revisamos duplicados, faltantes y supuestos estadísticos antes de modelar.</p></li>
-    <li><span class="num">03</span><h3>Código reproducible</h3><p>Scripts en R o Python listos para volver a correr si cambian los datos.</p></li>
-    <li><span class="num">04</span><h3>Sustentación</h3><p>Informe, figuras de publicación y sesión para preparar tu defensa o comité.</p></li>
-  </ol>
-</section>
-
-<!-- ============ SERVICIOS ============ -->
+<!-- ============ SERVICIOS (8 tarjetas esenciales en una sola rejilla) ============ -->
 <section class="seccion oscura" id="servicios">
   <div class="cab">
-    <p class="sobretitulo">Doce servicios en cuatro líneas</p>
-    <h2>Qué podemos hacer por ti</h2>
-    <p class="sub">Toca un servicio para ver entregables y respaldo verificado. Cada caso se cotiza según su alcance.</p>
+    <h2>Servicios</h2>
   </div>
-  <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios por línea"></div>
-  <div class="bloques" id="rejilla"></div>
-
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios"></div>
+  <div class="rejilla" id="rejilla"></div>
 </section>
 
-<!-- ============ EVIDENCIA ============ -->
-<section class="seccion" id="evidencia">
-  <div class="cab">
-    <p class="sobretitulo">Evidencia, no adjetivos</p>
-    <h2>Lo que ya está hecho, en cifras</h2>
-    <p class="sub">Cifras tomadas de soportes verificados del equipo. La gráfica de cajas usa datos simulados como ejemplo.</p>
-  </div>
-
-  <div class="cifras" id="cifras"></div>
-
-  <div class="graficas">
-    <figure class="tarjeta ancha">
-      <figcaption>
-        <h3>Publicaciones por año</h3>
-        <p>Cada punto es un artículo con DOI verificado en Crossref. Pasa el cursor o toca un punto para leerlo.</p>
-      </figcaption>
-      <div class="lienzo" id="g-pubs"></div>
-      <div class="detalle-pub" id="detalle-pub" aria-live="polite">Toca un punto para ver el artículo.</div>
-    </figure>
-
-    <figure class="tarjeta">
-      <figcaption>
-        <h3>300+ productores, 300 puntos</h3>
-        <p>Talleres de asociatividad con productores rurales de Boyacá (Epsea UPTC · ADR).</p>
-      </figcaption>
-      <div class="lienzo" id="g-puntos"></div>
-    </figure>
-
-    <figure class="tarjeta">
-      <figcaption>
-        <h3>Así te entregamos un resultado <span class="etiqueta">ilustración · datos simulados</span></h3>
-        <p>Cuatro materiales, 30 repeticiones cada uno. Caja: cuartiles. Rombo: media con intervalo de confianza del 95 %.</p>
-      </figcaption>
-      <div class="lienzo" id="g-cajas"></div>
-    </figure>
-
-    <figure class="tarjeta ancha">
-      <figcaption>
-        <h3>La ruta del dato</h3>
-        <p>El mismo camino sirve para una tesis, un observatorio o una cooperativa.</p>
-      </figcaption>
-      <div class="lienzo" id="g-ruta"></div>
-    </figure>
-  </div>
-</section>
-
-<!-- ============ LABORATORIO GIS ============ -->
+<!-- ============ LABORATORIO GIS (solo los 2 visores en vivo) ============ -->
 <section class="seccion gis" id="mapas">
   <div class="cab">
-    <p class="sobretitulo">Portafolio GIS</p>
-    <h2>Laboratorio de mapas</h2>
-    <p class="sub">Dos herramientas abiertas que corren en tu navegador, sin enviar datos.</p>
+    <h2>Laboratorio GIS</h2>
   </div>
-
-  <div class="gis-comp" id="gis-comp" aria-label="Competencias geoespaciales"></div>
 
   <article class="tarjeta mapa-tarjeta">
     <header>
-      <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">datos en vivo</span></h3>
-      <p>Consulta en vivo desde datos.gov.co. Toca un punto para ver municipio, categoría, tecnología y altitud.</p>
+      <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">en vivo</span></h3>
     </header>
     <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
       <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
@@ -231,40 +149,59 @@
       <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
     </div>
     <div class="mapa" id="map-ideam" role="region" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
-    <p class="mapa-fuente">Fuente: IDEAM, Catálogo Nacional de Estaciones (conjunto <code>hp9r-jxuu</code>, datos.gov.co), licencia CC BY-SA 4.0. Mapa base © OpenStreetMap.</p>
+    <p class="mapa-fuente">IDEAM, conjunto <code>hp9r-jxuu</code> (datos.gov.co, CC BY-SA 4.0) · © OpenStreetMap.</p>
   </article>
 
   <article class="tarjeta mapa-tarjeta">
     <header>
-      <h3>Validador de polígonos de predio <span class="etiqueta">estilo EUDR</span></h3>
-      <p>Marca los vértices en el mapa o pega un GeoJSON. Verifica cierre, cruces, coordenadas, decimales y umbral de 4 ha en tu navegador.</p>
+      <h3>Validador de polígonos <span class="etiqueta">EUDR</span></h3>
     </header>
     <div class="mapa-barra">
-      <button type="button" class="chip" id="v-deshacer">Deshacer punto</button>
+      <button type="button" class="chip" id="v-deshacer">Deshacer</button>
       <button type="button" class="chip" id="v-limpiar">Limpiar</button>
-      <button type="button" class="chip" id="v-ejemplo">Ver ejemplo</button>
+      <button type="button" class="chip" id="v-ejemplo">Ejemplo</button>
       <button type="button" class="chip chip-fuerte" id="v-descargar" disabled>Descargar GeoJSON</button>
     </div>
     <div class="val-grid">
       <div class="mapa" id="map-predio" role="region" aria-label="Mapa para dibujar el predio"></div>
       <div class="val-lado">
-        <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haz clic en el mapa para marcar el primer vértice.</p></div>
-        <label class="val-pega">O pega un GeoJSON
-          <textarea id="v-texto" rows="4" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.356927,5.552501],[-73.353701,5.552501],[-73.353701,5.554755],[-73.356927,5.552501]]]}'></textarea>
+        <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haz clic en el mapa para marcar los vértices del predio.</p></div>
+        <label class="val-pega">Pegar GeoJSON
+          <textarea id="v-texto" rows="3" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.356927,5.552501],[-73.353701,5.552501],[-73.353701,5.554755],[-73.356927,5.552501]]]}'></textarea>
         </label>
-        <button type="button" class="chip" id="v-cargar">Validar este GeoJSON</button>
+        <button type="button" class="chip" id="v-cargar">Validar GeoJSON</button>
       </div>
     </div>
-    <p class="mapa-fuente">Validación geométrica básica del Reglamento (UE) 2023/1115: no reemplaza el cribado satelital de deforestación ni la debida diligencia completa. Mapa base © OpenStreetMap; satélite © Esri, Maxar, Earthstar Geographics.</p>
+    <p class="mapa-fuente">Geometría básica Reglamento (UE) 2023/1115 · © OpenStreetMap · © Esri, Maxar.</p>
   </article>
 </section>
 
-<!-- ============ TRAYECTORIA ============ -->
-<section class="seccion" id="equipo">
+<!-- ============ EVIDENCIA Y PUBLICACIONES ============ -->
+<section class="seccion" id="evidencia">
   <div class="cab">
-    <p class="sobretitulo">Quiénes somos</p>
-    <h2>Un equipo, varias miradas</h2>
-    <p class="sub">Egresados de la UPTC en agronomía, estadística, desarrollo territorial y administración.</p>
+    <h2>Evidencia y publicaciones</h2>
+  </div>
+
+  <div class="cifras" id="cifras"></div>
+
+  <figure class="tarjeta ancha" id="publicaciones">
+    <figcaption>
+      <h3>Artículos con DOI verificado</h3>
+    </figcaption>
+    <div class="lienzo" id="g-pubs"></div>
+    <div class="detalle-pub" id="detalle-pub" aria-live="polite">Toca un punto para ver el artículo.</div>
+    <details class="mas-pubs">
+      <summary>Ver listado completo (7 artículos y 2 cartillas)</summary>
+      <ul class="pubs" id="lista-pubs"></ul>
+      <ul class="pubs" id="lista-cartillas"></ul>
+    </details>
+  </figure>
+</section>
+
+<!-- ============ EQUIPO ============ -->
+<section class="seccion claro2" id="equipo">
+  <div class="cab">
+    <h2>Equipo</h2>
   </div>
   <div class="carrusel" id="equipo-car" role="region" aria-roledescription="carrusel" aria-label="Integrantes del equipo">
     <button type="button" class="car-flecha" id="car-prev" aria-label="Integrante anterior">‹</button>
@@ -274,41 +211,10 @@
   <div class="car-pts" id="equipo-pts" aria-label="Posición en el carrusel"></div>
 </section>
 
-<section class="seccion" id="trayectoria">
+<!-- ============ VOCES (solo visible si hay testimonios o ?demo=1) ============ -->
+<section class="seccion" id="voces" hidden>
   <div class="cab">
-    <p class="sobretitulo">Trayectoria del equipo</p>
-    <h2>Del lote al tablero</h2>
-    <p class="sub">Hitos verificados en las hojas de vida del equipo.</p>
-  </div>
-  <ol class="linea" id="linea"></ol>
-  <div class="herramientas">
-    <h3>Herramientas</h3>
-    <ul>
-      <li><b>Estadística</b> R (avanzado) · PLS-SEM / SEM · psicometría · modelos mixtos · ANOVA · PCA</li>
-      <li><b>Datos</b> PostgreSQL · Python (ETL, ML) · Power BI · Excel avanzado · R Shiny</li>
-      <li><b>Investigación</b> Bibliometrix y VOSviewer (avanzado) · OpenAlex · Scopus · LaTeX</li>
-      <li><b>Territorio</b> QGIS · Google Earth Engine · Sentinel-1/2 · EUDR</li>
-    </ul>
-  </div>
-</section>
-
-<!-- ============ PUBLICACIONES ============ -->
-<section class="seccion claro2" id="publicaciones">
-  <div class="cab">
-    <p class="sobretitulo">Para quien quiera comprobarlo</p>
-    <h2>Artículos con DOI</h2>
-    <p class="sub">Cada enlace lleva al registro oficial del artículo. Verificados en Crossref el 16 de noviembre de 2026.</p>
-  </div>
-  <ul class="pubs" id="lista-pubs"></ul>
-  <h3 class="sub-pubs">Cartillas y divulgación técnica</h3>
-  <ul class="pubs" id="lista-cartillas"></ul>
-</section>
-
-<!-- ============ VOCES ============ -->
-<section class="seccion" id="voces">
-  <div class="cab">
-    <p class="sobretitulo">Voces</p>
-    <h2>Lo que dicen quienes ya trabajaron con nosotros</h2>
+    <h2>Voces</h2>
   </div>
   <div class="voces" id="voces-lista"></div>
 </section>
@@ -316,29 +222,26 @@
 <!-- ============ CONTACTO ============ -->
 <section class="seccion oscura cierre" id="contacto">
   <div class="cab">
-    <p class="sobretitulo">Hablemos</p>
-    <h2>Cuéntanos tu caso</h2>
-    <p class="sub">Dinos qué quieres lograr, qué datos tienes y para cuándo.</p>
+    <h2>Contacto</h2>
   </div>
   <div class="contacto-grid">
     <form class="formu" id="formu" novalidate>
-      <label>Tu nombre<input name="nombre" autocomplete="name" required></label>
-      <label>Qué necesitas
+      <label>Nombre<input name="nombre" autocomplete="name" required></label>
+      <label>Servicio
         <select name="servicio" id="f-servicio"></select>
       </label>
-      <label>Tu caso en pocas líneas<textarea name="caso" rows="4" required placeholder="Ej.: tengo un ensayo con 3 tratamientos y 4 repeticiones y debo entregar resultados a mi director el 10 de diciembre."></textarea></label>
+      <label>Tu caso<textarea name="caso" rows="3" required placeholder="Qué necesitas, qué datos tienes y para cuándo."></textarea></label>
       <div class="formu-acc">
         <button class="boton" type="submit" data-via="whatsapp">Enviar por WhatsApp</button>
         <button class="boton boton-claro" type="submit" data-via="correo">Enviar por correo</button>
       </div>
       <p class="formu-aviso" id="formu-aviso" role="status" aria-live="polite"></p>
-      <p class="formu-nota">Sin rastreadores: el botón abre tu WhatsApp o tu correo.</p>
     </form>
     <div class="datos-contacto">
       <p><b>WhatsApp</b><br><a id="c-wa" href="#"></a></p>
       <p><b>Correo</b><br><a id="c-mail" href="#"></a></p>
-      <p><b>Ubicación</b><br>Tunja, Boyacá · trabajo remoto en toda Colombia</p>
-      <p><b>ORCID de Diego</b><br><a href="https://orcid.org/0009-0007-3157-6140" target="_blank" rel="noopener">0009-0007-3157-6140</a></p>
+      <p><b>Ubicación</b><br>Tunja, Boyacá · Colombia</p>
+      <p><b>ORCID</b><br><a href="https://orcid.org/0009-0007-3157-6140" target="_blank" rel="noopener">0009-0007-3157-6140</a></p>
     </div>
   </div>
 </section>
@@ -346,7 +249,6 @@
 
 <footer class="pie">
   <p>© 2026 Consultoría · Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo</p>
-  <p class="pie-s">Sitio estático, sin cookies ni rastreadores. Código abierto en el repositorio <code>consultoria</code>.</p>
 </footer>
 
 <!-- símbolos reutilizables -->
@@ -354,31 +256,19 @@
   <defs>
     <symbol id="logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#0b1b2b"/><path d="M5 22c4-2 7-2 11 0s7 2 11 0M5 17c4-2 7-2 11 0s7 2 11 0M5 12c4-2 7-2 11 0s7 2 11 0" fill="none" stroke="#ff7a59" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-tesis" viewBox="0 0 40 40"><path d="M6 32V8M6 32h30" /><rect x="11" y="20" width="5" height="12"/><rect x="19" y="12" width="5" height="20"/><rect x="27" y="17" width="5" height="15"/></symbol>
-    <symbol id="i-sem" viewBox="0 0 40 40"><circle cx="9" cy="10" r="4"/><circle cx="9" cy="30" r="4"/><circle cx="31" cy="20" r="5"/><path d="M13 11l13 7M13 29l13-7"/></symbol>
     <symbol id="i-biblio" viewBox="0 0 40 40"><circle cx="17" cy="17" r="9"/><path d="M24 24l10 10M13 17h8M17 13v8"/></symbol>
     <symbol id="i-bi" viewBox="0 0 40 40"><rect x="5" y="7" width="30" height="26" rx="2"/><path d="M10 27v-6M16 27V15M22 27v-9M28 27V12"/></symbol>
     <symbol id="i-geo" viewBox="0 0 40 40"><path d="M20 35s11-10 11-18a11 11 0 1 0-22 0c0 8 11 18 11 18z"/><circle cx="20" cy="17" r="4"/></symbol>
-    <symbol id="i-talleres" viewBox="0 0 40 40"><circle cx="20" cy="11" r="5"/><circle cx="8" cy="15" r="3.5"/><circle cx="32" cy="15" r="3.5"/><path d="M10 33c0-7 5-11 10-11s10 4 10 11M2 30c0-5 3-8 6-8M38 30c0-5-3-8-6-8"/></symbol>
-    <symbol id="i-ensayos" viewBox="0 0 40 40"><path d="M20 34V16M20 22c-6 0-9-4-9-9 6 0 9 3 9 9zM20 18c0-5 3-8 9-8 0 5-3 8-9 8zM8 34h24"/></symbol>
     <symbol id="i-proyectos" viewBox="0 0 40 40"><rect x="9" y="6" width="22" height="28" rx="2"/><path d="M14 14h12M14 20h12M14 26h7"/></symbol>
-    <symbol id="i-dron" viewBox="0 0 40 40"><circle cx="20" cy="20" r="4"/><path d="M16.5 16.5L9 9M23.5 16.5L31 9M16.5 23.5L9 31M23.5 23.5L31 31"/><circle cx="8" cy="8" r="3.5"/><circle cx="32" cy="8" r="3.5"/><circle cx="8" cy="32" r="3.5"/><circle cx="32" cy="32" r="3.5"/></symbol>
     <symbol id="i-ia" viewBox="0 0 40 40"><circle cx="20" cy="23" r="8"/><path d="M20 15c0-3 2-5 5-5M5 12V5h7M28 5h7v7M5 28v7h7M35 28v7h-7"/></symbol>
     <symbol id="i-bpa" viewBox="0 0 40 40"><path d="M20 35V17M20 24c-6 0-9-4-9-9 6 0 9 3 9 9zM20 20c0-5 3-8 9-8 0 5-3 8-9 8z"/><path d="M26 29l3 3 6-7"/></symbol>
-    <symbol id="i-articulo" viewBox="0 0 40 40"><path d="M9 6h16l6 6v22H9z"/><path d="M25 6v6h6M14 20h12M14 26h9"/></symbol>
-    <symbol id="i-invernadero" viewBox="0 0 40 40"><path d="M4 34h32M6 34V21q14-15 28 0v13M20 34V15"/></symbol>
-    <symbol id="i-suelo" viewBox="0 0 40 40"><path d="M20 6c6 8 9 12 9 16a9 9 0 0 1-18 0c0-4 3-8 9-16z"/><path d="M8 35h24"/></symbol>
-    <symbol id="i-pradera" viewBox="0 0 40 40"><path d="M6 34h28M10 34c0-8 2-14 4-18M18 34c0-10 1-18 2-24M26 34c0-8 2-12 5-16"/></symbol>
-    <symbol id="i-poscosecha" viewBox="0 0 40 40"><path d="M6 14l14-6 14 6v16l-14 6-14-6zM6 14l14 6 14-6M20 20v16"/></symbol>
-    <symbol id="i-semilla" viewBox="0 0 40 40"><path d="M20 34c-8-4-10-12-8-22 10 0 16 6 16 14 0 4-3 8-8 8z"/><path d="M14 30c3-6 6-9 10-11"/></symbol>
-    <symbol id="i-financiero" viewBox="0 0 40 40"><path d="M5 33V7M5 33h30"/><path d="M10 26l7-7 5 4 10-12"/></symbol>
-    <symbol id="i-marca" viewBox="0 0 40 40"><path d="M6 6h14l14 14-14 14L6 20z"/><circle cx="13" cy="13" r="2.5"/></symbol>
     <symbol id="i-etl" viewBox="0 0 40 40"><ellipse cx="20" cy="9" rx="11" ry="4"/><path d="M9 9v10c0 2 5 4 11 4s11-2 11-4V9M9 19v10c0 2 5 4 11 4s11-2 11-4V19"/></symbol>
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116m"></script>
+<script src="datos.js?v=20261116s"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116m"></script>
-<script src="gis.js?v=20261116m"></script>
+<script src="app.js?v=20261116s"></script>
+<script src="gis.js?v=20261116s"></script>
 </body>
 </html>

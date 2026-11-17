@@ -19,7 +19,7 @@
 
   /* ---------- competencias ---------- */
   (function comp() {
-    var c = $("#gis-comp");
+    var c = $("#gis-comp"); if (!c) return;
     (D.gis || []).forEach(function (g) {
       var d = document.createElement("div"); d.className = "gis-c";
       d.innerHTML = "<b>" + esc(g.t) + "</b><span>" + esc(g.d) + "</span>"; c.appendChild(d);
