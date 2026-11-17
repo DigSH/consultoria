@@ -615,3 +615,14 @@ section[hidden]{display:none!important}
 @media (max-width:560px){.hero h1{font-size:clamp(30px,8.4vw,40px)}}
 .hero .sobretitulo{line-height:1.5}
 .hero .hero-acc:last-child{margin-bottom:0}
+
+/* ---------- inicio: aparición escalonada del titular y de lo que lo acompaña ---------- */
+@keyframes entra-pal{from{opacity:0;transform:translateY(.45em);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes entra-sube{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  .hero h1 .pal{display:inline-block;animation:entra-pal .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero .sobretitulo{animation:entra-sube .6s ease-out both}
+  .hero .lema{animation:entra-sube .7s ease-out both;animation-delay:calc(var(--fin-titular,.9s) + .1s)}
+  .hero .hero-acc{animation:entra-sube .7s ease-out both;animation-delay:calc(var(--fin-titular,.9s) + .3s)}
+}
+@media print{.hero h1 .pal,.hero .sobretitulo,.hero .lema,.hero .hero-acc{animation:none!important}}

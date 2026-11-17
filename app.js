@@ -55,6 +55,30 @@
     secs.forEach(function (s) { io.observe(s); });
   })();
 
+  /* ---------- titular: aparición palabra por palabra (el CSS hace la animación) ---------- */
+  (function titular() {
+    var h1 = $("#inicio h1");
+    if (!h1 || reduce) return;
+    var i = 0;
+    function partir(nodo) {
+      [].slice.call(nodo.childNodes).forEach(function (n) {
+        if (n.nodeType === 1) { partir(n); return; }
+        if (n.nodeType !== 3) return;
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (t) {
+          if (!t) return;
+          if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(" ")); return; }
+          var s = document.createElement("span");
+          s.className = "pal"; s.textContent = t; s.style.animationDelay = (0.15 + i++ * 0.09) + "s";
+          frag.appendChild(s);
+        });
+        nodo.replaceChild(frag, n);
+      });
+    }
+    partir(h1);
+    $("#inicio").style.setProperty("--fin-titular", (0.15 + i * 0.09) + "s");
+  })();
+
   /* ---------- visor GIS interactivo del hero (DEM + Marching Squares + Hidrología + Perfil) ---------- */
   (function relieve() {
     var svg = $("#relieve"), hero = $("#inicio");
