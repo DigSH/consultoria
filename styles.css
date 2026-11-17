@@ -626,3 +626,12 @@ section[hidden]{display:none!important}
   .hero .hero-acc{animation:entra-sube .7s ease-out both;animation-delay:calc(var(--fin-titular,.9s) + .3s)}
 }
 @media print{.hero h1 .pal,.hero .sobretitulo,.hero .lema,.hero .hero-acc{animation:none!important}}
+
+/* ---------- inicio: velo de lectura entre el mapa y el texto ---------- */
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(244,248,250,.9) 0,rgba(244,248,250,.84) 38%,rgba(244,248,250,.5) 56%,rgba(244,248,250,0) 72%)}
+.hero-in{z-index:2}
+@media (max-width:860px){
+  .hero::after{background:linear-gradient(180deg,rgba(244,248,250,.86) 0,rgba(244,248,250,.8) 55%,rgba(244,248,250,.35) 80%,rgba(244,248,250,0) 100%)}
+}
+@media print{.hero::after{display:none}}
