@@ -61,11 +61,11 @@
     if (!svg || !hero) return;
     var W = 1200, H = 720, PASO = 15, NX = W / PASO, NY = H / PASO, ESCALA_M = 4.2;
 
-    /* 1. Modelo Digital de Elevación (DEM) analítico: altiplano de Boyacá (2.560 a 3.290 m s.n.m.) */
+    /* 1. Modelo Digital de Elevación (DEM) analítico: altiplano de Boyacá (2.560 a 3.290 msnm) */
     var cumbres = [
-      { cx: 915, cy: 255, amp: 535, sx: 230, sy: 168, rot: -0.32, nom: "▲ 3286 m · Alto del Gavilán" },
-      { cx: 1065, cy: 505, amp: 355, sx: 190, sy: 150, rot: 0.38, nom: "▲ 3082 m · Loma Chica" },
-      { cx: 695, cy: 515, amp: 305, sx: 205, sy: 145, rot: -0.22, nom: "▲ 2964 m · Cerro Sur" },
+      { cx: 915, cy: 255, amp: 535, sx: 230, sy: 168, rot: -0.32, nom: "▲ 3286 msnm · Alto del Gavilán" },
+      { cx: 1065, cy: 505, amp: 355, sx: 190, sy: 150, rot: 0.38, nom: "▲ 3082 msnm · Loma Chica" },
+      { cx: 695, cy: 515, amp: 305, sx: 205, sy: 145, rot: -0.22, nom: "▲ 2964 msnm · Cerro Sur" },
       { cx: 625, cy: 185, amp: 225, sx: 175, sy: 130, rot: 0.18 },
       { cx: 215, cy: 600, amp: 270, sx: 235, sy: 165, rot: 0.25 },
       { cx: 335, cy: 150, amp: 185, sx: 210, sy: 140, rot: -0.15 },
@@ -303,7 +303,7 @@
             x: pm[0].toFixed(1), y: (pm[1] + 3).toFixed(1), "text-anchor": "middle",
             transform: "rotate(" + ang.toFixed(1) + " " + pm[0].toFixed(1) + " " + pm[1].toFixed(1) + ")",
             "class": "cota-lbl" + (esAlta ? " alta" : "")
-      }, gNivel, cota + " m");
+      }, gNivel, cota + " msnm");
         });
       }
     }
@@ -414,8 +414,8 @@
     el("path", { d: "M-48 0h10M38 0h10M0 -48v10M0 38v10", stroke: "#0b1b2b", "stroke-width": 1.3, "stroke-opacity": 0.6 }, gCursor);
     var lAsp = el("line", { x1: 0, y1: 0, x2: 24, y2: 0, "class": "sonda-asp" }, gCursor);
     el("circle", { cx: 0, cy: 0, r: 4.5, "class": "sonda-centro" }, gCursor);
-    var rTag = el("rect", { x: 14, y: -28, width: 132, height: 20, "class": "sonda-tag" }, gCursor);
-    var tTag = el("text", { x: 20, y: -14, "class": "sonda-txt" }, gCursor, "2948 m · 16,8° NO");
+    var rTag = el("rect", { x: 14, y: -28, width: 148, height: 20, "class": "sonda-tag" }, gCursor);
+    var tTag = el("text", { x: 20, y: -14, "class": "sonda-txt" }, gCursor, "2948 msnm · 16,8° NO");
 
     /* 10. HUD y gráfico de perfil topográfico en vivo */
     var hCoord = $("#hud-coord"), hCota = $("#hud-cota"), hPend = $("#hud-pend"), hObj = $("#hud-obj");
@@ -451,7 +451,7 @@
       var dZ = Math.round(zs[muestras] - zs[0]);
       if (cursorEnMedio) {
         hTit.textContent = "Perfil local (" + distM + " m)";
-        hDes.textContent = Math.round(zMin) + " a " + Math.round(zMax) + " m";
+        hDes.textContent = Math.round(zMin) + " a " + Math.round(zMax) + " msnm";
       } else {
         hTit.textContent = "Transecto A-B (" + distM + " m)";
         hDes.textContent = "ΔZ " + (dZ >= 0 ? "+" : "") + dZ + " m";
@@ -471,11 +471,11 @@
       lAsp.setAttribute("x2", (Math.cos(radAsp) * 28).toFixed(1));
       lAsp.setAttribute("y2", (Math.sin(radAsp) * 28).toFixed(1));
 
-      var txtSonda = Math.round(z) + " m · " + gr.deg.toFixed(1).replace(".", ",") + "° " + gr.rum;
+      var txtSonda = Math.round(z) + " msnm · " + gr.deg.toFixed(1).replace(".", ",") + "° " + gr.rum;
       tTag.textContent = txtSonda;
       var tagIzq = x > W - 170;
-      rTag.setAttribute("x", tagIzq ? -146 : 14);
-      tTag.setAttribute("x", tagIzq ? -140 : 20);
+      rTag.setAttribute("x", tagIzq ? -162 : 14);
+      tTag.setAttribute("x", tagIzq ? -156 : 20);
 
       /* Isohipsa exacta bajo el cursor, sombreado DEM dinámico y paralaje 2.5D por altitud */
       pIsoViva.setAttribute("d", marchar(z, false).d);
@@ -518,7 +518,7 @@
       }
 
       if (hCoord) hCoord.textContent = geo.dms;
-      if (hCota) hCota.textContent = Math.round(z).toLocaleString("es-CO") + " m s.n.m.";
+      if (hCota) hCota.textContent = Math.round(z).toLocaleString("es-CO") + " msnm";
       if (hPend) hPend.textContent = gr.deg.toFixed(1).replace(".", ",") + "° (" + Math.round(gr.pct) + " %) · " + gr.rum;
 
       if (ptoA) {

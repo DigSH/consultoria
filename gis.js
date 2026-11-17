@@ -42,7 +42,7 @@
         if (filtro !== "todas" && e.tipo !== filtro) return;
         n++;
         L.circleMarker([e.lat, e.lon], { radius: 4.5, weight: 1, color: "#fff", fillColor: e.tipo === "auto" ? CIAN : CORAL, fillOpacity: .9 })
-          .bindPopup("<b>" + esc(e.nombre) + "</b><br>" + esc(e.municipio) + "<br>" + esc(e.categoria) + "<br>" + esc(e.tecnologia) + (e.alt ? "<br>Altitud: " + esc(e.alt) + " m" : ""))
+          .bindPopup("<b>" + esc(e.nombre) + "</b><br>" + esc(e.municipio) + "<br>" + esc(e.categoria) + "<br>" + esc(e.tecnologia) + (e.alt ? "<br>Altitud: " + esc(e.alt) + " msnm" : ""))
           .addTo(capa);
       });
       var a = est.filter(function (e) { return e.tipo === "auto"; }).length;
