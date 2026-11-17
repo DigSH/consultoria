@@ -63,9 +63,9 @@
 
     /* 1. Modelo Digital de Elevación (DEM) analítico: altiplano de Boyacá (2.560 a 3.290 msnm) */
     var cumbres = [
-      { cx: 915, cy: 255, amp: 535, sx: 230, sy: 168, rot: -0.32, nom: "▲ 3286 msnm · Alto del Gavilán" },
-      { cx: 1065, cy: 505, amp: 355, sx: 190, sy: 150, rot: 0.38, nom: "▲ 3082 msnm · Loma Chica" },
-      { cx: 695, cy: 515, amp: 305, sx: 205, sy: 145, rot: -0.22, nom: "▲ 2964 msnm · Cerro Sur" },
+      { cx: 915, cy: 255, amp: 535, sx: 230, sy: 168, rot: -0.32, nom: "▲ 3286 msnm" },
+      { cx: 1065, cy: 505, amp: 355, sx: 190, sy: 150, rot: 0.38, nom: "▲ 3082 msnm" },
+      { cx: 695, cy: 515, amp: 305, sx: 205, sy: 145, rot: -0.22, nom: "▲ 2964 msnm" },
       { cx: 625, cy: 185, amp: 225, sx: 175, sy: 130, rot: 0.18 },
       { cx: 215, cy: 600, amp: 270, sx: 235, sy: 165, rot: 0.25 },
       { cx: 335, cy: 150, amp: 185, sx: 210, sy: 140, rot: -0.15 },
