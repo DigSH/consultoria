@@ -55,47 +55,568 @@
     secs.forEach(function (s) { io.observe(s); });
   })();
 
-  /* ---------- relieve del hero (curvas de nivel generadas) ---------- */
+  /* ---------- visor GIS interactivo del hero (DEM + Marching Squares + Hidrología + Perfil) ---------- */
   (function relieve() {
-    var svg = $("#relieve"), R = rng(2026);
-    var colinas = [
-      { cx: 880, cy: 270, rs: 11, paso: 30, ini: 28 },
-      { cx: 170, cy: 640, rs: 8, paso: 34, ini: 30 },
-      { cx: 520, cy: 760, rs: 6, paso: 38, ini: 34 }
+    var svg = $("#relieve"), hero = $("#inicio");
+    if (!svg || !hero) return;
+    var W = 1200, H = 720, PASO = 15, NX = W / PASO, NY = H / PASO, ESCALA_M = 4.2;
+
+    /* 1. Modelo Digital de Elevación (DEM) analítico: altiplano de Boyacá (2.560 a 3.290 m s.n.m.) */
+    var cumbres = [
+      { cx: 915, cy: 255, amp: 535, sx: 230, sy: 168, rot: -0.32, nom: "▲ 3286 m · Alto del Gavilán" },
+      { cx: 1065, cy: 505, amp: 355, sx: 190, sy: 150, rot: 0.38, nom: "▲ 3082 m · Loma Chica" },
+      { cx: 695, cy: 515, amp: 305, sx: 205, sy: 145, rot: -0.22, nom: "▲ 2964 m · Cerro Sur" },
+      { cx: 625, cy: 185, amp: 225, sx: 175, sy: 130, rot: 0.18 },
+      { cx: 215, cy: 600, amp: 270, sx: 235, sy: 165, rot: 0.25 },
+      { cx: 335, cy: 150, amp: 185, sx: 210, sy: 140, rot: -0.15 },
+      { cx: 775, cy: 365, amp: -135, sx: 140, sy: 112, rot: 0.12 }
     ];
-    var grupos = [];
-    colinas.forEach(function (c, ci) {
-      var g = el("g", {}, svg); grupos.push({ g: g, f: 0.4 + ci * 0.35 });
-      var fases = [], amps = [];
-      for (var i = 0; i < 5; i++) { fases.push(R() * 6.28); amps.push((0.12 + R() * 0.1) / (i + 1)); }
-      for (var k = 0; k < c.rs * 3; k++) {
-        var base = c.ini + k * c.paso, pts = [];
-        for (var a = 0; a <= 360; a++) {
-          var t = a / 360 * Math.PI * 2, f = 1;
-          for (var j = 0; j < 5; j++) f += amps[j] * Math.sin((j + 2) * t + fases[j] + k * 0.12);
-          var r = base * f;
-          pts.push((c.cx + Math.cos(t) * r * 1.35).toFixed(1) + "," + (c.cy + Math.sin(t) * r).toFixed(1));
-        }
-        var p = el("path", { d: "M" + pts.join("L") + "Z" }, g);
-        if (k % 5 === 0) p.setAttribute("class", "maestra");
-        else if (k % 7 === 3) p.setAttribute("class", "oro");
-        if (!reduce) {
-          var len = 4000; p.style.strokeDasharray = len; p.style.strokeDashoffset = len;
-          p.style.transition = "stroke-dashoffset 2.6s ease-out " + (k * 0.04 + ci * 0.3) + "s";
-          requestAnimationFrame(function (q) { return function () { requestAnimationFrame(function () { q.style.strokeDashoffset = 0; }); }; }(p));
+    cumbres.forEach(function (c) { c.cos = Math.cos(c.rot); c.sen = Math.sin(c.rot); });
+
+    function elev(x, y) {
+      var z = 2540 + (x / W) * 70 + ((H - y) / H) * 40;
+      for (var i = 0; i < cumbres.length; i++) {
+        var c = cumbres[i], dx = x - c.cx, dy = y - c.cy;
+        var rx = dx * c.cos - dy * c.sen, ry = dx * c.sen + dy * c.cos;
+        z += c.amp * Math.exp(-0.5 * ((rx * rx) / (c.sx * c.sx) + (ry * ry) / (c.sy * c.sy)));
+      }
+      z += 15 * Math.sin(x * 0.015 + y * 0.01) * Math.cos(x * 0.008 - y * 0.014);
+      return z;
+    }
+
+    var rumbos = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"];
+    function grad(x, y) {
+      var e = 2.5;
+      var dzx = (elev(x + e, y) - elev(x - e, y)) / (2 * e);
+      var dzy = (elev(x, y + e) - elev(x, y - e)) / (2 * e);
+      var sx = dzx / ESCALA_M, sy = -dzy / ESCALA_M;
+      var mag = Math.hypot(sx, sy), deg = Math.atan(mag) * 180 / Math.PI;
+      var asp = (Math.atan2(-sx, -sy) * 180 / Math.PI + 360) % 360;
+      return { dzx: dzx, dzy: dzy, deg: deg, pct: mag * 100, asp: asp, rum: rumbos[Math.round(asp / 45) % 8] };
+    }
+
+    function dms(val, pos, neg) {
+      var h = val >= 0 ? pos : neg, a = Math.abs(val), g = Math.floor(a), m = Math.floor((a - g) * 60), s = ((a - g) * 3600 - m * 60).toFixed(0);
+      return g + "°" + (m < 10 ? "0" : "") + m + "'" + (s < 10 ? "0" : "") + s + '"' + h;
+    }
+    function aGeo(x, y) {
+      var lon = -73.382 + (x / W) * 0.058, lat = 5.568 - (y / H) * 0.035;
+      var este = Math.round(4959000 + x * ESCALA_M), norte = Math.round(2173024 - y * ESCALA_M);
+      return { dms: dms(lat, "N", "S") + " · " + dms(lon, "E", "O"), este: este, norte: norte };
+    }
+
+    /* 2. Malla precalculada y Marching Squares para curvas de nivel e isohipsa en vivo */
+    var malla = [];
+    for (var iy = 0; iy <= NY; iy++) {
+      var fila = [];
+      for (var ix = 0; ix <= NX; ix++) fila.push(elev(ix * PASO, iy * PASO));
+      malla.push(fila);
+    }
+    var tablaMS = {
+      1: [[3, 0]], 14: [[3, 0]], 2: [[0, 1]], 13: [[0, 1]],
+      4: [[1, 2]], 11: [[1, 2]], 8: [[2, 3]], 7: [[2, 3]],
+      3: [[3, 1]], 12: [[3, 1]], 6: [[0, 2]], 9: [[0, 2]],
+      5: [[3, 2], [0, 1]], 10: [[3, 0], [1, 2]]
+    };
+
+    function marchar(cota, coser) {
+      var segs = [], adj = {};
+      function clave(p) { return Math.round(p[0] * 5) + "_" + Math.round(p[1] * 5); }
+      for (var y = 0; y < NY; y++) {
+        var y0 = y * PASO, y1 = y0 + PASO, r0 = malla[y], r1 = malla[y + 1];
+        for (var x = 0; x < NX; x++) {
+          var z0 = r0[x], z1 = r0[x + 1], z2 = r1[x + 1], z3 = r1[x];
+          var idx = (z0 >= cota ? 1 : 0) | (z1 >= cota ? 2 : 0) | (z2 >= cota ? 4 : 0) | (z3 >= cota ? 8 : 0);
+          var pares = tablaMS[idx];
+          if (!pares) continue;
+          var x0 = x * PASO, x1 = x0 + PASO, pts = [];
+          if ((idx & 1) !== ((idx >> 1) & 1)) pts[0] = [x0 + PASO * ((cota - z0) / (z1 - z0 || 1e-6)), y0];
+          if (((idx >> 1) & 1) !== ((idx >> 2) & 1)) pts[1] = [x1, y0 + PASO * ((cota - z1) / (z2 - z1 || 1e-6))];
+          if (((idx >> 2) & 1) !== ((idx >> 3) & 1)) pts[2] = [x0 + PASO * ((cota - z3) / (z2 - z3 || 1e-6)), y1];
+          if (((idx >> 3) & 1) !== (idx & 1)) pts[3] = [x0, y0 + PASO * ((cota - z0) / (z3 - z0 || 1e-6))];
+          for (var k = 0; k < pares.length; k++) {
+            var a = pts[pares[k][0]], b = pts[pares[k][1]];
+            var si = segs.length; segs.push([a, b]);
+            if (coser) {
+              var ka = clave(a), kb = clave(b);
+              (adj[ka] = adj[ka] || []).push(si); (adj[kb] = adj[kb] || []).push(si);
+            }
+          }
         }
       }
+      if (!coser) {
+        var d = "";
+        for (var i = 0; i < segs.length; i++) {
+          var s = segs[i];
+          d += "M" + s[0][0].toFixed(1) + " " + s[0][1].toFixed(1) + "L" + s[1][0].toFixed(1) + " " + s[1][1].toFixed(1);
+        }
+        return { d: d, cadenas: [] };
+      }
+      var usado = [], cadenas = [], dCosido = "";
+      for (var j = 0; j < segs.length; j++) {
+        if (usado[j]) continue;
+        usado[j] = 1;
+        var cad = [segs[j][0], segs[j][1]];
+        while (true) {
+          var kf = clave(cad[cad.length - 1]), ls = adj[kf], sig = -1;
+          if (ls) for (var m = 0; m < ls.length; m++) if (!usado[ls[m]]) { sig = ls[m]; break; }
+          if (sig < 0) break;
+          usado[sig] = 1;
+          var sg = segs[sig]; cad.push(clave(sg[0]) === kf ? sg[1] : sg[0]);
+        }
+        while (true) {
+          var ki = clave(cad[0]), ls2 = adj[ki], ant = -1;
+          if (ls2) for (var n = 0; n < ls2.length; n++) if (!usado[ls2[n]]) { ant = ls2[n]; break; }
+          if (ant < 0) break;
+          usado[ant] = 1;
+          var sg2 = segs[ant]; cad.unshift(clave(sg2[0]) === ki ? sg2[1] : sg2[0]);
+        }
+        cadenas.push(cad);
+        dCosido += "M" + cad.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L");
+      }
+      return { d: dCosido, cadenas: cadenas };
+    }
+
+    /* 3. Definiciones SVG: máscara de legibilidad para el texto izquierdo */
+    var defs = el("defs", {}, svg);
+    var gradMask = el("linearGradient", { id: "mask-grad", x1: "0%", y1: "0%", x2: "100%", y2: "0%" }, defs);
+    el("stop", { offset: "0%", "stop-color": "#fff", "stop-opacity": "0.42" }, gradMask);
+    el("stop", { offset: "42%", "stop-color": "#fff", "stop-opacity": "0.52" }, gradMask);
+    el("stop", { offset: "62%", "stop-color": "#fff", "stop-opacity": "0.94" }, gradMask);
+    el("stop", { offset: "100%", "stop-color": "#fff", "stop-opacity": "1" }, gradMask);
+    var mask = el("mask", { id: "hero-mask" }, defs);
+    el("rect", { x: 0, y: 0, width: W, height: H, fill: "url(#mask-grad)" }, mask);
+
+    var gRaiz = el("g", { mask: "url(#hero-mask)" }, svg);
+    var gCaneva = el("g", { id: "capa-caneva" }, gRaiz);
+    var gCurvas = el("g", { id: "capa-curvas" }, gRaiz);
+    var gPend = el("g", { id: "capa-pendiente" }, gRaiz);
+    var gHidro = el("g", { id: "capa-hidro" }, gRaiz);
+    var gLotes = el("g", { id: "capa-lotes" }, gRaiz);
+    var gSonda = el("g", { id: "capa-sonda" }, svg);
+
+    /* 4. Capa 0: Canevá cartográfico, coordenadas, rosa de los vientos y escala */
+    for (var gx = 150; gx < W; gx += 150) {
+      el("line", { x1: gx, y1: 0, x2: gx, y2: H, "class": "can-lin" }, gCaneva);
+      var geoX = aGeo(gx, 0);
+      el("text", { x: gx + 4, y: 74, "class": "can-txt" }, gCaneva, (geoX.este / 1000).toFixed(1) + " km E");
+    }
+    for (var gy = 120; gy < H; gy += 120) {
+      el("line", { x1: 0, y1: gy, x2: W, y2: gy, "class": "can-lin" }, gCaneva);
+      var geoY = aGeo(0, gy);
+      el("text", { x: W - 8, y: gy - 4, "text-anchor": "end", "class": "can-txt" }, gCaneva, (geoY.norte / 1000).toFixed(1) + " km N");
+      for (var gx2 = 150; gx2 < W; gx2 += 150) {
+        el("path", { d: "M" + (gx2 - 4) + " " + gy + "h8M" + gx2 + " " + (gy - 4) + "v8", "class": "can-cruz" }, gCaneva);
+      }
+    }
+    var gNorte = el("g", { transform: "translate(1152,96)" }, gCaneva);
+    el("circle", { cx: 0, cy: 0, r: 18, fill: "#fbfdfecc", stroke: "#0b1b2b", "stroke-width": 1, "stroke-opacity": 0.35 }, gNorte);
+    el("path", { d: "M0 -14L5 6L0 2L-5 6Z", fill: "#0b1b2b" }, gNorte);
+    el("path", { d: "M0 -14L0 2L5 6Z", fill: "#e0533a" }, gNorte);
+    el("text", { x: 0, y: -21, "text-anchor": "middle", "class": "can-txt", style: "font-weight:700;fill:#0b1b2b" }, gNorte, "N");
+
+    var gEsc = el("g", { transform: "translate(985,84)" }, gCaneva);
+    el("rect", { x: 0, y: 0, width: 60, height: 5, fill: "#0b1b2b", "fill-opacity": 0.7 }, gEsc);
+    el("rect", { x: 60, y: 0, width: 60, height: 5, fill: "#fbfdfe", stroke: "#0b1b2b", "stroke-width": 1 }, gEsc);
+    el("text", { x: 0, y: 16, "class": "can-txt" }, gEsc, "0");
+    el("text", { x: 60, y: 16, "text-anchor": "middle", "class": "can-txt" }, gEsc, "250 m");
+    el("text", { x: 120, y: 16, "text-anchor": "end", "class": "can-txt" }, gEsc, "500 m");
+
+    /* 5. Capa 1: Ráster DEM con sombreado analítico interactivo (Hillshade) + curvas de nivel (2600 a 3275 m) */
+    var cDem = document.createElement("canvas");
+    cDem.className = "dem-canvas"; cDem.width = 240; cDem.height = 144;
+    hero.insertBefore(cDem, svg);
+    var ctxDem = cDem.getContext && cDem.getContext("2d");
+    var RW = 240, RH = 144, RN = RW * RH;
+    var demNx = new Float32Array(RN), demNy = new Float32Array(RN), demNz = new Float32Array(RN);
+    var demR = new Uint8Array(RN), demG = new Uint8Array(RN), demB = new Uint8Array(RN), demA = new Uint8Array(RN);
+    var imgDem = ctxDem ? ctxDem.createImageData(RW, RH) : null;
+    if (ctxDem) {
+      for (var ry = 0, pi = 0; ry < RH; ry++) {
+        var vyR = (ry + 0.5) * (H / RH);
+        for (var rx = 0; rx < RW; rx++, pi++) {
+          var vxR = (rx + 0.5) * (W / RW);
+          var zR = elev(vxR, vyR), gR = grad(vxR, vyR);
+          var nxR = -gR.dzx / ESCALA_M, nyR = -gR.dzy / ESCALA_M, nzR = 0.26;
+          var invN = 1 / Math.hypot(nxR, nyR, nzR);
+          demNx[pi] = nxR * invN; demNy[pi] = nyR * invN; demNz[pi] = nzR * invN;
+          var tZ = Math.max(0, Math.min(1, (zR - 2580) / 680));
+          /* Rampa hipsométrica estilo QGIS (azul valle -> verde esmeralda -> ocre -> terracota cumbre) */
+          var cr, cg, cb;
+          if (tZ < 0.35) { var u1 = tZ / 0.35; cr = 212 - u1 * 48; cg = 232 - u1 * 12; cb = 238 - u1 * 38; }
+          else if (tZ < 0.7) { var u2 = (tZ - 0.35) / 0.35; cr = 164 + u2 * 68; cg = 220 - u2 * 22; cb = 200 - u2 * 52; }
+          else { var u3 = (tZ - 0.7) / 0.3; cr = 232 + u3 * 18; cg = 198 - u3 * 52; cb = 148 - u3 * 36; }
+          demR[pi] = cr; demG[pi] = cg; demB[pi] = cb;
+          var fMask = vxR < 520 ? 0.22 + (vxR / 520) * 0.25 : Math.min(0.82, 0.47 + ((vxR - 520) / 420) * 0.35);
+          demA[pi] = Math.round(fMask * (65 + tZ * 115));
+        }
+      }
+    }
+    function pintarDem(cx, cy) {
+      if (!ctxDem || !imgDem) return;
+      var d = imgDem.data, lx = (cx - W * 0.55) / 520 - 0.55, ly = (cy - H * 0.5) / 420 - 0.55, lz = 0.72;
+      var invL = 1 / Math.hypot(lx, ly, lz); lx *= invL; ly *= invL; lz *= invL;
+      var rCx = cx * (RW / W), rCy = cy * (RH / H), rLente2 = 8.4 * 8.4;
+      for (var i = 0, p = 0; i < RN; i++, p += 4) {
+        var sh = demNx[i] * lx + demNy[i] * ly + demNz[i] * lz;
+        var luz = Math.max(0.58, Math.min(1.22, 0.68 + sh * 0.52));
+        var ix = i % RW, iy = (i / RW) | 0;
+        var dxL = ix - rCx, dyL = iy - rCy, dist2 = dxL * dxL + dyL * dyL;
+        if (dist2 < rLente2) {
+          /* Lupa multiespectral NDVI / pendiente dentro del anillo de la sonda */
+          d[p] = Math.min(255, (demR[i] * 0.45 + (1 - demNz[i]) * 380) | 0);
+          d[p + 1] = Math.min(255, (demG[i] * 0.85 + sh * 45) | 0);
+          d[p + 2] = Math.min(255, (demB[i] * 0.55) | 0);
+          d[p + 3] = Math.min(220, demA[i] + 55);
+        } else {
+          d[p] = Math.min(255, (demR[i] * luz) | 0);
+          d[p + 1] = Math.min(255, (demG[i] * luz) | 0);
+          d[p + 2] = Math.min(255, (demB[i] * luz) | 0);
+          d[p + 3] = demA[i];
+        }
+      }
+      ctxDem.putImageData(imgDem, 0, 0);
+    }
+
+    var capasParalaje = [];
+
+    for (var cota = 2600, idxC = 0; cota <= 3275; cota += 25, idxC++) {
+      var esMaestra = cota % 100 === 0, esAlta = cota >= 3100;
+      var resC = marchar(cota, true);
+      if (!resC.d) continue;
+      var cls = "curva" + (esMaestra ? " maestra" : "") + (esAlta ? " alta" : "");
+      var gNivel = el("g", {}, gCurvas); capasParalaje.push({ g: gNivel, f: (cota - 2580) / 700 });
+      var pCurva = el("path", { d: resC.d, "class": cls }, gNivel);
+      if (!reduce && esMaestra) {
+        pCurva.style.strokeDasharray = 3600; pCurva.style.strokeDashoffset = 3600;
+        pCurva.style.transition = "stroke-dashoffset 2.2s ease-out " + (idxC * 0.04) + "s";
+        requestAnimationFrame(function (q) { return function () { requestAnimationFrame(function () { q.style.strokeDashoffset = 0; }); }; }(pCurva));
+      }
+      if (esMaestra) {
+        resC.cadenas.forEach(function (cad) {
+          if (cad.length < 28) return;
+          var mIdx = Math.floor(cad.length * 0.55), pm = cad[mIdx], pa = cad[mIdx - 2], pb = cad[mIdx + 2];
+          if (!pm || pm[0] < 540 || pm[0] > 1140 || pm[1] < 60 || pm[1] > 660) return;
+          var ang = Math.atan2(pb[1] - pa[1], pb[0] - pa[0]) * 180 / Math.PI;
+          if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+          el("text", {
+            x: pm[0].toFixed(1), y: (pm[1] + 3).toFixed(1), "text-anchor": "middle",
+            transform: "rotate(" + ang.toFixed(1) + " " + pm[0].toFixed(1) + " " + pm[1].toFixed(1) + ")",
+            "class": "cota-lbl" + (esAlta ? " alta" : "")
+      }, gNivel, cota + " m");
+        });
+      }
+    }
+    cumbres.forEach(function (c) {
+      if (!c.nom) return;
+      el("text", { x: c.cx, y: c.cy - 6, "text-anchor": "middle", "class": "cumbre-lbl" }, gCurvas, c.nom);
     });
-    if (reduce) return;
-    var tx = 0, ty = 0, raf = 0;
-    document.addEventListener("pointermove", function (e) {
-      var nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
-      if (raf) return;
-      raf = requestAnimationFrame(function () {
-        raf = 0;
-        grupos.forEach(function (o) { o.g.setAttribute("transform", "translate(" + (nx * 40 * o.f).toFixed(1) + " " + (ny * 28 * o.f).toFixed(1) + ")"); });
+
+    /* 6. Capa 2: Red TIN y campo vectorial de pendientes (reactivo al cursor) */
+    var nodosTIN = [
+      [915, 255], [785, 210], [1045, 220], [830, 355], [985, 365],
+      [1065, 505], [910, 485], [695, 515], [625, 185], [680, 340], [1135, 370]
+    ];
+    var paresTIN = [[0,1],[0,2],[0,3],[0,4],[1,8],[1,9],[3,9],[3,6],[4,2],[4,5],[4,6],[4,10],[5,6],[5,10],[6,7],[3,7],[8,9]];
+    var dTIN = paresTIN.map(function (pr) {
+      var a = nodosTIN[pr[0]], b = nodosTIN[pr[1]];
+      return "M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1];
+    }).join("");
+    el("path", { d: dTIN, "class": "tin-arista" }, gPend);
+
+    var vectores = [];
+    for (var vy = 84; vy <= H - 70; vy += 54) {
+      for (var vx = 480; vx <= W - 45; vx += 54) {
+        var gr = grad(vx, vy);
+        if (gr.deg < 3.5) continue;
+        var len = Math.min(20, 6 + gr.deg * 0.55);
+        var rad = (gr.asp - 90) * Math.PI / 180;
+        var ux = Math.cos(rad), uy = Math.sin(rad);
+        var col = gr.deg > 22 ? "#e0533a" : gr.deg > 13 ? "#6b4fc7" : "#0b6e8a";
+        var lin = el("line", {
+          x1: vx.toFixed(1), y1: vy.toFixed(1),
+          x2: (vx + ux * len).toFixed(1), y2: (vy + uy * len).toFixed(1),
+          stroke: col, "stroke-opacity": 0.42, "class": "vec-pend"
+        }, gPend);
+        vectores.push({ x: vx, y: vy, ux: ux, uy: uy, len: len, el: lin });
+      }
+    }
+
+    /* 7. Capa 3: Red de escorrentía superficial D8 + trazador hidrológico en vivo */
+    function trazarFlujo(x0, y0, pasos, pasoPx) {
+      var x = x0, y = y0, pts = [[x, y]];
+      for (var i = 0; i < pasos; i++) {
+        var g = grad(x, y), m = Math.hypot(g.dzx, g.dzy);
+        if (m < 0.015) break;
+        x -= (g.dzx / m) * pasoPx;
+        y -= (g.dzy / m) * pasoPx;
+        if (x < 10 || x > W - 10 || y < 10 || y > H - 10) break;
+        pts.push([x, y]);
+      }
+      return pts;
+    }
+    var semillasHidro = [[865, 235], [955, 290], [820, 310], [1025, 470], [725, 475], [645, 220]];
+    semillasHidro.forEach(function (s) {
+      var tr = trazarFlujo(s[0], s[1], 55, 11);
+      if (tr.length > 5) {
+        el("path", { d: "M" + tr.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L"), "class": "drenaje" }, gHidro);
+      }
+    });
+    var pFlujoVivo = el("path", { d: "", "class": "flujo-vivo" }, gHidro);
+    var cDescarga = el("circle", { cx: -20, cy: -20, r: 4, fill: "#009ec2", stroke: "#fff", "stroke-width": 1.5 }, gHidro);
+
+    /* 8. Capa 4: Polígonos prediales georreferenciados (Papa, Arándano, Ensayo, Reserva EUDR) */
+    var lotes = [
+      { id: "LOTE P-01", uso: "Papa Diacol Capiro · 6,4 ha · NDVI 0,78", col: "#0b6e8a",
+        pts: [[760, 155], [855, 140], [870, 215], [775, 235]] },
+      { id: "LOTE A-04", uso: "Arándano Biloxi · 3,8 ha · NDVI 0,82", col: "#6b4fc7",
+        pts: [[945, 325], [1035, 310], [1050, 385], [955, 395]] },
+      { id: "ENSAYO E-12", uso: "Bioinsumos DBCA (120 UE) · 2,1 ha", col: "#e0533a",
+        pts: [[615, 420], [705, 405], [720, 470], [625, 485]] },
+      { id: "RESERVA R-02", uso: "Bosque altoandino · EUDR conforme · 11,2 ha", col: "#1b8a5a",
+        pts: [[1020, 145], [1135, 130], [1150, 235], [1040, 245]] }
+    ];
+    lotes.forEach(function (lt) {
+      var gL = el("g", { "class": "lote-g" }, gLotes);
+      lt.el = gL;
+      var strPts = lt.pts.map(function (p) { return p[0] + "," + p[1]; }).join(" ");
+      el("polygon", { points: strPts, fill: lt.col, stroke: lt.col, "class": "lote-poly" }, gL);
+      var cx = 0, cy = 0;
+      lt.pts.forEach(function (p) {
+        cx += p[0]; cy += p[1];
+        el("rect", { x: p[0] - 3, y: p[1] - 3, width: 6, height: 6, "class": "lote-vert" }, gL);
       });
+      cx /= lt.pts.length; cy /= lt.pts.length;
+      el("text", { x: cx.toFixed(1), y: cy.toFixed(1), "text-anchor": "middle", "class": "lote-lbl" }, gL, lt.id);
+    });
+
+    function enPoligono(x, y, pts) {
+      var dentro = false;
+      for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        var xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1];
+        if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) dentro = !dentro;
+      }
+      return dentro;
+    }
+
+    /* 9. Capa 5: Sonda interactiva en vivo, isohipsa dinámica y transecto A-B */
+    var pIsoViva = el("path", { d: "", "class": "iso-viva" }, gSonda);
+    var lHiloX = el("line", { x1: 0, y1: 0, x2: W, y2: 0, "class": "hilo" }, gSonda);
+    var lHiloY = el("line", { x1: 0, y1: 0, x2: 0, y2: H, "class": "hilo" }, gSonda);
+    var lTransecto = el("line", { x1: 0, y1: 0, x2: 0, y2: 0, "class": "transecto", hidden: "" }, gSonda);
+    var cPtoA = el("circle", { cx: -20, cy: -20, r: 5.5, "class": "pto-ab", hidden: "" }, gSonda);
+    var cPtoB = el("circle", { cx: -20, cy: -20, r: 5.5, "class": "pto-ab", hidden: "" }, gSonda);
+    var tLblA = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "A");
+    var tLblB = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "B");
+
+    var gCursor = el("g", { transform: "translate(880,280)" }, gSonda);
+    el("circle", { cx: 0, cy: 0, r: 42, "class": "sonda-anillo" }, gCursor);
+    el("path", { d: "M-48 0h10M38 0h10M0 -48v10M0 38v10", stroke: "#0b1b2b", "stroke-width": 1.3, "stroke-opacity": 0.6 }, gCursor);
+    var lAsp = el("line", { x1: 0, y1: 0, x2: 24, y2: 0, "class": "sonda-asp" }, gCursor);
+    el("circle", { cx: 0, cy: 0, r: 4.5, "class": "sonda-centro" }, gCursor);
+    var rTag = el("rect", { x: 14, y: -28, width: 132, height: 20, "class": "sonda-tag" }, gCursor);
+    var tTag = el("text", { x: 20, y: -14, "class": "sonda-txt" }, gCursor, "2948 m · 16,8° NO");
+
+    /* 10. HUD y gráfico de perfil topográfico en vivo */
+    var hCoord = $("#hud-coord"), hCota = $("#hud-cota"), hPend = $("#hud-pend"), hObj = $("#hud-obj");
+    var hTit = $("#hud-perfil-tit"), hDes = $("#hud-perfil-des"), svgPerf = $("#hud-perfil"), btnLimpiar = $("#hud-limpiar");
+    var pPerfArea = el("path", { d: "", fill: "#0b6e8a", "fill-opacity": 0.32 }, svgPerf);
+    var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#3d9fb8", "stroke-width": 2 }, svgPerf);
+    var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#ff7a59", stroke: "#08131f", "stroke-width": 1.5 }, svgPerf);
+
+    var ptoA = null, ptoB = null;
+
+    function dibujarPerfil(p1, p2, cursorEnMedio) {
+      var muestras = 32, zs = [], zMin = Infinity, zMax = -Infinity;
+      for (var i = 0; i <= muestras; i++) {
+        var t = i / muestras;
+        var px = p1[0] + (p2[0] - p1[0]) * t, py = p1[1] + (p2[1] - p1[1]) * t;
+        var z = elev(px, py);
+        zs.push(z);
+        if (z < zMin) zMin = z; if (z > zMax) zMax = z;
+      }
+      var span = Math.max(30, zMax - zMin), PW = 220, PH = 52, pad = 5;
+      var pts = zs.map(function (z, idx) {
+        var x = (idx / muestras) * PW;
+        var y = PH - pad - ((z - zMin) / span) * (PH - pad * 2);
+        return [x, y];
+      });
+      var dLin = "M" + pts.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L");
+      pPerfLinea.setAttribute("d", dLin);
+      pPerfArea.setAttribute("d", dLin + "L" + PW + " " + PH + "L0 " + PH + "Z");
+      var idxPin = cursorEnMedio ? Math.floor(muestras / 2) : muestras;
+      cPerfPin.setAttribute("cx", pts[idxPin][0].toFixed(1));
+      cPerfPin.setAttribute("cy", pts[idxPin][1].toFixed(1));
+      var distM = Math.round(Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) * ESCALA_M);
+      var dZ = Math.round(zs[muestras] - zs[0]);
+      if (cursorEnMedio) {
+        hTit.textContent = "Perfil local (" + distM + " m)";
+        hDes.textContent = Math.round(zMin) + " a " + Math.round(zMax) + " m";
+      } else {
+        hTit.textContent = "Transecto A-B (" + distM + " m)";
+        hDes.textContent = "ΔZ " + (dZ >= 0 ? "+" : "") + dZ + " m";
+      }
+    }
+
+    function actualizarSonda(x, y) {
+      x = Math.max(20, Math.min(W - 20, x));
+      y = Math.max(20, Math.min(H - 20, y));
+      var z = elev(x, y), gr = grad(x, y), geo = aGeo(x, y);
+
+      lHiloX.setAttribute("y1", y.toFixed(1)); lHiloX.setAttribute("y2", y.toFixed(1));
+      lHiloY.setAttribute("x1", x.toFixed(1)); lHiloY.setAttribute("x2", x.toFixed(1));
+      gCursor.setAttribute("transform", "translate(" + x.toFixed(1) + "," + y.toFixed(1) + ")");
+
+      var radAsp = (gr.asp - 90) * Math.PI / 180;
+      lAsp.setAttribute("x2", (Math.cos(radAsp) * 28).toFixed(1));
+      lAsp.setAttribute("y2", (Math.sin(radAsp) * 28).toFixed(1));
+
+      var txtSonda = Math.round(z) + " m · " + gr.deg.toFixed(1).replace(".", ",") + "° " + gr.rum;
+      tTag.textContent = txtSonda;
+      var tagIzq = x > W - 170;
+      rTag.setAttribute("x", tagIzq ? -146 : 14);
+      tTag.setAttribute("x", tagIzq ? -140 : 20);
+
+      /* Isohipsa exacta bajo el cursor, sombreado DEM dinámico y paralaje 2.5D por altitud */
+      pIsoViva.setAttribute("d", marchar(z, false).d);
+      if (!gCurvas.hasAttribute("hidden")) {
+        pintarDem(x, y);
+        var nxP = (x / W - 0.5) * 26, nyP = (y / H - 0.5) * 18;
+        for (var ip = 0; ip < capasParalaje.length; ip++) {
+          var cp = capasParalaje[ip];
+          cp.g.setAttribute("transform", "translate(" + (nxP * cp.f).toFixed(1) + "," + (nyP * cp.f).toFixed(1) + ")");
+        }
+      }
+
+      /* Escorrentía en vivo pendiente abajo */
+      if (!gHidro.hasAttribute("hidden")) {
+        var fl = trazarFlujo(x, y, 42, 11);
+        if (fl.length > 2) {
+          pFlujoVivo.setAttribute("d", "M" + fl.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L"));
+          var ult = fl[fl.length - 1];
+          cDescarga.setAttribute("cx", ult[0].toFixed(1)); cDescarga.setAttribute("cy", ult[1].toFixed(1));
+        }
+      }
+
+      /* Campo de vectores de pendiente reactivo al radio de la sonda */
+      if (!gPend.hasAttribute("hidden")) {
+        for (var i = 0; i < vectores.length; i++) {
+          var v = vectores[i], d = Math.hypot(v.x - x, v.y - y);
+          var f = d < 165 ? 1 + (1 - d / 165) * 0.75 : 1;
+          v.el.setAttribute("x2", (v.x + v.ux * v.len * f).toFixed(1));
+          v.el.setAttribute("y2", (v.y + v.uy * v.len * f).toFixed(1));
+          v.el.setAttribute("stroke-opacity", d < 165 ? "0.88" : "0.38");
+        }
+      }
+
+      /* Detección de polígono de lote bajo el cursor */
+      var loteActivo = null;
+      for (var j = 0; j < lotes.length; j++) {
+        var dentro = enPoligono(x, y, lotes[j].pts);
+        lotes[j].el.classList.toggle("activo", dentro);
+        if (dentro) loteActivo = lotes[j];
+      }
+
+      if (hCoord) hCoord.textContent = geo.dms;
+      if (hCota) hCota.textContent = Math.round(z).toLocaleString("es-CO") + " m s.n.m.";
+      if (hPend) hPend.textContent = gr.deg.toFixed(1).replace(".", ",") + "° (" + Math.round(gr.pct) + " %) · " + gr.rum;
+
+      if (ptoA) {
+        var dest = ptoB || [x, y];
+        lTransecto.setAttribute("x1", ptoA[0].toFixed(1)); lTransecto.setAttribute("y1", ptoA[1].toFixed(1));
+        lTransecto.setAttribute("x2", dest[0].toFixed(1)); lTransecto.setAttribute("y2", dest[1].toFixed(1));
+        cPtoB.setAttribute("cx", dest[0].toFixed(1)); cPtoB.setAttribute("cy", dest[1].toFixed(1));
+        tLblB.setAttribute("x", (dest[0] + 8).toFixed(1)); tLblB.setAttribute("y", (dest[1] - 8).toFixed(1));
+        cPtoB.removeAttribute("hidden"); tLblB.removeAttribute("hidden");
+        dibujarPerfil(ptoA, dest, false);
+        if (hObj) hObj.textContent = ptoB ? "Transecto A-B fijado (clic para reiniciar)" : "Mueve y haz clic para fijar B";
+      } else {
+        /* Perfil local en la dirección de máxima pendiente (±60 px ≈ ±250 m) */
+        var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
+        dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP], true);
+        if (hObj) hObj.textContent = loteActivo ? loteActivo.id + " · " + loteActivo.uso : "Clic en el mapa: medir perfil A-B";
+      }
+    }
+
+    function limpiarAB() {
+      ptoA = null; ptoB = null;
+      lTransecto.setAttribute("hidden", ""); cPtoA.setAttribute("hidden", ""); cPtoB.setAttribute("hidden", "");
+      tLblA.setAttribute("hidden", ""); tLblB.setAttribute("hidden", "");
+      if (btnLimpiar) btnLimpiar.hidden = true;
+    }
+
+    function aCoordSVG(e) {
+      var r = svg.getBoundingClientRect();
+      if (!r.width || !r.height) return [880, 280];
+      var esc = Math.max(r.width / W, r.height / H);
+      var ox = (r.width - W * esc) / 2, oy = (r.height - H * esc) / 2;
+      return [(e.clientX - r.left - ox) / esc, (e.clientY - r.top - oy) / esc];
+    }
+
+    /* Interacción con puntero y clic para transecto A-B */
+    var manual = false, raf = 0, ultPt = [885, 275];
+    hero.addEventListener("pointermove", function (e) {
+      if (e.target.closest && e.target.closest(".gis-hud")) return;
+      manual = true;
+      ultPt = aCoordSVG(e);
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = 0; actualizarSonda(ultPt[0], ultPt[1]); });
     }, { passive: true });
+
+    hero.addEventListener("pointerleave", function () { if (!ptoA) manual = false; });
+
+    hero.addEventListener("click", function (e) {
+      if (e.target.closest && e.target.closest("a, button, .gis-hud")) return;
+      manual = true;
+      var pt = aCoordSVG(e);
+      if (!ptoA) {
+        ptoA = pt; ptoB = null;
+        cPtoA.setAttribute("cx", pt[0].toFixed(1)); cPtoA.setAttribute("cy", pt[1].toFixed(1));
+        tLblA.setAttribute("x", (pt[0] + 8).toFixed(1)); tLblA.setAttribute("y", (pt[1] - 8).toFixed(1));
+        cPtoA.removeAttribute("hidden"); tLblA.removeAttribute("hidden"); lTransecto.removeAttribute("hidden");
+        if (btnLimpiar) btnLimpiar.hidden = false;
+      } else if (!ptoB) {
+        ptoB = pt;
+      } else {
+        limpiarAB();
+      }
+      actualizarSonda(pt[0], pt[1]);
+    });
+
+    if (btnLimpiar) btnLimpiar.addEventListener("click", function () { limpiarAB(); actualizarSonda(ultPt[0], ultPt[1]); });
+
+    /* Botones de capas en el HUD */
+    var mapaCapas = { curvas: gCurvas, pendiente: gPend, hidro: gHidro, lotes: gLotes };
+    [].forEach.call(document.querySelectorAll(".hud-chip[data-capa]"), function (b) {
+      b.addEventListener("click", function () {
+        var k = b.dataset.capa, g = mapaCapas[k];
+        if (!g) return;
+        var vis = b.getAttribute("aria-pressed") !== "true";
+        b.setAttribute("aria-pressed", vis ? "true" : "false");
+        if (vis) g.removeAttribute("hidden"); else g.setAttribute("hidden", "");
+        if (k === "curvas") cDem.hidden = !vis;
+        actualizarSonda(ultPt[0], ultPt[1]);
+      });
+    });
+
+    /* Escaneo orbital autónomo mientras el usuario no mueve el cursor */
+    actualizarSonda(885, 275);
+    if (reduce) return;
+    var heroVis = true;
+    if ("IntersectionObserver" in window) {
+      var ioH = new IntersectionObserver(function (es) { heroVis = es[0].isIntersecting; }, { threshold: 0.05 });
+      ioH.observe(hero);
+    }
+    (function orbita(t) {
+      if (heroVis && !manual && !ptoA) {
+        var s = t * 0.00045;
+        var ox = 865 + Math.cos(s) * 195 + Math.sin(s * 2.1) * 55;
+        var oy = 330 + Math.sin(s * 1.3) * 155 + Math.cos(s * 0.7) * 40;
+        ultPt = [ox, oy];
+        actualizarSonda(ox, oy);
+      }
+      requestAnimationFrame(orbita);
+    })(0);
   })();
 
   /* ---------- embudo guiado (4 pasos) ---------- */

@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116v">
+<link rel="stylesheet" href="styles.css?v=20261116x">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -77,7 +77,30 @@
       <li><a href="#publicaciones">7 artículos con DOI verificado</a></li>
     </ul>
   </div>
-  <div class="hero-nota" aria-hidden="true"><span>Mueve el cursor: el relieve responde.</span></div>
+  <aside class="hero-nota gis-hud" id="gis-hud" aria-label="Consola GIS del modelo digital de elevación">
+    <div class="hud-bar">
+      <span class="hud-crs"><b>QGIS · DEM ALTIPLANO</b> EPSG:9377 · 1:15 000</span>
+      <div class="hud-capas" role="group" aria-label="Capas del visor topográfico">
+        <button type="button" class="hud-chip" data-capa="curvas" aria-pressed="true">Curvas DEM</button>
+        <button type="button" class="hud-chip" data-capa="pendiente" aria-pressed="true">Pendiente / TIN</button>
+        <button type="button" class="hud-chip" data-capa="hidro" aria-pressed="true">Escorrentía</button>
+        <button type="button" class="hud-chip" data-capa="lotes" aria-pressed="true">Lotes / NDVI</button>
+        <button type="button" class="hud-chip hud-limpiar" id="hud-limpiar" hidden>Limpiar A-B</button>
+      </div>
+    </div>
+    <div class="hud-cuerpo">
+      <div class="hud-tele">
+        <div><span class="k">COORD</span><span class="v" id="hud-coord">5°33'18"N · 73°20'42"O</span></div>
+        <div><span class="k">COTA DEM</span><span class="v" id="hud-cota">2.948 m s.n.m.</span></div>
+        <div><span class="k">PEND / ASP</span><span class="v" id="hud-pend">16,8° (30,2 %) · NO</span></div>
+        <div><span class="k">INSPECCIÓN</span><span class="v" id="hud-obj">Clic en el mapa: perfil A-B</span></div>
+      </div>
+      <div class="hud-visor">
+        <div class="hud-visor-cab"><span id="hud-perfil-tit">Perfil transversal (±250 m)</span><span id="hud-perfil-des">ΔZ 42 m</span></div>
+        <svg class="hud-perfil" id="hud-perfil" viewBox="0 0 220 52" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </aside>
 </section>
 
 <!-- ============ EMBUDO (4 pasos guiados) ============ -->
@@ -353,9 +376,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116v"></script>
+<script src="datos.js?v=20261116x"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116v"></script>
-<script src="gis.js?v=20261116v"></script>
+<script src="app.js?v=20261116x"></script>
+<script src="gis.js?v=20261116x"></script>
 </body>
 </html>

@@ -47,9 +47,9 @@ a{color:var(--verde)}
 .hero{position:relative;min-height:min(100svh,880px);display:flex;align-items:center;overflow:hidden;
   background:radial-gradient(120% 90% at 75% 20%,#f8fbfc 0,var(--papel) 60%,var(--papel2) 100%)}
 .relieve{position:absolute;inset:0;width:100%;height:100%}
-.relieve path{fill:none;stroke:var(--verde);stroke-opacity:.2;stroke-width:1.1;vector-effect:non-scaling-stroke}
-.relieve path.maestra{stroke-opacity:.42;stroke-width:1.6}
-.relieve path.oro{stroke:#e0533a;stroke-opacity:.38}
+.relieve path.curva{fill:none;stroke:var(--verde);stroke-opacity:.36;stroke-width:1.15;vector-effect:non-scaling-stroke}
+.relieve path.curva.maestra{stroke-opacity:.72;stroke-width:1.8}
+.relieve path.curva.oro{stroke:#e0533a;stroke-opacity:.58}
 .hero-in{position:relative;max-width:var(--max);margin:0 auto;padding:130px clamp(16px,4vw,40px) 90px;width:100%}
 .sobretitulo{font:600 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ocre);margin:0 0 18px}
 .oscura .sobretitulo{color:var(--oro)}
@@ -220,9 +220,9 @@ h1,h2,h3{color:var(--tinta)}
 }
 
 @media (max-width:860px){
-  .relieve path{stroke-opacity:.16}
-  .relieve path.maestra{stroke-opacity:.3}
-  .relieve path.oro{stroke-opacity:.3}
+  .relieve path.curva{stroke-opacity:.26}
+  .relieve path.curva.maestra{stroke-opacity:.52}
+  .relieve path.curva.oro{stroke-opacity:.45}
 }
 
 /* ===== Laboratorio GIS ===== */
@@ -455,3 +455,72 @@ h1,h2,h3{color:var(--tinta)}
 
 /* una tarjeta contraída ocupa solo su altura, sin estirarse a la de su vecina */
 .serv.cerrada{align-self:start}
+
+
+/* ---------- visor GIS profesional en el hero (estilo QGIS / DEM) ---------- */
+.hero{cursor:crosshair}
+.hero-in{pointer-events:none;padding:124px clamp(16px,4vw,40px) 168px}
+.hero-in h1,.hero-in .lema,.hero-in .sobretitulo,.hero-in a,.hero-in button,.gis-hud{pointer-events:auto;cursor:auto}
+.hero-in a,.hero-in button{cursor:pointer}
+.relieve .can-lin{stroke:#0b6e8a;stroke-opacity:.11;stroke-width:1;stroke-dasharray:2 6;vector-effect:non-scaling-stroke}
+.relieve .can-cruz{stroke:#0b1b2b;stroke-opacity:.28;stroke-width:1.1;vector-effect:non-scaling-stroke}
+.relieve .can-txt{font:600 9.5px var(--mono);fill:#3a4b5c;fill-opacity:.72;letter-spacing:.04em}
+.dem-canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;opacity:.88;transition:opacity .3s}
+.dem-canvas[hidden]{display:none}
+.relieve .hipso{stroke:none;pointer-events:none}
+.relieve path.curva{fill:none;stroke:var(--verde);stroke-opacity:.38;stroke-width:1.15;vector-effect:non-scaling-stroke}
+.relieve path.curva.maestra{stroke:#06485c;stroke-opacity:.68;stroke-width:1.75}
+.relieve path.curva.alta{stroke:#b83b24;stroke-opacity:.58;stroke-width:1.45}
+.relieve text.cota-lbl{font:700 9.5px var(--mono);fill:#075268;paint-order:stroke;stroke:var(--papel);stroke-width:4px;stroke-linejoin:round;letter-spacing:.03em}
+.relieve text.cota-lbl.alta{fill:#9a2c19}
+.relieve text.cumbre-lbl{font:700 10px var(--mono);fill:var(--tinta);paint-order:stroke;stroke:var(--papel);stroke-width:4px}
+.relieve path.tin-arista{fill:none;stroke:#3d9fb8;stroke-opacity:.16;stroke-width:.85;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.relieve line.vec-pend{stroke-width:1.35;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.relieve path.drenaje{fill:none;stroke:#0b6e8a;stroke-opacity:.55;stroke-width:1.85;stroke-dasharray:8 5;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:fluye 1.5s linear infinite}
+.relieve path.flujo-vivo{fill:none;stroke:#009ec2;stroke-opacity:.95;stroke-width:2.5;stroke-dasharray:7 4;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:fluye .8s linear infinite}
+.relieve polygon.lote-poly{fill-opacity:.13;stroke-width:1.65;stroke-dasharray:6 3;vector-effect:non-scaling-stroke;transition:fill-opacity .2s,stroke-width .2s}
+.relieve g.lote-g.activo polygon.lote-poly{fill-opacity:.28;stroke-width:2.5;stroke-dasharray:none}
+.relieve rect.lote-vert{fill:#fff;stroke:var(--tinta);stroke-width:1.2}
+.relieve text.lote-lbl{font:700 9.5px var(--mono);fill:var(--tinta);paint-order:stroke;stroke:#fbfdfedd;stroke-width:3.5px;letter-spacing:.03em}
+.relieve path.iso-viva{fill:none;stroke:var(--oro);stroke-opacity:.94;stroke-width:2.35;vector-effect:non-scaling-stroke}
+.relieve line.hilo{stroke:var(--tinta);stroke-opacity:.22;stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.relieve circle.sonda-anillo{fill:#0b6e8a0e;stroke:var(--tinta);stroke-opacity:.68;stroke-width:1.3;stroke-dasharray:5 3}
+.relieve circle.sonda-centro{fill:var(--oro);stroke:var(--tinta);stroke-width:1.8}
+.relieve line.sonda-asp{stroke:var(--ocre);stroke-width:2;stroke-linecap:round}
+.relieve rect.sonda-tag{fill:var(--tinta);fill-opacity:.9;rx:5}
+.relieve text.sonda-txt{font:600 10px var(--mono);fill:#fff}
+.relieve line.transecto{stroke:var(--ocre);stroke-width:2.4;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
+.relieve circle.pto-ab{fill:var(--oro);stroke:var(--tinta);stroke-width:2}
+.relieve text.lbl-ab{font:700 10.5px var(--mono);fill:var(--tinta);paint-order:stroke;stroke:#fff;stroke-width:3.5px}
+.relieve [hidden]{display:none}
+
+/* consola flotante GIS en el hero */
+.hero-nota.gis-hud{position:absolute;bottom:14px;right:clamp(16px,4vw,40px);z-index:4;opacity:1;
+  background:rgba(11,27,43,.92);backdrop-filter:blur(8px);color:#e8eff4;border:1px solid #28425c;
+  border-radius:14px;padding:10px 14px;width:min(650px,calc(100vw - 32px));box-shadow:0 10px 28px rgba(11,27,43,.22);
+  display:grid;gap:8px;font:11.5px/1.35 var(--mono)}
+.hud-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid #243b53;padding-bottom:7px}
+.hud-crs{color:#9fd3e0;font-size:11px;letter-spacing:.04em}
+.hud-crs b{color:var(--oro);font-weight:700;margin-right:4px}
+.hud-capas{display:flex;gap:5px;flex-wrap:wrap}
+.hud-chip{font:600 10.5px var(--mono);background:#14293e;color:#bccad6;border:1px solid #35516d;padding:3px 9px;border-radius:999px;cursor:pointer;transition:all .15s}
+.hud-chip:hover{border-color:var(--oro);color:#fff}
+.hud-chip[aria-pressed=true]{background:var(--verde);color:#fff;border-color:#3d9fb8}
+.hud-chip.hud-limpiar{background:#3a1d1c;color:#ffb3a1;border-color:var(--oro)}
+.hud-chip[hidden]{display:none}
+.hud-cuerpo{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;align-items:center}
+.hud-tele{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px}
+.hud-tele>div{display:flex;flex-direction:column;min-width:0}
+.hud-tele .k{font-size:9.5px;color:#8fa6b8;letter-spacing:.08em}
+.hud-tele .v{font-size:11.5px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud-visor{background:#08131f;border:1px solid #243b53;border-radius:9px;padding:5px 8px;display:grid;gap:2px}
+.hud-visor-cab{display:flex;justify-content:space-between;font-size:9.5px;color:#9fd3e0}
+.hud-visor-cab span:last-child{color:var(--oro);font-weight:700}
+.hud-perfil{width:100%;height:46px;display:block;overflow:visible}
+@media (max-width:860px){
+  .hero{flex-direction:column;align-items:stretch}
+  .hero-in{padding:106px clamp(16px,4vw,40px) 24px}
+  .hero-nota.gis-hud{display:grid;position:relative;right:auto;bottom:auto;margin:0 clamp(16px,4vw,40px) 22px;width:auto}
+  .hud-cuerpo{grid-template-columns:1fr}
+}
+@media print{.hero-nota.gis-hud,#capa-sonda{display:none!important}}
