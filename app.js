@@ -551,7 +551,7 @@
         tLblB.setAttribute("x", (dest[0] + 8).toFixed(1)); tLblB.setAttribute("y", (dest[1] - 8).toFixed(1));
         cPtoB.removeAttribute("hidden"); tLblB.removeAttribute("hidden");
         dibujarPerfil(ptoA, dest, false);
-        if (hObj) hObj.textContent = ptoB ? "Transecto A-B fijado (clic: reiniciar)" : "Mueve y haz clic para fijar B";
+        if (hObj) hObj.textContent = ptoB ? "Transecto A-B fijado (clic: reiniciar)" : "Mueva y haga clic para fijar B";
       } else {
         var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
         dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP], true);
@@ -672,7 +672,7 @@
     }
     function situaciones() {
       est.sit = null;
-      if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elige primero tu perfil (paso 1).</p>'; return; }
+      if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elija primero su perfil (paso 1).</p>'; return; }
       var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
       grupo(bs, lista, function (s) { est.sit = s; render(); });
     }
@@ -690,13 +690,13 @@
     function render() {
       if (ver) ver.hidden = !(est.linea && est.sit);
       if (!est.linea || !est.sit) {
-        res.innerHTML = '<p class="vacio">Elige tu perfil y tu necesidad para ver qué te entregamos.</p>';
+        res.innerHTML = '<p class="vacio">Elija su perfil y su necesidad para ver qué le entregamos.</p>';
         return;
       }
       var sv = est.sit.servicio ? serv(est.sit.servicio) : null, txt = resumen();
       var sel = $("#f-servicio"); if (sel) sel.value = sv ? sv.id : "otro";
       var cuerpo = !sv
-        ? '<h3>Conversemos tu caso</h3><p>Cuéntanos en dos líneas qué necesitas y te proponemos alcance y fecha.</p>'
+        ? '<h3>Conversemos su caso</h3><p>Cuéntenos en dos líneas qué necesita y le proponemos alcance y fecha.</p>'
         : '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Entregable</dt><dd>' + esc(sv.entrega) + '</dd><dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>';
       res.innerHTML = '<div class="entra">' + cuerpo +
         '<div class="e-acc"><a class="boton" target="_blank" rel="noopener" href="' + waLink("Hola, equipo de Consultoría. " + txt) + '">Enviar por WhatsApp</a>' +
@@ -905,7 +905,7 @@
       e.preventDefault();
       var nombre = f.nombre.value.trim(), caso = f.caso.value.trim(), falta = [];
       marca(f.nombre, !!nombre); marca(f.caso, !!caso);
-      if (!nombre) falta.push("tu nombre"); if (!caso) falta.push("tu caso");
+      if (!nombre) falta.push("su nombre"); if (!caso) falta.push("su caso");
       if (falta.length) { aviso.textContent = "Falta " + falta.join(" y ") + "."; (nombre ? f.caso : f.nombre).focus(); return; }
       aviso.textContent = "";
       var sv = serv(f.servicio.value), t = sv ? sv.titulo : "otro tema";
@@ -913,8 +913,8 @@
       if (via === "correo") {
         var copiado = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(msg).then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
         copiado.then(function (ok) {
-          aviso.textContent = ok ? "Abriendo tu correo. También copiamos el mensaje al portapapeles (" + c.correo + ")."
-                                 : "Abriendo tu correo (" + c.correo + ").";
+          aviso.textContent = ok ? "Abriendo su correo. También copiamos el mensaje al portapapeles (" + c.correo + ")."
+                                 : "Abriendo su correo (" + c.correo + ").";
         });
         location.href = "mailto:" + c.correo + "?subject=" + encodeURIComponent("Consulta: " + t) + "&body=" + encodeURIComponent(msg);
       } else window.open(waLink(msg), "_blank", "noopener");

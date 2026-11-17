@@ -146,7 +146,7 @@
     function analizar() {
       dibujar(); ultimo = null; btnDes.disabled = true;
       if (pts.length < 3) {
-        res.innerHTML = '<p class="vacio">' + (pts.length === 0 ? "Haz clic en el mapa para marcar el primer vértice." : "Llevas " + pts.length + " vértice(s). Se necesitan al menos 3.") + "</p>";
+        res.innerHTML = '<p class="vacio">' + (pts.length === 0 ? "Haga clic en el mapa para marcar el primer vértice." : "Lleva " + pts.length + " vértice(s). Se necesitan al menos 3.") + "</p>";
         return;
       }
       var items = [], mal = 0;
@@ -163,10 +163,10 @@
       items.push(fila("ok", "Área esférica (±0,5 %): <b>" + ha.toLocaleString("es-CO", { maximumFractionDigits: 2 }) + " ha</b> · perímetro " + Math.round(per).toLocaleString("es-CO") + " m."));
       if (repetidos) { items.push(fila("mal", "<b>" + repetidos + " vértice(s) repetido(s)</b> o a menos de 1 cm del siguiente: separa los puntos.")); mal++; }
       if (ha < 0.0001) { items.push(fila("mal", "<b>El área es prácticamente cero</b> (menos de 1 m²): los vértices están repetidos o alineados.")); mal++; }
-      if (cruces) { items.push(fila("mal", "<b>El contorno se cruza consigo mismo</b> (" + cruces + " cruce(s)). Las plataformas lo rechazan: corrige los vértices."));  mal++; }
+      if (cruces) { items.push(fila("mal", "<b>El contorno se cruza consigo mismo</b> (" + cruces + " cruce(s)). Las plataformas lo rechazan: corrija los vértices."));  mal++; }
       else items.push(fila("ok", "Sin cruces del contorno."));
       if (invert) { items.push(fila("mal", "Las coordenadas parecen <b>invertidas</b> (latitud y longitud intercambiadas). GeoJSON va en orden [longitud, latitud].")); mal++; }
-      else if (fuera) { items.push(fila("mal", "<b>" + fuera + " vértice(s) fuera del recuadro de Colombia</b>: revisa el signo y el orden de las coordenadas.")); mal++; }
+      else if (fuera) { items.push(fila("mal", "<b>" + fuera + " vértice(s) fuera del recuadro de Colombia</b>: revise el signo y el orden de las coordenadas.")); mal++; }
       else items.push(fila("ok", "Todos los vértices están dentro del recuadro geográfico de Colombia (no distingue las fronteras con países vecinos)."));
       items.push(dec >= 6 ? fila("ok", "Precisión de coordenadas suficiente (6 decimales o más).") : fila("aviso", "Algunas coordenadas tienen solo " + dec + " decimal(es). Se recomiendan al menos 6 (≈ 0,1 m)."));
       items.push(cw ? fila("aviso", "El anillo va en sentido horario; al descargar se corrige a antihorario (norma RFC 7946).") : fila("ok", "Sentido del anillo correcto (antihorario)."));
@@ -197,7 +197,7 @@
     });
     $("#v-cargar").addEventListener("click", function () {
       var txt = $("#v-texto").value.trim(); avisos = [];
-      if (!txt) { res.innerHTML = '<p class="vacio">Pega primero un GeoJSON.</p>'; return; }
+      if (!txt) { res.innerHTML = '<p class="vacio">Pegue primero un GeoJSON.</p>'; return; }
       var g;
       try { g = JSON.parse(txt); } catch (e) { res.innerHTML = '<ul>' + fila("mal", "No es un JSON válido: " + esc(e.message)) + "</ul>"; return; }
       if (g.type === "FeatureCollection") g = (g.features || [])[0]; if (g && g.type === "Feature") g = g.geometry;

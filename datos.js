@@ -41,7 +41,7 @@ window.CONSULTORIA = {
 
     { id: "ia", cat: "datos", corto: "IA agrícola", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "ia",
       titulo: "Modelos de IA a medida para fincas",
-      entrega: "Visión por computador y proyección de cosecha entrenados con tus datos, con error medido y tablero de uso.",
+      entrega: "Visión por computador y proyección de cosecha entrenados con sus datos, con error medido y tablero de uso.",
       respaldo: "Diagnóstico por imagen en 7 cultivos (Surco AgTech, YOLOv8/EfficientNet) · Certificación IA MinTIC (2024)" },
 
     { id: "geomatica", cat: "datos", corto: "GIS, dron y EUDR", responsables: ["Stiven", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "geo",
@@ -128,7 +128,7 @@ window.CONSULTORIA = {
 
   testimonios: [],
   testimoniosDemo: [
-    { cita: "Aquí irá, con su permiso, la frase textual de quien trabajó contigo.", nombre: "Nombre y apellido", rol: "Tesista · Universidad", servicio: "estadistica" },
+    { cita: "Aquí irá, con su permiso, la frase textual de quien trabajó con el equipo.", nombre: "Nombre y apellido", rol: "Tesista · Universidad", servicio: "estadistica" },
     { cita: "Una frase corta sobre qué cambió: tiempo ahorrado, resultado aprobado, decisión tomada.", nombre: "Nombre y apellido", rol: "Directora de grupo de investigación", servicio: "cienciometria" },
     { cita: "Mejor si menciona el entregable concreto, el plazo y el resultado.", nombre: "Nombre y apellido", rol: "Asociación de productores", servicio: "proyectos" }
   ]
