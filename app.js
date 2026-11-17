@@ -546,6 +546,10 @@
     }
 
     function aCoordSVG(e) {
+      if (svg.createSVGPoint && svg.getScreenCTM) {
+        var ctm = svg.getScreenCTM();
+        if (ctm) { var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; var p = pt.matrixTransform(ctm.inverse()); return [p.x, p.y]; }
+      }
       var r = svg.getBoundingClientRect();
       if (!r.width || !r.height) return [880, 280];
       var esc = Math.max(r.width / W, r.height / H);
@@ -610,7 +614,8 @@
     (function orbita(t) {
       if (heroVis && !manual && !ptoA) {
         var s = t * 0.00045;
-        var ox = 865 + Math.cos(s) * 195 + Math.sin(s * 2.1) * 55;
+        var mov = window.innerWidth <= 860, cxO = mov ? 690 : 865, rxO = mov ? 115 : 195;
+        var ox = cxO + Math.cos(s) * rxO + Math.sin(s * 2.1) * 40;
         var oy = 330 + Math.sin(s * 1.3) * 155 + Math.cos(s * 0.7) * 40;
         ultPt = [ox, oy];
         actualizarSonda(ox, oy);
