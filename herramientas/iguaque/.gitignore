@@ -1,0 +1,5 @@
+# intermedios que los scripts vuelven a generar
+*.npy
+*.geojson
+*.json
+*.png

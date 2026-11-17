@@ -74,3 +74,11 @@ No se publican números de contrato ni nombres de clientes. La maestría de Zahi
 2. Conseguir 2 o 3 testimonios reales (ver `docs/TESTIMONIOS.md`) y pasarlos a `datos.js`.
 3. Enlace del repositorio EUDR y de un caso de tablero público, para sumarlos como prueba cuando estén verificados.
 4. Dominio propio (opcional) y correo de la consultoría distinto del personal.
+
+## Estudio longitudinal del páramo Iguaque - Merchán (Laboratorio GIS)
+
+- La tarjeta la dibuja `iguaque.js` con dos archivos generados: `datos/iguaque-datos.js` (cifras por año, límite y focos) y `datos/iguaque-perdida.png` (imagen codificada: 0 sin cobertura, 200 cobertura en pie, 1 a 25 año de pérdida). No se editan a mano.
+- Fuentes: límite oficial de Minambiente (capa «Páramos Delimitados», Resolución 1555 de 2016, 1:25.000) y Hansen/UMD Global Forest Change v1.13 (30 m, dosel de al menos 30 % en 2000).
+- Para regenerarlos (por ejemplo, cuando salga una versión nueva de Hansen): correr en orden `herramientas/iguaque/01_limite.py`, `02_hansen.py`, `03_focos.py` y `04_imagen_zona.py`. Necesitan `rasterio`, `shapely`, `numpy` y `Pillow`; `02` lee la tesela por ventana, sin descargarla completa.
+- Comprobación: `03` y `04` imprimen el número de píxeles por año; en el navegador `IGUAQUE_PRUEBA.cuenta(19)` debe dar lo mismo que el script.
+- Cifras vigentes (v1.13): 26.520,7 ha de páramo, 16.403 ha con cobertura arbórea en 2000, 127,3 ha perdidas entre 2001 y 2025 (117,0 antes del corte EUDR y 10,3 después); 445,6 ha en la franja exterior de 2 km.

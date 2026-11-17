@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261117d">
+<link rel="stylesheet" href="styles.css?v=20261117e">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -130,6 +130,41 @@
   <div class="cab">
     <h2>Laboratorio GIS</h2>
   </div>
+
+  <article class="tarjeta mapa-tarjeta" id="iguaque">
+    <header>
+      <h3>Páramo Iguaque - Merchán: pérdida de cobertura arbórea, 2001–2025 <span class="etiqueta">estudio longitudinal</span></h3>
+      <p>Límite oficial del complejo de páramos y pérdida anual de cobertura arbórea detectada por satélite, con el corte EUDR del 31 de diciembre de 2020 como referencia.</p>
+    </header>
+    <div class="mapa-barra ig-barra">
+      <button type="button" class="chip chip-fuerte" id="ig-play" aria-pressed="false">▶ Reproducir</button>
+      <input type="range" id="ig-rango" min="2000" max="2025" step="1" value="2000" aria-label="Año del estudio">
+      <button type="button" class="chip" id="ig-bosque" aria-pressed="true">Cobertura arbórea</button>
+      <button type="button" class="chip" id="ig-vista">Ver todo</button>
+    </div>
+    <div class="val-grid ig-grid">
+      <div class="ig-mapa">
+        <div class="mapa" id="map-iguaque" role="region" aria-label="Mapa del Complejo de Páramos Iguaque - Merchán con la pérdida de cobertura arbórea por año"></div>
+        <div class="ig-anio" id="ig-anio" aria-live="off">2000</div>
+        <ul class="ig-leyenda" aria-label="Leyenda">
+          <li><i class="ig-l ig-l-lim"></i>Límite del páramo</li>
+          <li><i class="ig-l ig-l-bos"></i>Cobertura arbórea en pie</li>
+          <li><i class="ig-l ig-l-act"></i>Pérdida del año</li>
+          <li><i class="ig-l ig-l-acu"></i>Pérdida acumulada</li>
+        </ul>
+      </div>
+      <div class="val-lado ig-lado">
+        <p class="ig-k">Pérdida acumulada dentro del páramo</p>
+        <p class="ig-acum" id="ig-acum" aria-live="polite">0,0 ha</p>
+        <p class="ig-det" id="ig-det"></p>
+        <div class="ig-barras" id="ig-barras"></div>
+        <p class="ig-ley2"><i class="ig-l ig-l-pa"></i>Páramo <i class="ig-l ig-l-fr"></i>Franja exterior de 2 km</p>
+        <p class="ig-resumen" id="ig-resumen"></p>
+        <p class="mapa-cuenta" id="ig-estado" role="status">Cargando el estudio…</p>
+      </div>
+    </div>
+    <p class="mapa-fuente">Pérdida de cobertura arbórea: Hansen/UMD/Google/USGS/NASA, Global Forest Change v1.13 (30 m, dosel de al menos 30 % en 2000; CC BY 4.0). Límite: Minambiente, Resolución 1555 de 2016, escala 1:25.000. La pérdida de cobertura arbórea incluye talas, incendios y aprovechamientos; es un cribado de apoyo y requiere verificación en campo. Usa las mismas fuentes de evidencia forestal de nuestro prototipo <a href="https://digsh.github.io/EUDR-OpenAI/" target="_blank" rel="noopener">EUDR Copilot</a>.</p>
+  </article>
 
   <article class="tarjeta mapa-tarjeta">
     <header>
@@ -258,9 +293,10 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261117d"></script>
+<script src="datos.js?v=20261117e"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261117d"></script>
-<script src="gis.js?v=20261117d"></script>
+<script src="app.js?v=20261117e"></script>
+<script src="gis.js?v=20261117e"></script>
+<script src="iguaque.js?v=20261117e"></script>
 </body>
 </html>
