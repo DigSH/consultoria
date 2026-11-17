@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Consultoría · Estadística, datos y proyectos para el agro y la academia</title>
-<meta name="description" content="Consultoría académica y empresarial: análisis estadístico para tesis, bibliometría, tableros en Power BI, ensayos agronómicos, Buenas Prácticas Agrícolas, gobernanza de datos, fotogrametría, formulación de proyectos, análisis geoespacial y trazabilidad EUDR. Equipo de agronomía, estadística y gestión de proyectos, Tunja.">
+<meta name="description" content="Consultoría académica, empresarial y agrícola en Tunja, Boyacá: estadística, bibliometría, Power BI, gobernanza de datos, geomática con dron, trazabilidad EUDR, Buenas Prácticas Agrícolas y formulación de proyectos.">
 <meta property="og:title" content="Consultoría · Estadística, datos y proyectos para el agro y la academia">
-<meta property="og:description" content="Resultados que resisten al jurado, al comité y al campo. Análisis reproducible, tableros y ensayos.">
+<meta property="og:description" content="Evidencia verificable para investigar, decidir y producir. Cada cifra se entrega con su código y cada mapa con su fuente.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://digsh.github.io/consultoria/">
 <meta property="og:image" content="https://digsh.github.io/consultoria/og-portada.png">
@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261116s">
+<link rel="stylesheet" href="styles.css?v=20261116w">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -59,29 +59,28 @@
 <section class="hero" id="inicio">
   <svg class="relieve" id="relieve" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="hero-in">
-    <p class="sobretitulo">Estadística · datos · agro · Tunja, Boyacá</p>
-    <h1>Tu dato, <em>cultivado</em><br>hasta que aguante el jurado.</h1>
-    <p class="lema">Estadística, geomática y proyectos para la academia y el agro. Análisis reproducible: cada cifra con su código, cada mapa con su fuente.</p>
+    <p class="sobretitulo">Consultoría académica, empresarial y agrícola · Tunja, Boyacá</p>
+    <h1>Evidencia <em>verificable</em> para investigar, decidir y producir.</h1>
+    <p class="lema">Estadística, geomática y formulación de proyectos. Cada cifra se entrega con su código y cada mapa con su fuente.</p>
     <div class="hero-acc">
       <a class="boton" href="#buscador" data-linea="academica">Investigación o tesis <span aria-hidden="true">→</span></a>
-      <a class="boton boton-alt" href="#buscador" data-linea="empresarial">Empresa o entidad <span aria-hidden="true">→</span></a>
-      <a class="boton boton-pro" href="#buscador" data-linea="productor">Productor o finca <span aria-hidden="true">→</span></a>
+      <a class="boton" href="#buscador" data-linea="empresarial">Empresa o entidad <span aria-hidden="true">→</span></a>
+      <a class="boton" href="#buscador" data-linea="productor">Productor o finca <span aria-hidden="true">→</span></a>
     </div>
     <ul class="sellos" aria-label="Credenciales">
       <li><a href="#equipo">Equipo de 4 profesionales</a></li>
       <li><a href="#servicios">8 servicios con respaldo</a></li>
-      <li><a href="#mapas">QGIS · Google Earth Engine · EUDR</a></li>
       <li><a href="#publicaciones">7 artículos con DOI</a></li>
     </ul>
   </div>
-  <aside class="hero-nota gis-hud" id="gis-hud" aria-label="Consola GIS del modelo digital de elevación">
+  <aside class="hero-nota gis-hud" id="gis-hud" aria-label="Consola GIS de demostración, con relieve simulado">
     <div class="hud-bar">
-      <span class="hud-crs"><b>DEM · ALTIPLANO</b> EPSG:9377 · 1:15 000</span>
+      <span class="hud-crs"><b>DEMOSTRACIÓN</b> Relieve simulado · EPSG:9377</span>
       <div class="hud-capas" role="group" aria-label="Capas del visor topográfico">
         <button type="button" class="hud-chip" data-capa="curvas" aria-pressed="true">Curvas</button>
-        <button type="button" class="hud-chip" data-capa="pendiente" aria-pressed="true">Pendiente</button>
+        <button type="button" class="hud-chip" data-capa="pendiente" aria-pressed="false">Pendiente</button>
         <button type="button" class="hud-chip" data-capa="hidro" aria-pressed="true">Drenaje</button>
-        <button type="button" class="hud-chip" data-capa="lotes" aria-pressed="true">Lotes</button>
+        <button type="button" class="hud-chip" data-capa="lotes" aria-pressed="false">Lotes</button>
         <button type="button" class="hud-chip hud-limpiar" id="hud-limpiar" hidden>Limpiar A-B</button>
       </div>
     </div>
@@ -266,9 +265,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261116s"></script>
+<script src="datos.js?v=20261116w"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261116s"></script>
-<script src="gis.js?v=20261116s"></script>
+<script src="app.js?v=20261116w"></script>
+<script src="gis.js?v=20261116w"></script>
 </body>
 </html>

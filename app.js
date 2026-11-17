@@ -510,7 +510,7 @@
       /* Detección de polígono de lote bajo el cursor */
       var loteActivo = null;
       for (var j = 0; j < lotes.length; j++) {
-        var dentro = enPoligono(x, y, lotes[j].pts);
+        var dentro = !gLotes.hasAttribute("hidden") && enPoligono(x, y, lotes[j].pts);
         lotes[j].el.classList.toggle("activo", dentro);
         if (dentro) loteActivo = lotes[j];
       }
@@ -587,6 +587,8 @@
 
     var mapaCapas = { curvas: gCurvas, pendiente: gPend, hidro: gHidro, lotes: gLotes };
     [].forEach.call(document.querySelectorAll(".hud-chip[data-capa]"), function (b) {
+      /* capas apagadas de entrada (aria-pressed="false" en el HTML): el inicio queda limpio */
+      if (mapaCapas[b.dataset.capa] && b.getAttribute("aria-pressed") !== "true") mapaCapas[b.dataset.capa].setAttribute("hidden", "");
       b.addEventListener("click", function () {
         var k = b.dataset.capa, g = mapaCapas[k];
         if (!g) return;

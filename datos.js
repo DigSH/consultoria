@@ -47,17 +47,17 @@ window.CONSULTORIA = {
     { id: "geomatica", cat: "datos", corto: "GIS, dron y EUDR", responsables: ["Stiven", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "geo",
       titulo: "Geomática, dron y trazabilidad EUDR",
       entrega: "Polígonos prediales y expediente EUDR, ortomosaicos y modelos de superficie con dron (RGB), conteo de plantas y mapas en QGIS.",
-      respaldo: "Flujo EUDR con Whisp, Hansen/UMD y RADD-Sentinel-1 · QGIS, Google Earth Engine y dron 48 MP" },
+      respaldo: "Prototipo de debida diligencia EUDR con Whisp, Hansen/UMD y RADD-Sentinel-1 · QGIS, Google Earth Engine y dron 48 MP" },
 
     { id: "bpa", cat: "agro", corto: "BPA y ensayos", responsables: ["Faiver", "Diego"], linea: ["empresarial", "productor"], icono: "bpa",
       titulo: "Buenas Prácticas Agrícolas y ensayos en campo",
       entrega: "Diagnóstico y plan de adecuación para certificación BPA; protocolo, seguimiento fenológico (BBCH) y análisis estadístico de ensayos.",
-      respaldo: "Certificación BPA en vivero (Tunja, 2025) · ensayo factorial de 120 UE en R · evaluación de biofertilizantes (2024)" },
+      respaldo: "Acompañamiento a la certificación BPA de un vivero (Tunja, 2025) · ensayo factorial de 120 UE en R · evaluación de biofertilizantes (2024)" },
 
     { id: "proyectos", cat: "proyectos", corto: "Proyectos", responsables: ["Zahira", "Faiver", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "proyectos",
       titulo: "Formulación de proyectos y asociatividad",
       entrega: "Estructuración técnica y financiera para convocatorias, informes de avance y talleres de asociatividad hasta el registro legal.",
-      respaldo: "Proyectos universidad-empresa en OTRI y VIE-UPTC · talleres con 300+ productores y 3–5 asociaciones formalizadas" }
+      respaldo: "Proyectos universidad-empresa en OTRI y VIE-UPTC · talleres con 300+ productores y 3–5 asociaciones acompañadas hasta su registro" }
   ],
 
   lineas: {
@@ -73,14 +73,14 @@ window.CONSULTORIA = {
     { texto: "Limpiar y ordenar una base de datos con duplicados o errores", servicio: "gobernanza", linea: ["academica", "empresarial"] },
     { texto: "Mapear lotes con dron, medir relieve o validar predios EUDR", servicio: "geomatica", linea: ["academica", "empresarial", "productor"] },
     { texto: "Contar fruta, detectar daño o proyectar cosecha con IA", servicio: "ia", linea: ["empresarial", "productor"] },
-    { texto: "Certificar finca/vivero en BPA o evaluar un insumo en campo", servicio: "bpa", linea: ["empresarial", "productor"] },
+    { texto: "Preparar una finca o vivero para la certificación BPA o evaluar un insumo en campo", servicio: "bpa", linea: ["empresarial", "productor"] },
     { texto: "Formular un proyecto, rendir informes o formalizar una asociación", servicio: "proyectos", linea: ["academica", "empresarial", "productor"] },
     { texto: "Otro caso: quiero conversarlo", servicio: null, linea: ["academica", "empresarial", "productor"] }
   ],
 
   equipo: [
     { ini: "DS", corto: "Diego", nombre: "Diego Sanabria Higuera", rol: "Estadística, datos y geomática",
-      titulo: "Ing. Agrónomo y Esp. en Estadística (UPTC) · M.Sc. (c) Ciencias Agrarias",
+      titulo: "Ing. Agrónomo y Esp. en Estadística (UPTC) · Maestría en Ciencias Agrarias (en curso)",
       respaldo: "7 artículos con DOI · 12 reportes OCITEB · cofundador Surco AgTech", orcid: "0009-0007-3157-6140" },
     { ini: "ZR", corto: "Zahira", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos",
       titulo: "Administradora de Empresas (UPTC)",
