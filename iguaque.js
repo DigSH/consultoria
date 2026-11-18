@@ -57,7 +57,7 @@
     map.createPane("ig-focos").style.zIndex = 430;
     var marco = L.latLngBounds([D.marco[1], D.marco[0]], [D.marco[3], D.marco[2]]);
     L.geoJSON(D.limite, { pane: "ig-limite", interactive: false, style: { color: "#ffffff", weight: 4.5, opacity: .75, fill: false } }).addTo(map);
-    var limite = L.geoJSON(D.limite, { pane: "ig-limite", interactive: false, style: { color: "#0b1b2b", weight: 1.8, fillColor: "#0b6e8a", fillOpacity: .05 } }).addTo(map);
+    var limite = L.geoJSON(D.limite, { pane: "ig-limite", interactive: false, style: { color: "#0e1512", weight: 1.8, fillColor: "#14633f", fillOpacity: .05 } }).addTo(map);
     map.fitBounds(limite.getBounds(), { padding: [12, 12] });
     map.setMaxBounds(marco.pad(.25));
     var vistaInicial = { c: map.getCenter(), z: map.getZoom() };
@@ -115,8 +115,8 @@
         var actual = f[2] === yy;
         L.circleMarker([f[1], f[0]], {
           pane: "ig-focos", radius: actual ? 4 + Math.sqrt(f[3]) * 2.6 : 2 + Math.sqrt(f[3]) * 1.1,
-          color: actual ? "#ff5c14" : "#b01622", weight: actual ? 2 : 1, opacity: actual ? 1 : .7,
-          fillColor: actual ? "#ff7a59" : "#b01622", fillOpacity: actual ? .45 : .32, className: actual ? "ig-foco ig-foco-act" : "ig-foco"
+          color: actual ? "#d9482b" : "#8c2f22", weight: actual ? 2 : 1, opacity: actual ? 1 : .7,
+          fillColor: actual ? "#e5694f" : "#8c2f22", fillOpacity: actual ? .45 : .32, className: actual ? "ig-foco ig-foco-act" : "ig-foco"
         }).bindTooltip((2000 + f[2]) + " · " + num(f[3], 1) + " ha · " + (f[4] ? "dentro del páramo" : "franja de 2 km"), { direction: "top" }).addTo(gFocos);
       });
     }

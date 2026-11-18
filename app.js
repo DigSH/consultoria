@@ -234,14 +234,14 @@
       }
     }
     var gNorte = el("g", { transform: "translate(1152,96)" }, gCaneva);
-    el("circle", { cx: 0, cy: 0, r: 18, fill: "#fbfdfecc", stroke: "#0b1b2b", "stroke-width": 1, "stroke-opacity": 0.35 }, gNorte);
-    el("path", { d: "M0 -14L5 6L0 2L-5 6Z", fill: "#0b1b2b" }, gNorte);
-    el("path", { d: "M0 -14L0 2L5 6Z", fill: "#e0533a" }, gNorte);
-    el("text", { x: 0, y: -21, "text-anchor": "middle", "class": "can-txt", style: "font-weight:700;fill:#0b1b2b" }, gNorte, "N");
+    el("circle", { cx: 0, cy: 0, r: 18, fill: "#fcfcfacc", stroke: "#0e1512", "stroke-width": 1, "stroke-opacity": 0.35 }, gNorte);
+    el("path", { d: "M0 -14L5 6L0 2L-5 6Z", fill: "#0e1512" }, gNorte);
+    el("path", { d: "M0 -14L0 2L5 6Z", fill: "#b08a2e" }, gNorte);
+    el("text", { x: 0, y: -21, "text-anchor": "middle", "class": "can-txt", style: "font-weight:700;fill:#0e1512" }, gNorte, "N");
 
     var gEsc = el("g", { transform: "translate(985,84)" }, gCaneva);
-    el("rect", { x: 0, y: 0, width: 60, height: 5, fill: "#0b1b2b", "fill-opacity": 0.7 }, gEsc);
-    el("rect", { x: 60, y: 0, width: 60, height: 5, fill: "#fbfdfe", stroke: "#0b1b2b", "stroke-width": 1 }, gEsc);
+    el("rect", { x: 0, y: 0, width: 60, height: 5, fill: "#0e1512", "fill-opacity": 0.7 }, gEsc);
+    el("rect", { x: 60, y: 0, width: 60, height: 5, fill: "#fcfcfa", stroke: "#0e1512", "stroke-width": 1 }, gEsc);
     el("text", { x: 0, y: 16, "class": "can-txt" }, gEsc, "0");
     el("text", { x: 60, y: 16, "text-anchor": "middle", "class": "can-txt" }, gEsc, "250 m");
     el("text", { x: 120, y: 16, "text-anchor": "end", "class": "can-txt" }, gEsc, "500 m");
@@ -266,9 +266,9 @@
           demNx[pi] = nxR * invN; demNy[pi] = nyR * invN; demNz[pi] = nzR * invN;
           var tZ = Math.max(0, Math.min(1, (zR - 2580) / 680));
           var cr, cg, cb;
-          if (tZ < 0.35) { var u1 = tZ / 0.35; cr = 212 - u1 * 48; cg = 232 - u1 * 12; cb = 238 - u1 * 38; }
-          else if (tZ < 0.7) { var u2 = (tZ - 0.35) / 0.35; cr = 164 + u2 * 68; cg = 220 - u2 * 22; cb = 200 - u2 * 52; }
-          else { var u3 = (tZ - 0.7) / 0.3; cr = 232 + u3 * 18; cg = 198 - u3 * 52; cb = 148 - u3 * 36; }
+          if (tZ < 0.35) { var u1 = tZ / 0.35; cr = 232 - u1 * 40; cg = 240 - u1 * 14; cb = 232 - u1 * 36; }
+          else if (tZ < 0.7) { var u2 = (tZ - 0.35) / 0.35; cr = 192 + u2 * 20; cg = 226 - u2 * 12; cb = 196 - u2 * 24; }
+          else { var u3 = (tZ - 0.7) / 0.3; cr = 212 + u3 * 18; cg = 214 - u3 * 14; cb = 172 - u3 * 32; }
           demR[pi] = cr; demG[pi] = cg; demB[pi] = cb;
           var fMask = vxR < 520 ? 0.22 + (vxR / 520) * 0.25 : Math.min(0.82, 0.47 + ((vxR - 520) / 420) * 0.35);
           demA[pi] = Math.round(fMask * (65 + tZ * 115));
@@ -286,8 +286,8 @@
         var ix = i % RW, iy = (i / RW) | 0;
         var dxL = ix - rCx, dyL = iy - rCy, dist2 = dxL * dxL + dyL * dyL;
         if (dist2 < rLente2) {
-          d[p] = Math.min(255, (demR[i] * 0.45 + (1 - demNz[i]) * 380) | 0);
-          d[p + 1] = Math.min(255, (demG[i] * 0.85 + sh * 45) | 0);
+          d[p] = Math.min(255, (demR[i] * 0.45) | 0);
+          d[p + 1] = Math.min(255, (demG[i] * 0.85 + (1 - demNz[i]) * 380 + sh * 45) | 0);
           d[p + 2] = Math.min(255, (demB[i] * 0.55) | 0);
           d[p + 3] = Math.min(220, demA[i] + 55);
         } else {
@@ -354,7 +354,7 @@
         var len = Math.min(20, 6 + gr.deg * 0.55);
         var rad = (gr.asp - 90) * Math.PI / 180;
         var ux = Math.cos(rad), uy = Math.sin(rad);
-        var col = gr.deg > 22 ? "#e0533a" : gr.deg > 13 ? "#6b4fc7" : "#0b6e8a";
+        var col = gr.deg > 22 ? "#b08a2e" : gr.deg > 13 ? "#6b766f" : "#14633f";
         var lin = el("line", {
           x1: vx.toFixed(1), y1: vy.toFixed(1),
           x2: (vx + ux * len).toFixed(1), y2: (vy + uy * len).toFixed(1),
@@ -385,17 +385,17 @@
       }
     });
     var pFlujoVivo = el("path", { d: "", "class": "flujo-vivo" }, gHidro);
-    var cDescarga = el("circle", { cx: -20, cy: -20, r: 4, fill: "#009ec2", stroke: "#fff", "stroke-width": 1.5 }, gHidro);
+    var cDescarga = el("circle", { cx: -20, cy: -20, r: 4, fill: "#1f9e68", stroke: "#fff", "stroke-width": 1.5 }, gHidro);
 
     /* 8. Capa 4: Polígonos prediales georreferenciados */
     var lotes = [
-      { id: "EJEMPLO 1", uso: "Lote de ejemplo · papa · 6,4 ha", col: "#0b6e8a",
+      { id: "EJEMPLO 1", uso: "Lote de ejemplo · papa · 6,4 ha", col: "#14633f",
         pts: [[760, 155], [855, 140], [870, 215], [775, 235]] },
-      { id: "EJEMPLO 2", uso: "Lote de ejemplo · arándano · 3,8 ha", col: "#6b4fc7",
+      { id: "EJEMPLO 2", uso: "Lote de ejemplo · arándano · 3,8 ha", col: "#6b766f",
         pts: [[945, 325], [1035, 310], [1050, 385], [955, 395]] },
-      { id: "EJEMPLO 3", uso: "Lote de ejemplo · ensayo · 2,1 ha", col: "#e0533a",
+      { id: "EJEMPLO 3", uso: "Lote de ejemplo · ensayo · 2,1 ha", col: "#b08a2e",
         pts: [[615, 420], [705, 405], [720, 470], [625, 485]] },
-      { id: "EJEMPLO 4", uso: "Lote de ejemplo · reserva · 11,2 ha", col: "#1b8a5a",
+      { id: "EJEMPLO 4", uso: "Lote de ejemplo · reserva · 11,2 ha", col: "#2f8f5e",
         pts: [[1020, 145], [1135, 130], [1150, 235], [1040, 245]] }
     ];
     lotes.forEach(function (lt) {
@@ -434,7 +434,7 @@
 
     var gCursor = el("g", { transform: "translate(880,280)" }, gSonda);
     el("circle", { cx: 0, cy: 0, r: 42, "class": "sonda-anillo" }, gCursor);
-    el("path", { d: "M-48 0h10M38 0h10M0 -48v10M0 38v10", stroke: "#0b1b2b", "stroke-width": 1.3, "stroke-opacity": 0.6 }, gCursor);
+    el("path", { d: "M-48 0h10M38 0h10M0 -48v10M0 38v10", stroke: "#0e1512", "stroke-width": 1.3, "stroke-opacity": 0.6 }, gCursor);
     var lAsp = el("line", { x1: 0, y1: 0, x2: 24, y2: 0, "class": "sonda-asp" }, gCursor);
     el("circle", { cx: 0, cy: 0, r: 4.5, "class": "sonda-centro" }, gCursor);
     var rTag = el("rect", { x: 14, y: -28, width: 148, height: 20, "class": "sonda-tag" }, gCursor);
@@ -443,9 +443,9 @@
     /* 10. HUD y gráfico de perfil topográfico en vivo */
     var hCoord = $("#hud-coord"), hCota = $("#hud-cota"), hPend = $("#hud-pend"), hObj = $("#hud-obj");
     var hTit = $("#hud-perfil-tit"), hDes = $("#hud-perfil-des"), svgPerf = $("#hud-perfil"), btnLimpiar = $("#hud-limpiar");
-    var pPerfArea = el("path", { d: "", fill: "#0b6e8a", "fill-opacity": 0.32 }, svgPerf);
-    var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#3d9fb8", "stroke-width": 2 }, svgPerf);
-    var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#ff7a59", stroke: "#08131f", "stroke-width": 1.5 }, svgPerf);
+    var pPerfArea = el("path", { d: "", fill: "#14633f", "fill-opacity": 0.32 }, svgPerf);
+    var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#5ad69a", "stroke-width": 2 }, svgPerf);
+    var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#5ad69a", stroke: "#080d0b", "stroke-width": 1.5 }, svgPerf);
 
     var ptoA = null, ptoB = null;
 
@@ -793,22 +793,22 @@
     if (!cont) return;
     var W = 760, H = 260, m = { l: 40, r: 20, t: 22, b: 42 };
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Publicaciones por año, 2023 a 2026" }, cont);
-    var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#0b6e8a", "Bibliometría": "#e0533a", "Complejidad y economía": "#6b4fc7", "Territorio rural": "#6b4fc7", "Economía solidaria": "#6b4fc7" };
+    var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#14633f", "Bibliometría": "#b08a2e", "Complejidad y economía": "#6b766f", "Territorio rural": "#6b766f", "Economía solidaria": "#6b766f" };
     var etiquetaTema = function (t) { return /PLS/.test(t) ? "PLS-SEM" : t === "Bibliometría" ? "Bibliometría" : "Territorio y economía"; };
     var xs = function (a) { return m.l + (anios.indexOf(a) + .5) * ((W - m.l - m.r) / anios.length); };
     var base = H - m.b, r = 16;
-    el("line", { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: "#0b1b2b", "stroke-width": 2 }, svg);
+    el("line", { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: "#0e1512", "stroke-width": 2 }, svg);
     for (var g = 1; g <= 4; g++) {
       var y = base - g * (r * 2 + 4) + r + 2;
-      el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#c5d3dc", "stroke-dasharray": "3 5" }, svg);
+      el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#d5dad2", "stroke-dasharray": "3 5" }, svg);
     }
     anios.forEach(function (a) { el("text", { x: xs(a), y: H - 14, "text-anchor": "middle", "font-size": 15, "font-weight": 600 }, svg, a); });
     var pila = {}, ultima = null;
     D.publicaciones.slice().sort(function (a, b) { return a.anio - b.anio; }).forEach(function (p, idx) {
       pila[p.anio] = (pila[p.anio] || 0) + 1;
       var cx = xs(p.anio), cy = base - 4 - r - (pila[p.anio] - 1) * (r * 2 + 4);
-      var col = colores[p.tema] || "#0b6e8a";
-      var c = el("circle", { cx: cx, cy: cy, r: r, fill: col, "class": "punto-pub", tabindex: 0, role: "button", "aria-label": p.anio + ": " + p.titulo, stroke: "#fbfdfe", "stroke-width": 3 }, svg);
+      var col = colores[p.tema] || "#14633f";
+      var c = el("circle", { cx: cx, cy: cy, r: r, fill: col, "class": "punto-pub", tabindex: 0, role: "button", "aria-label": p.anio + ": " + p.titulo, stroke: "#fcfcfa", "stroke-width": 3 }, svg);
       if (!reduce) { c.style.transform = "translateY(" + (base - 4 - r - cy) + "px)"; c.style.opacity = 0; c.style.transition = "transform .7s cubic-bezier(.2,1.4,.4,1) " + (idx * .12) + "s, opacity .3s " + (idx * .12) + "s"; }
       var mostrar = function () {
         det.innerHTML = '<b>' + esc(p.titulo) + '</b><br>' + esc(p.rev) + ' · ' + p.anio + ' · ' + esc(etiquetaTema(p.tema)) + ' <a href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">doi.org/' + esc(p.doi) + '</a>';
@@ -821,7 +821,7 @@
       if (!ultima || p.anio >= ultima.anio) ultima = { anio: p.anio, f: mostrar };
     });
     if (ultima) ultima.f();
-    var leg = [["PLS-SEM", "#0b6e8a"], ["Bibliometría", "#e0533a"], ["Territorio y economía", "#6b4fc7"]];
+    var leg = [["PLS-SEM", "#14633f"], ["Bibliometría", "#b08a2e"], ["Territorio y economía", "#6b766f"]];
     leg.forEach(function (l, i) {
       var x = m.l + 10 + i * 170;
       el("circle", { cx: x, cy: 14, r: 6, fill: l[1] }, svg);

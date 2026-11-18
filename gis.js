@@ -5,7 +5,7 @@
   if (typeof L === "undefined") return;
   var D = window.CONSULTORIA;
   var $ = function (s) { return document.querySelector(s); };
-  var CIAN = "#0b6e8a", CORAL = "#e0533a", TINTA = "#0b1b2b";
+  var VERDE = "#14633f", BRONCE = "#b08a2e", TINTA = "#0e1512";
   var COL = { latMin: -4.3, latMax: 13.5, lonMin: -79.1, lonMax: -66.8 };
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -41,7 +41,7 @@
       est.forEach(function (e) {
         if (filtro !== "todas" && e.tipo !== filtro) return;
         n++;
-        L.circleMarker([e.lat, e.lon], { radius: 4.5, weight: 1, color: "#fff", fillColor: e.tipo === "auto" ? CIAN : CORAL, fillOpacity: .9 })
+        L.circleMarker([e.lat, e.lon], { radius: 4.5, weight: 1, color: "#fff", fillColor: e.tipo === "auto" ? VERDE : BRONCE, fillOpacity: .9 })
           .bindPopup("<b>" + esc(e.nombre) + "</b><br>" + esc(e.municipio) + "<br>" + esc(e.categoria) + "<br>" + esc(e.tecnologia) + (e.alt ? "<br>Altitud: " + esc(e.alt) + " msnm" : ""))
           .addTo(capa);
       });
@@ -134,8 +134,8 @@
     function dibujar() {
       dib.clearLayers();
       var ll = pts.map(function (p) { return [p[1], p[0]]; });
-      if (ll.length >= 3) L.polygon(ll, { color: CIAN, weight: 3, fillColor: CIAN, fillOpacity: .22 }).addTo(dib);
-      else if (ll.length === 2) L.polyline(ll, { color: CIAN, weight: 3, dashArray: "6 6" }).addTo(dib);
+      if (ll.length >= 3) L.polygon(ll, { color: VERDE, weight: 3, fillColor: VERDE, fillOpacity: .22 }).addTo(dib);
+      else if (ll.length === 2) L.polyline(ll, { color: VERDE, weight: 3, dashArray: "6 6" }).addTo(dib);
       ll.forEach(function (p, i) {
         var m = L.marker(p, { draggable: true, keyboard: false, icon: L.divIcon({ className: "vert" + (i === 0 ? " ini" : ""), iconSize: i === 0 ? [20, 20] : [16, 16] }) }).addTo(dib);
         m.on("dragend", function () { var q = m.getLatLng(); pts[i] = [q.lng, q.lat]; decTexto = null; setTimeout(analizar, 0); });
