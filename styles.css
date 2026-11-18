@@ -121,6 +121,7 @@ h1,h2,h3{color:var(--tinta)}
 .graficas{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .tarjeta{margin:0;background:#fcfcfa;border:1.5px solid var(--linea);border-radius:20px;padding:26px}
 .tarjeta.ancha{grid-column:1/-1}
+.seccion>.tarjeta{margin-left:auto;margin-right:auto}
 .tarjeta figcaption p{margin:0 0 14px;font-size:14.5px;color:var(--tinta2)}
 .tarjeta h3{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .etiqueta{font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--menta);color:var(--tinta);padding:3px 8px;border-radius:999px}

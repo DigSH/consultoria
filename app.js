@@ -791,7 +791,7 @@
   (function pubs() {
     var cont = $("#g-pubs"), det = $("#detalle-pub");
     if (!cont) return;
-    var W = 760, H = 260, m = { l: 40, r: 20, t: 22, b: 42 };
+    var W = 760, H = 260, m = { l: 20, r: 20, t: 22, b: 42 };
     var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Publicaciones por año, 2023 a 2026" }, cont);
     var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#14633f", "Bibliometría": "#b08a2e", "Complejidad y economía": "#6b766f", "Territorio rural": "#6b766f", "Economía solidaria": "#6b766f" };
     var etiquetaTema = function (t) { return /PLS/.test(t) ? "PLS-SEM" : t === "Bibliometría" ? "Bibliometría" : "Territorio y economía"; };
@@ -822,11 +822,13 @@
     });
     if (ultima) ultima.f();
     var leg = [["PLS-SEM", "#14633f"], ["Bibliometría", "#b08a2e"], ["Territorio y economía", "#6b766f"]];
+    var gLeg = el("g", {}, svg);
     leg.forEach(function (l, i) {
       var x = m.l + 10 + i * 170;
-      el("circle", { cx: x, cy: 14, r: 6, fill: l[1] }, svg);
-      el("text", { x: x + 12, y: 18, "font-size": 12 }, svg, l[0]);
+      el("circle", { cx: x, cy: 14, r: 6, fill: l[1] }, gLeg);
+      el("text", { x: x + 12, y: 18, "font-size": 12 }, gLeg, l[0]);
     });
+    try { var bb = gLeg.getBBox(); if (bb.width) gLeg.setAttribute("transform", "translate(" + ((W - bb.width) / 2 - bb.x).toFixed(1) + " 0)"); } catch (e) {}
     var io = new IntersectionObserver(function (es) {
       if (es[0].isIntersecting) { [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (c) { c._fin(); }); io.disconnect(); }
     }, { threshold: .4 }); io.observe(cont);
