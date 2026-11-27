@@ -684,11 +684,21 @@
       var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
       grupo(bs, lista, function (s) { est.sit = s; render(); });
     }
+    /* el perfil se comparte con «Cómo trabajamos» (proceso.js) por un evento y una interfaz mínima */
+    function anunciar(id) { document.dispatchEvent(new CustomEvent("perfil", { detail: id })); }
     function elegirLinea(id) {
       var i = Object.keys(D.lineas).indexOf(id);
       if (i < 0 || !bl.children[i]) return;
-      marcar(bl, bl.children[i]); est.linea = id; situaciones(); render();
+      marcar(bl, bl.children[i]); est.linea = id; situaciones(); render(); anunciar(id);
     }
+    window.consultoriaEmbudo = {
+      linea: function (id) { if (est.linea !== id) elegirLinea(id); },
+      servicio: function (id) {
+        var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
+        for (var k = 0; k < lista.length; k++) if (lista[k].servicio === id && bs.children[k]) { bs.children[k].click(); return true; }
+        return false;
+      }
+    };
     function resumen() {
       var L = D.lineas[est.linea], sv = est.sit.servicio ? serv(est.sit.servicio) : null;
       var p = ["Soy " + L.frase + ".", "Necesito: " + est.sit.texto.toLowerCase() + "."];
@@ -716,12 +726,15 @@
       });
     }
 
-    grupo(bl, Object.keys(D.lineas).map(function (k) { return { id: k, t: D.lineas[k].texto }; }), function (it) { est.linea = it.id; situaciones(); render(); });
+    grupo(bl, Object.keys(D.lineas).map(function (k) { return { id: k, t: D.lineas[k].texto }; }), function (it) { est.linea = it.id; situaciones(); render(); anunciar(it.id); });
     situaciones();
     [].forEach.call(document.querySelectorAll("[data-linea]"), function (x) {
       x.addEventListener("click", function (e) {
         e.preventDefault();
         elegirLinea(x.dataset.linea);
+        /* del inicio al relato personalizado; la última fase devuelve al embudo con el perfil marcado */
+        var pr = $("#proceso");
+        if (pr) { pr.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); return; }
         var p1 = $("#paso-1"), p2 = $("#paso-2");
         p1.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
         p2.classList.add("resalta"); setTimeout(function () { p2.classList.remove("resalta"); }, 2200);

@@ -51,13 +51,71 @@
   });
   var n = fases.length;
 
+  /* ---------- recorrido por perfil (mismo perfil que el embudo) ----------
+     Cada fase propone el servicio que la respalda; las acciones son WhatsApp (canal principal en Colombia)
+     y «Ver entregable», que deja el embudo con perfil y necesidad ya marcados. */
+  var D = window.CONSULTORIA || { servicios: [], lineas: {}, contacto: {} };
+  var PERFILES = {
+    productor: {
+      serv: ["geomatica", "ia", "surco", "bpa"],
+      cta: "Quiero mi diagnóstico de finca",
+      hitos: ["Visita", "Reporte BPA o EUDR", "Ajuste del plan"]
+    },
+    empresarial: {
+      fases: [
+        ["Diagnóstico", "Levantamos el estado de sus fincas o asociados: dron, suelo y registros."],
+        ["Análisis y plan", "Indicadores por finca y por lote en un tablero, con un plan y metas para la organización."],
+        ["Implementación de app", "Surco configurado para su organización: fincas, técnicos con roles y tablero gerencial."],
+        ["Acompañamiento", "Reportes consolidados BPA o EUDR para compradores y auditorías, y ajuste del plan."]
+      ],
+      serv: ["geomatica", "tableros", "surco", "bpa"],
+      cta: "Quiero el diagnóstico de mi organización",
+      tel: { tit: "Organización", sub: "3 fincas · 1 hato", filas: ["Finca 1", "Finca 2", "Finca 3", "Hato"], datos: ["BPA al día", "Riego hoy", "EUDR listo", "12 bovinos"], alerta: "Reporte comprador" },
+      hitos: ["Comité", "Reporte consolidado", "Auditoría"],
+      fun: [
+        ["foto", "Diagnóstico por foto", "Sin internet, en 4 cultivos", 0],
+        ["gota", "Riego y clima", "Balance hídrico por lote", 0],
+        ["doc", "Cuaderno BPA y EUDR", "Reportes en PDF", 0],
+        ["moneda", "Tablero gerencial", "Varias fincas y roles", 0],
+        ["kg", "Peso por foto", "Bovinos y porcinos", 1],
+        ["hato", "Hato y sanidad", "Vacunas y reproducción", 1]
+      ]
+    },
+    academica: {
+      fases: [
+        ["Diagnóstico", "Revisamos el estado del arte, definimos su pregunta y el diseño de muestreo."],
+        ["Análisis", "Estadística en R, modelos PLS-SEM y figuras listas para publicación."],
+        ["Entrega reproducible", "Código, base de datos depurada con su diccionario, tablas y figuras."],
+        ["Acompañamiento", "Hasta la sustentación y la respuesta a revisores."]
+      ],
+      serv: ["cienciometria", "estadistica", "gobernanza", "cienciometria"],
+      cta: "Quiero asesoría para mi investigación",
+      capas: ["Diseño experimental", "Estadística en R", "Modelos PLS-SEM", "Figuras y tablas"],
+      tel: { tit: "Ensayo", sub: "3 tratamientos · testigo", filas: ["T1", "T2", "T3", "Testigo"], datos: ["Datos al día", "Datos al día", "Datos al día", "Datos al día"], alerta: "Base depurada" },
+      hitos: ["Revisión", "Respuesta a revisores", "Sustentación"],
+      grupos: ["ENTREGABLES", null],
+      fun: [
+        ["doc", "Código en R", "Análisis reproducible", 0],
+        ["doc", "Base depurada", "Con diccionario de datos", 0],
+        ["doc", "Tablas y figuras", "Listas para publicación", 0],
+        ["doc", "Sustentación", "Acompañamiento final", 0]
+      ],
+      ind: false
+    }
+  };
+  var perfil = "productor";
+  function textos() { var f = PERFILES[perfil].fases; return f ? f.map(function (x) { return { t: x[0], p: x[1] }; }) : fases; }
+  function servDe(id) { return (D.servicios || []).filter(function (s) { return s.id === id; })[0]; }
+
   pista.innerHTML =
     '<div class="pr-fijo">' +
+      '<div class="pr-perfil" role="radiogroup" aria-label="Recorrido para"><span>Recorrido para</span></div>' +
       '<div class="pr-escena" data-paso="0" aria-hidden="true"></div>' +
       '<div class="pr-panel">' +
         '<div class="pr-meta"><p class="pr-num"><b>01</b><span> / ' + ("0" + n).slice(-2) + '</span></p>' +
           '<div class="pr-prog" role="group" aria-label="Ir a una fase"></div></div>' +
         '<div class="pr-fases"></div>' +
+        '<aside class="pr-serv" aria-live="polite"></aside>' +
       '</div>' +
       '<p class="pr-vivo" aria-live="polite"></p>' +
     '</div>';
@@ -77,6 +135,51 @@
     return b;
   });
   var arts = [].slice.call(cajaF.children);
+  var cajaS = pista.querySelector(".pr-serv"), cajaP = pista.querySelector(".pr-perfil");
+
+  /* selector de perfil dentro del escenario fijo */
+  var botonesP = Object.keys(PERFILES).map(function (id) {
+    var b = document.createElement("button");
+    b.type = "button"; b.setAttribute("role", "radio"); b.dataset.perfil = id;
+    b.textContent = (D.lineas[id] && D.lineas[id].texto) || id;
+    b.addEventListener("click", function () { aplicarPerfil(id, true); });
+    cajaP.appendChild(b);
+    return b;
+  });
+
+  /* tarjeta del servicio de la fase: entregable y acciones */
+  function waLink(txt) { return "https://wa.me/" + (D.contacto.whatsapp || "") + "?text=" + encodeURIComponent(txt); }
+  function servicio(i) {
+    var s = servDe(PERFILES[perfil].serv[i]); if (!s) { cajaS.innerHTML = ""; return; }
+    var f = textos()[i], quien = (D.lineas[perfil] && D.lineas[perfil].frase) || "";
+    var msg = "Hola, equipo de Consultoría. Soy " + quien + ". Vi la fase «" + f.t + "» y me interesa: " + s.titulo + ".";
+    cajaS.innerHTML = '<p class="k">Servicio de esta fase</p><h4></h4><p class="e"></p>' +
+      '<div class="acc"><a class="boton boton-chico pr-wa" target="_blank" rel="noopener">Escribir por WhatsApp</a>' +
+      '<button type="button" class="pr-ver">Ver entregable</button></div>';
+    cajaS.querySelector("h4").textContent = s.titulo;
+    cajaS.querySelector(".e").textContent = s.entrega;
+    cajaS.querySelector(".pr-wa").href = waLink(msg);
+    cajaS.querySelector(".pr-ver").addEventListener("click", function () {
+      var E = window.consultoriaEmbudo; if (!E) return;
+      E.linea(perfil); E.servicio(s.id);
+      var b = document.getElementById("buscador"); if (b) b.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    });
+  }
+
+  function aplicarPerfil(id, desdeAqui) {
+    if (!PERFILES[id]) return;
+    var cambia = id !== perfil;
+    perfil = id;
+    botonesP.forEach(function (b) { b.setAttribute("aria-checked", b.dataset.perfil === id ? "true" : "false"); });
+    textos().forEach(function (f, k) {
+      arts[k].querySelector("h3").textContent = f.t; arts[k].querySelector("p").textContent = f.p;
+      barras[k].setAttribute("aria-label", "Fase " + (k + 1) + ": " + f.t);
+    });
+    var cta = sec.querySelector(".cierre-acc .boton");
+    if (cta) cta.firstChild.textContent = PERFILES[id].cta + " ";
+    if (desdeAqui && window.consultoriaEmbudo) window.consultoriaEmbudo.linea(id);
+    if (cambia && typeof escenaSVG === "function" && escena.firstChild) { escenaSVG(); actual = -1; medir(); }
+  }
 
   /* ---------- el diorama (apaisado; en pantallas angostas, vertical) ---------- */
   var estrecho = null, RUTA = null, rastro = null, vuelo = null;
@@ -91,6 +194,7 @@
     rastro.style.strokeDashoffset = (1 - t).toFixed(4);
   }
   function escenaSVG() {
+  var PF = PERFILES[perfil];
   estrecho = innerWidth < 640;
   semilla = 7;
   escena.innerHTML = "";
@@ -256,7 +360,7 @@
       }
     }
     var izq = iso(-lim, lim, z);
-    etiqueta(cg, izq[0] - 12, izq[1] - 4, cp.t, "fin");
+    etiqueta(cg, izq[0] - 12, izq[1] - 4, PF.capas ? PF.capas[k] : cp.t, "fin");
   });
 
   /* ===== fase 3: implementación de app (lotes y potrero en Surco, con sus funciones) ===== */
@@ -276,9 +380,10 @@
   el("rect", { x: tel.x, y: tel.y, width: tel.w, height: tel.h, rx: 22, fill: "#e9eee9" }, t);
   el("rect", { x: tel.x + 7, y: tel.y + 9, width: tel.w - 14, height: tel.h - 18, rx: 15, fill: "#fcfcfa" }, t);
   el("rect", { x: tel.x + tel.w / 2 - 18, y: tel.y + 14, width: 36, height: 7, rx: 3.5, fill: "#0e1512" }, t);
-  el("text", { x: tel.x + 18, y: tel.y + 44, "class": "pr-tel-tit" }, t, "Surco");
-  el("text", { x: tel.x + 18, y: tel.y + 58, "class": "pr-tel-sub" }, t, "3 lotes · 1 potrero");
-  var nombres = ["Lote 1", "Lote 2", "Lote 3", "Potrero"], datos = ["Fenología", "Riego hoy", "Sin alertas", "12 bovinos"];
+  var TL = PF.tel || { tit: "Surco", sub: "3 lotes · 1 potrero", filas: ["Lote 1", "Lote 2", "Lote 3", "Potrero"], datos: ["Fenología", "Riego hoy", "Sin alertas", "12 bovinos"], alerta: "Vacuna: 3 bovinos" };
+  el("text", { x: tel.x + 18, y: tel.y + 44, "class": "pr-tel-tit" }, t, TL.tit);
+  el("text", { x: tel.x + 18, y: tel.y + 58, "class": "pr-tel-sub" }, t, TL.sub);
+  var nombres = TL.filas, datos = TL.datos;
   LOTES.forEach(function (l, i) {
     var cy = cards[i];
     el("rect", { x: tel.x + 14, y: cy - 16, width: tel.w - 28, height: 34, rx: 9, fill: "#eceee8" }, t);
@@ -288,10 +393,10 @@
   });
   var al = tel.y + tel.h - 36;
   el("rect", { x: tel.x + 14, y: al - 12, width: tel.w - 28, height: 24, rx: 12, fill: "#5ad69a" }, t);
-  el("text", { x: tel.x + tel.w / 2, y: al + 4, "text-anchor": "middle", "class": "pr-tel-al" }, t, "Vacuna: 3 bovinos");
+  el("text", { x: tel.x + tel.w / 2, y: al + 4, "text-anchor": "middle", "class": "pr-tel-al" }, t, TL.alerta);
 
   /* funciones de la app: agrícolas y pecuarias */
-  var FUN = [
+  var FUN = PF.fun || [
     ["foto", "Diagnóstico por foto", "Sin internet, en 4 cultivos", 0],
     ["gota", "Riego y clima", "Balance hídrico por lote", 0],
     ["doc", "Cuaderno BPA y EUDR", "Reportes en PDF", 0],
@@ -323,8 +428,9 @@
     if (!estrecho) el("text", { x: x + 44, y: y + 33, "class": "pr-fun-s" }, fg, fn[2]);
   });
   if (!estrecho) {
-    el("text", { x: 24, y: 76, "class": "pr-fun-g" }, f2, "AGRÍCOLA");
-    el("text", { x: 24, y: 298, "class": "pr-fun-g pr-fun-g-pec" }, f2, "PECUARIO");
+    var GR = PF.grupos || ["AGRÍCOLA", "PECUARIO"];
+    el("text", { x: 24, y: 76, "class": "pr-fun-g" }, f2, GR[0]);
+    if (GR[1]) el("text", { x: 24, y: 298, "class": "pr-fun-g pr-fun-g-pec" }, f2, GR[1]);
   }
 
   /* ===== fase 4: acompañamiento (ciclo, alertas, informe, cultivo que crece) ===== */
@@ -336,7 +442,7 @@
     var am = el("animateMotion", { dur: "7s", repeatCount: "indefinite", path: frente.replace(/A/, " A") }, punto);
     am.setAttribute("rotate", "0");
   } else { punto.setAttribute("cx", CX); punto.setAttribute("cy", CY + ry); }
-  [["Visita", 0.22], ["Reporte BPA o EUDR", 0.5], ["Ajuste del plan", 0.78]].forEach(function (h) {
+  PF.hitos.map(function (hh, k) { return [hh, [0.22, 0.5, 0.78][k]]; }).forEach(function (h) {
     var ang = Math.PI * (1 - h[1]), x = CX + rx * Math.cos(ang), y = CY + ry * Math.sin(ang);
     el("circle", { cx: x, cy: y, r: 5, "class": "pr-hito" }, f3);
     etiqueta(f3, x, y + 26, h[0], "medio");
@@ -351,7 +457,7 @@
   var IND = [["Rendimiento", "+12 %", 1], ["Agua por kg", "\u221218 %", -1], ["Costo por kg", "\u22129 %", -1], ["Alertas atendidas", "+35 %", 1]];
   var posI = estrecho ? [[180, 494], [412, 494], [180, 574], [412, 574]] : [[606, 86], [630, 170], [24, 262], [38, 340]];
   var wI = estrecho ? 204 : 162, hI = 62;
-  IND.forEach(function (d, i) {
+  if (PF.ind !== false) IND.forEach(function (d, i) {
     var x = posI[i][0], y = posI[i][1], ig = g(f3, "pr-ind"), fl = g(ig, "pr-ind-flota");
     ig.style.transitionDelay = (0.15 + i * 0.12) + "s";
     fl.style.animationDelay = (i * 0.7) + "s";
@@ -362,7 +468,7 @@
     el("polyline", { points: serie.map(function (v, k) { return (sx + k * 9.6).toFixed(1) + "," + (sy + v).toFixed(1); }).join(" "), "class": "pr-ind-linea" }, fl);
     el("circle", { cx: sx + 48, cy: sy + serie[5], r: 3.2, "class": "pr-ind-pt" }, fl);
   });
-  el("text", { x: 400, y: estrecho ? 668 : 510, "text-anchor": "middle", "class": "pr-nota" }, f3, "Indicadores ilustrativos");
+  if (PF.ind !== false) el("text", { x: 400, y: estrecho ? 668 : 510, "text-anchor": "middle", "class": "pr-nota" }, f3, "Indicadores ilustrativos");
   var doc = g(f3, "pr-doc");
   if (estrecho) doc.setAttribute("transform", "translate(126 -70)");
   el("rect", { x: 70, y: 128, width: 92, height: 116, rx: 10, fill: "#e9eee9" }, doc);
@@ -382,7 +488,8 @@
     num.textContent = ("0" + (i + 1)).slice(-2);
     arts.forEach(function (a, k) { a.classList.toggle("activa", k === i); });
     barras.forEach(function (b, k) { b.setAttribute("aria-current", k === i ? "step" : "false"); });
-    vivo.textContent = "Fase " + (i + 1) + " de " + n + ": " + fases[i].t + ".";
+    vivo.textContent = "Fase " + (i + 1) + " de " + n + ": " + textos()[i].t + ".";
+    servicio(i);
   }
   function medir() {
     var r = pista.getBoundingClientRect(), total = pista.offsetHeight - innerHeight;
@@ -399,6 +506,21 @@
   var pend = false;
   function alDesplazar() { if (pend) return; pend = true; requestAnimationFrame(function () { pend = false; medir(); }); }
   sec.classList.add("pr-js");
+  /* tocar el escenario resalta la propuesta de la fase */
+  escena.addEventListener("click", function () {
+    cajaS.classList.remove("pulso"); void cajaS.offsetWidth; cajaS.classList.add("pulso");
+  });
+  /* cierre: vuelve al embudo con el perfil marcado y pide la necesidad */
+  var cierre = sec.querySelector(".cierre-acc .boton");
+  if (cierre) cierre.addEventListener("click", function (e) {
+    var E = window.consultoriaEmbudo, p2 = document.getElementById("paso-2");
+    if (!E || !p2) return;
+    e.preventDefault(); E.linea(perfil);
+    p2.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    p2.classList.add("resalta"); setTimeout(function () { p2.classList.remove("resalta"); }, 2200);
+  });
+  document.addEventListener("perfil", function (e) { if (e.detail !== perfil) aplicarPerfil(e.detail, false); });
+  aplicarPerfil("productor", false);
   addEventListener("scroll", alDesplazar, { passive: true });
   addEventListener("resize", function () {
     if ((innerWidth < 640) !== estrecho) escenaSVG();
