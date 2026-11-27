@@ -746,188 +746,103 @@
     arrancarOrbita();
   })();
 
-  /* ---------- embudo (2 pasos directos) ---------- */
-  (function embudo() {
-    var est = { linea: null, sit: null };
-    var bl = $("#e-linea"), bs = $("#situaciones"), res = $("#resultado"), ver = $("#e-ver");
-
-    function icono(it) {
-      var s = it.servicio && serv(it.servicio);
-      return s ? '<svg class="ic" viewBox="0 0 40 40" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' : "";
-    }
-    function marcar(box, b) {
-      [].forEach.call(box.children, function (x) { x.setAttribute("aria-checked", "false"); });
-      b.setAttribute("aria-checked", "true");
-    }
-    function grupo(box, items, alElegir) {
-      box.innerHTML = "";
-      items.forEach(function (it, i) {
-        var b = h("button", { type: "button", role: "radio", "aria-checked": "false" }, box, esc(it.t || it.texto) + icono(it));
-        b.addEventListener("click", function () { marcar(box, b); alElegir(it); });
-        b.addEventListener("keydown", function (e) {
-          var k = e.key, n = null, c = box.children;
-          if (k === "ArrowDown" || k === "ArrowRight") n = c[(i + 1) % c.length];
-          if (k === "ArrowUp" || k === "ArrowLeft") n = c[(i - 1 + c.length) % c.length];
-          if (n) { e.preventDefault(); n.focus(); n.click(); }
-        });
-      });
-    }
-    function situaciones() {
-      est.sit = null;
-      if (!est.linea) { bs.innerHTML = '<p class="vacio-e">Elija primero su perfil (paso 1).</p>'; return; }
-      var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
-      grupo(bs, lista, function (s) { est.sit = s; render(); });
-    }
-    /* el perfil se comparte con «Cómo trabajamos» (proceso.js) por un evento y una interfaz mínima */
-    function anunciar(id) { document.dispatchEvent(new CustomEvent("perfil", { detail: id })); }
-    function elegirLinea(id) {
-      var i = Object.keys(D.lineas).indexOf(id);
-      if (i < 0 || !bl.children[i]) return;
-      marcar(bl, bl.children[i]); est.linea = id; situaciones(); render(); anunciar(id);
-    }
-    window.consultoriaEmbudo = {
-      linea: function (id) { if (est.linea !== id) elegirLinea(id); },
-      servicio: function (id) {
-        var lista = D.situaciones.filter(function (s) { return s.linea.indexOf(est.linea) >= 0; });
-        for (var k = 0; k < lista.length; k++) if (lista[k].servicio === id && bs.children[k]) { bs.children[k].click(); return true; }
-        return false;
-      }
-    };
-    function resumen() {
-      var L = D.lineas[est.linea], sv = est.sit.servicio ? serv(est.sit.servicio) : null;
-      var p = ["Soy " + L.frase + ".", "Necesito: " + est.sit.texto.toLowerCase() + "."];
-      if (sv) p.push("Servicio: " + sv.titulo + ".");
-      return p.join(" ");
-    }
-    function render() {
-      if (ver) ver.hidden = !(est.linea && est.sit);
-      if (!est.linea || !est.sit) {
-        res.innerHTML = '<p class="vacio">Elija su perfil y su necesidad para ver qué le entregamos.</p>';
-        return;
-      }
-      var sv = est.sit.servicio ? serv(est.sit.servicio) : null, txt = resumen();
-      var sel = $("#f-servicio"); if (sel) sel.value = sv ? sv.id : "otro";
-      var cuerpo = !sv
-        ? '<h3>Conversemos su caso</h3><p>Cuéntenos en dos líneas qué necesita y le proponemos alcance y fecha.</p>'
-        : '<h3>' + esc(sv.titulo) + '</h3><dl><dt>Entregable</dt><dd>' + esc(sv.entrega) + '</dd><dt>Respaldo</dt><dd>' + esc(sv.respaldo) + '</dd></dl>';
-      res.innerHTML = '<div class="entra">' + cuerpo +
-        '<div class="e-acc"><a class="boton" target="_blank" rel="noopener" href="' + waLink("Hola, equipo de Consultoría. " + txt) + '">Enviar por WhatsApp</a>' +
-        '<button type="button" class="boton boton-claro" id="e-form">Pasar al formulario</button></div></div>';
-      $("#e-form").addEventListener("click", function () {
-        var f = $("#formu"); if (!f.caso.value.trim() || f.caso.dataset.auto === "1") { f.caso.value = txt; f.caso.dataset.auto = "1"; }
-        location.hash = "#contacto";
-        setTimeout(function () { f.nombre.focus({ preventScroll: true }); }, 400);
-      });
-    }
-
-    grupo(bl, Object.keys(D.lineas).map(function (k) { return { id: k, t: D.lineas[k].texto }; }), function (it) { est.linea = it.id; situaciones(); render(); anunciar(it.id); });
-    situaciones();
-    [].forEach.call(document.querySelectorAll("[data-linea]"), function (x) {
-      x.addEventListener("click", function (e) {
-        e.preventDefault();
-        elegirLinea(x.dataset.linea);
-        /* del inicio al relato personalizado; la última fase devuelve al embudo con el perfil marcado */
-        var pr = $("#proceso");
-        if (pr) { pr.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); return; }
-        var p1 = $("#paso-1"), p2 = $("#paso-2");
-        p1.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-        p2.classList.add("resalta"); setTimeout(function () { p2.classList.remove("resalta"); }, 2200);
-      });
-    });
-    render();
-  })();
-
-  /* ---------- servicios: tablero por fases del ciclo; tocar un servicio abre su detalle ----------
-     En escritorio el detalle va bajo el tablero (ancho completo); en < 761 px va justo debajo del servicio tocado.
-     En < 761 px se ve una fase a la vez, elegida con las pestañas .sf-tabs (el CSS oculta las demás).
-     De entrada no hay detalle abierto (27/11/2026): abierto ocupaba una pantalla en el teléfono. */
+  /* ---------- servicios por perfil (27/11/2026): fusiona el embudo «¿En qué le ayudamos?» y el tablero por fases ----------
+     Pestañas: los 3 perfiles de D.lineas (los mismos del inicio y de «Cómo trabajamos»). Lista: las situaciones de ese perfil
+     (datos.js), en palabras del visitante y ordenadas por la fase de su servicio. Tocar una abre su detalle: a la derecha en
+     escritorio, debajo de ella en < 761 px. De entrada no hay detalle abierto. window.consultoriaEmbudo y el evento «perfil»
+     los usan el visor del inicio y proceso.js. */
   (function servicios() {
-    var box = $("#serv-fases"), sel = $("#f-servicio");
-    if (!box) return;
+    var tabs = $("#sp-tabs"), lista = $("#sp-lista"), col = $("#sp-col-det"), sel = $("#f-servicio");
+    if (!tabs || !lista || !col) return;
     var FASES = D.fasesServicio || ["Diagnóstico", "Análisis y plan", "Implementación", "Acompañamiento"];
-    var det = h("div", { "class": "sf-det", id: "sf-det", role: "region", "aria-live": "polite", hidden: "" }, null);
-    var botones = [], elegido = null, cols = [], pest = [];
-    var tabs = h("div", { "class": "sf-tabs", role: "tablist", "aria-label": "Fases del recorrido" }, null);
-    box.parentNode.insertBefore(tabs, box);
-    FASES.forEach(function (nombre, f) {
-      var t = h("button", { type: "button", "class": "sf-tab", role: "tab", id: "sf-t" + f, "aria-controls": "sf-f" + f, "aria-selected": f === 0 ? "true" : "false" }, tabs,
-        '<span class="n">' + ("0" + (f + 1)).slice(-2) + '</span>' + esc(nombre));
-      t.addEventListener("click", function () { fase(f); });
-      pest.push(t);
-      var col = h("div", { "class": "sf-fase" + (f === 0 ? " sf-activa" : ""), id: "sf-f" + f, role: "tabpanel", "aria-labelledby": "sf-t" + f }, box,
-        '<div class="sf-cab"><span class="n">' + ("0" + (f + 1)).slice(-2) + '</span><h3>' + esc(nombre) + '</h3></div>');
-      D.servicios.filter(function (s) { return s.fase === f; }).forEach(function (s) {
-        var b = h("button", { type: "button", "class": "sf-item", "data-id": s.id, "data-cat": s.cat, "aria-expanded": "false", "aria-controls": "sf-det" }, col,
-          '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg><span>' + esc(s.titulo) + '</span>');
-        b.addEventListener("click", function () { abrir(s, b, true); });
-        botones.push(b);
-      });
-      cols.push(col);
-    });
-    function fase(f) {
-      pest.forEach(function (t, k) { t.setAttribute("aria-selected", k === f ? "true" : "false"); });
-      cols.forEach(function (c, k) { c.classList.toggle("sf-activa", k === f); });
-      if (elegido && elegido.parentNode !== cols[f]) cerrar();
-    }
+    var CORTO = { productor: "Productor", empresarial: "Empresa", academica: "Investigación" };
+    var ids = Object.keys(D.lineas), linea = null, abierto = null;
     D.servicios.forEach(function (s) { if (sel) h("option", { value: s.id }, sel, esc(s.titulo)); });
     if (sel) h("option", { value: "otro" }, sel, "Otro tema");
-
+    var vacio = h("p", { "class": "sp-vacio" }, col, "Toque una necesidad para ver qué recibe, con qué lo respaldamos y cómo pedirlo.");
+    var det = h("div", { "class": "sp-det", id: "sp-det", role: "region", "aria-label": "Detalle del servicio", "aria-live": "polite", hidden: "" }, col);
+    function movil() { return window.innerWidth <= 760; }
+    function ubicar() {
+      if (abierto && movil()) abierto.parentNode.insertBefore(det, abierto.nextSibling);
+      else if (det.parentNode !== col) col.appendChild(det);
+      det.hidden = !abierto; vacio.hidden = !!abierto;
+    }
+    function anunciar(id) { document.dispatchEvent(new CustomEvent("perfil", { detail: id })); }
+    function fase(s) { var sv = s.servicio && serv(s.servicio); return sv ? sv.fase : 9; }
+    var pest = ids.map(function (id, i) {
+      var t = h("button", { type: "button", role: "tab", "class": "sp-tab", id: "sp-t-" + id, "aria-controls": "sp-lista", "aria-selected": "false", tabindex: "-1" }, tabs,
+        esc(CORTO[id] || D.lineas[id].texto));
+      t.addEventListener("click", function () { elegir(id, true); });
+      t.addEventListener("keydown", function (e) {
+        var k = e.key, n = null;
+        if (k === "ArrowRight") n = (i + 1) % ids.length; if (k === "ArrowLeft") n = (i - 1 + ids.length) % ids.length;
+        if (k === "Home") n = 0; if (k === "End") n = ids.length - 1;
+        if (n !== null) { e.preventDefault(); pest[n].focus(); elegir(ids[n], true); }
+      });
+      return t;
+    });
+    function elegir(id, avisar) {
+      if (ids.indexOf(id) < 0) return;
+      linea = id; abierto = null;
+      pest.forEach(function (t, k) { var si = ids[k] === id; t.setAttribute("aria-selected", si ? "true" : "false"); t.tabIndex = si ? 0 : -1; });
+      lista.setAttribute("aria-labelledby", "sp-t-" + id);
+      if (det.parentNode !== col) col.appendChild(det);
+      lista.innerHTML = "";
+      D.situaciones.filter(function (s) { return s.linea.indexOf(id) >= 0; })
+        .sort(function (p, q) { return fase(p) - fase(q); })
+        .forEach(function (s) {
+          var sv = s.servicio && serv(s.servicio);
+          var b = h("button", { type: "button", "class": "sp-item" + (sv ? "" : " sp-otro"), "aria-expanded": "false", "aria-controls": "sp-det", "data-id": sv ? sv.id : "otro" }, lista,
+            '<svg viewBox="0 0 40 40" aria-hidden="true">' + (sv ? '<use href="#i-' + sv.icono + '"/>' : '<path d="M8 10h24v16H18l-7 6v-6H8z"/>') + '</svg>' +
+            '<span><b>' + esc(s.texto) + '</b><small>' + (sv ? esc(sv.titulo) + ' · Fase ' + (sv.fase + 1) : 'Le proponemos alcance y fecha') + '</small></span>');
+          b.addEventListener("click", function () { if (abierto === b) { abierto = null; marcar(); ubicar(); return; } abrir(s, b, true); });
+        });
+      ubicar();
+      if (avisar) anunciar(id);
+    }
+    function marcar() { [].forEach.call(lista.children, function (x) { if (x.classList.contains("sp-item")) x.setAttribute("aria-expanded", x === abierto ? "true" : "false"); }); }
     function abrir(s, b, desplazar) {
-      if (elegido === b && !det.hidden && desplazar) { cerrar(); return; }
-      botones.forEach(function (x) { x.setAttribute("aria-expanded", x === b ? "true" : "false"); });
-      elegido = b;
-      det.innerHTML = '<div class="sf-det-t"><p class="k">Fase ' + (s.fase + 1) + ' · ' + esc(FASES[s.fase]) + '</p><h3>' + esc(s.titulo) + '</h3>' +
-        '<p class="sf-recibe"><b>Usted recibe:</b> ' + esc(s.entrega) + '</p></div>' +
-        '<div class="sf-det-l"><p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>' +
-        '<div class="sf-acc"><a class="boton boton-chico" target="_blank" rel="noopener" href="' +
-        waLink("Hola, equipo de Consultoría. Me interesa: " + s.titulo + ".") + '">Escribir por WhatsApp</a>' +
-        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Cotizar por formulario →</a></div></div>';
-      det.hidden = false;
-      /* en teléfono, debajo del servicio; en escritorio, al final del tablero */
-      if (window.innerWidth <= 760) b.parentNode.insertBefore(det, b.nextSibling); else box.appendChild(det);
-      /* si el detalle queda fuera de la vista (teléfono, o tablero de 2 columnas), la página baja hasta él */
-      if (desplazar) {
+      abierto = b; marcar();
+      var sv = s.servicio && serv(s.servicio), L = D.lineas[linea];
+      var txt = "Soy " + L.frase + ". Necesito: " + s.texto.toLowerCase() + "." + (sv ? " Servicio: " + sv.titulo + "." : "");
+      det.innerHTML = (sv
+        ? '<p class="k">Fase ' + (sv.fase + 1) + ' · ' + esc(FASES[sv.fase]) + '</p><h3>' + esc(sv.titulo) + '</h3>' +
+          '<p class="sp-recibe"><b>Usted recibe:</b> ' + esc(sv.entrega) + '</p><p class="resp"><b>RESPALDO</b> ' + esc(sv.respaldo) + '</p>'
+        : '<h3>Conversemos su caso</h3><p class="sp-recibe">Cuéntenos en dos líneas qué necesita y le proponemos alcance y fecha.</p>') +
+        '<div class="sp-acc"><a class="boton boton-chico" target="_blank" rel="noopener" href="' + waLink("Hola, equipo de Consultoría. " + txt) + '">Escribir por WhatsApp</a>' +
+        '<a class="cta" href="#contacto" data-serv="' + (sv ? sv.id : "otro") + '">Pasar al formulario →</a></div>';
+      det.querySelector(".cta").addEventListener("click", function () {
+        var f = $("#formu"); if (!f) return;
+        if (sel) sel.value = sv ? sv.id : "otro";
+        if (!f.caso.value.trim() || f.caso.dataset.auto === "1") { f.caso.value = txt; f.caso.dataset.auto = "1"; }
+        setTimeout(function () { f.nombre.focus({ preventScroll: true }); }, 400);
+      });
+      if (sel) sel.value = sv ? sv.id : "otro";
+      ubicar();
+      if (desplazar && movil()) {
         var r = det.getBoundingClientRect();
         if (r.top < 70 || r.bottom > window.innerHeight) det.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
       }
     }
-    function cerrar() { det.hidden = true; if (elegido) elegido.setAttribute("aria-expanded", "false"); elegido = null; }
-    window.addEventListener("resize", function () {
-      if (!elegido || det.hidden) return;
-      var movil = window.innerWidth <= 760, dentro = det.parentNode === box;
-      if (movil && dentro) elegido.parentNode.insertBefore(det, elegido.nextSibling);
-      else if (!movil && !dentro) box.appendChild(det);
+    window.addEventListener("resize", ubicar);
+    window.consultoriaEmbudo = {
+      linea: function (id) { if (linea !== id) elegir(id, true); },
+      servicio: function (id) {
+        var b = lista.querySelector('.sp-item[data-id="' + id + '"]'); if (!b) return false;
+        if (abierto !== b) b.click();
+        return true;
+      }
+    };
+    /* botones del inicio: marcan el perfil y llevan al relato personalizado de «Cómo trabajamos» */
+    [].forEach.call(document.querySelectorAll("[data-linea]"), function (x) {
+      x.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (linea !== x.dataset.linea) elegir(x.dataset.linea, true); else anunciar(linea);
+        var pr = $("#proceso");
+        (pr || $("#servicios")).scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      });
     });
-
-    document.addEventListener("click", function (e) {
-      var l = e.target.closest && e.target.closest("[data-serv]"); if (!l) return;
-      if (sel) sel.value = l.dataset.serv;
-    });
-  })();
-
-  /* ---------- cifras con conteo ---------- */
-  (function cifras() {
-    var box = $("#cifras");
-    if (!box) return;
-    D.cifras.forEach(function (c) {
-      h("div", { "class": "cifra rev" }, box,
-        '<div class="n" data-n="' + c.n + '" data-s="' + c.sufijo + '">0</div><div class="e">' + esc(c.etiqueta) + '</div><div class="f">' + esc(c.fuente) + '</div>');
-    });
-    function cuenta(nodo) {
-      var meta = +nodo.dataset.n, suf = nodo.dataset.s, ini = performance.now(), dur = 1400;
-      function fmt(v) { return Math.round(v).toLocaleString("es-CO") + suf; }
-      if (reduce) { nodo.textContent = fmt(meta); return; }
-      (function paso(t) {
-        var p = Math.min(1, (t - ini) / dur), e = 1 - Math.pow(1 - p, 3);
-        nodo.textContent = fmt(meta * e);
-        if (p < 1) requestAnimationFrame(paso);
-      })(ini);
-    }
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { cuenta(e.target); io.unobserve(e.target); } });
-    }, { threshold: .6 });
-    [].forEach.call(box.querySelectorAll(".n"), function (n) { io.observe(n); });
-    finales.push(function () { [].forEach.call(box.querySelectorAll(".n"), function (n) { n.textContent = Math.round(+n.dataset.n).toLocaleString("es-CO") + n.dataset.s; }); });
+    elegir("productor", false);
   })();
 
   /* ---------- mapa de conocimiento: equipo → publicaciones → áreas → servicios ---------- */
@@ -1142,9 +1057,22 @@
     });
   })();
 
+  /* ---------- franja del equipo en la portada (27/11/2026): personas y cifras salen de datos.js ---------- */
+  (function franjaEquipo() {
+    var ul = $("#eq-mini"), dato = $("#eq-dato");
+    if (!ul) return;
+    D.equipo.forEach(function (p) {
+      h("li", {}, ul, '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><span><b>' + esc(p.nombre) + '</b><small>' + esc(p.rol) + '</small></span>');
+    });
+    var talleres = (D.cifras || []).filter(function (c) { return /productores en talleres/.test(c.etiqueta); })[0];
+    if (dato) dato.textContent = D.publicaciones.length + " artículos con DOI · " + D.cartillas.length + " cartillas" +
+      (talleres ? " · " + talleres.n + talleres.sufijo + " " + talleres.etiqueta : "");
+  })();
+
   /* ---------- equipo (4 tarjetas limpias) ---------- */
   (function equipo() {
     var cont = $("#equipo-lista");
+    if (!cont) return;
     D.equipo.forEach(function (p) {
       h("article", { "class": "persona rev" }, cont,
         '<span class="av" aria-hidden="true">' + esc(p.ini) + '</span><h3>' + esc(p.nombre) + '</h3>' +
@@ -1187,6 +1115,7 @@
   /* ---------- voces (solo visible cuando hay testimonios autorizados o ?demo=1) ---------- */
   (function voces() {
     var sec = $("#voces"), cont = $("#voces-lista"), demo = /[?&]demo=1/.test(location.search);
+    if (!sec || !cont) return;
     var lista = D.testimonios.filter(function (t) { return t.autorizado; });
     if (demo) lista = D.testimoniosDemo;
     if (!lista.length) { if (sec) sec.hidden = true; return; }
@@ -1202,6 +1131,7 @@
   /* ---------- contacto ---------- */
   (function contacto() {
     var c = D.contacto;
+    if (!$("#formu") || !$("#c-wa")) return;
     var wa = $("#c-wa"); wa.textContent = c.whatsappVisible; wa.href = "https://wa.me/" + c.whatsapp;
     var ma = $("#c-mail"); ma.textContent = c.correo; ma.href = "mailto:" + c.correo;
     var f = $("#formu"), via = "whatsapp";

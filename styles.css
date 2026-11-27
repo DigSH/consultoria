@@ -1121,3 +1121,65 @@ section[hidden]{display:none!important}
 @media (max-width:860px){
   .surco-pantallas{scroll-padding-inline:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px)}
 }
+
+/* ---------- Servicios por perfil (27/11/2026): pestañas de perfil, lista de necesidades y detalle ---------- */
+.ancla{display:block;position:relative;top:-80px;visibility:hidden}
+.sp-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:560px;margin:0 0 22px}
+.sp-tab{min-height:48px;padding:10px 8px;border-radius:14px;border:1px solid var(--linea);background:#fcfcfa;color:var(--tinta);
+  font:600 15px var(--display);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.sp-tab:hover{border-color:var(--verde)}
+.sp-tab[aria-selected=true]{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.sp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,3vw,32px);align-items:start}
+.sp.resalta .sp-lista{animation:pulso 2.2s ease-out;border-radius:18px}
+.sp-lista{display:grid;gap:10px}
+.sp-item{display:flex;gap:12px;align-items:flex-start;width:100%;min-height:56px;padding:13px 16px;text-align:left;cursor:pointer;
+  background:#fcfcfa;border:1px solid var(--linea);border-radius:16px;color:var(--tinta);transition:border-color .2s,box-shadow .2s}
+.sp-item svg{flex:none;width:26px;height:26px;margin-top:1px;fill:none;stroke:var(--verde);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sp-item b{display:block;font:600 15.5px/1.35 var(--display)}
+.sp-item small{display:block;margin-top:4px;font:500 12px/1.35 var(--mono);color:var(--tinta2);letter-spacing:.02em}
+.sp-item:hover{border-color:var(--verde)}
+.sp-item[aria-expanded=true]{border-color:var(--verde);box-shadow:0 0 0 2px rgba(20,99,63,.22)}
+.sp-col{position:sticky;top:84px}
+.sp-vacio{margin:0;padding:22px 24px;border:1px dashed var(--linea);border-radius:var(--r-l);color:var(--tinta2)}
+.sp-det{background:var(--tinta);color:#dde5de;border-radius:var(--r-l);padding:24px 26px;box-shadow:var(--sombra)}
+.sp-det[hidden]{display:none}
+.sp-det .k{margin:0;font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--menta)}
+.sp-det h3{margin:6px 0 10px;color:#fff;font-size:21px}
+.sp-recibe{margin:0 0 14px;font-size:15.5px}
+.sp-recibe b{color:#fff}
+.sp-det .resp{margin:0 0 16px;padding:0 0 14px;border-bottom:1px dashed #3a4a40;font:12.5px/1.6 var(--mono);color:#9bd8b6}
+.sp-det .resp b{color:var(--menta);font-weight:600}
+.sp-acc{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.sp-acc .boton{background:var(--menta);border-color:var(--menta);color:var(--tinta)}
+.sp-acc .boton:hover{background:#fff;border-color:#fff}
+.sp-acc .cta{color:var(--menta);font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+@media (max-width:760px){
+  .sp{grid-template-columns:1fr}
+  .sp-col{position:static}
+  .sp-vacio{display:none}
+  .sp-det{margin:-2px 0 4px;padding:18px}
+  .sp-det h3{font-size:19px}
+  .sp-tab{font-size:14px;padding:10px 4px}
+}
+@media print{.sp-tabs,.sp-vacio,.sp-acc{display:none!important}}
+
+/* ---------- Equipo (27/11/2026): franja en la portada y página equipo.html ---------- */
+.eq-mini{list-style:none;margin:0 0 18px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.eq-mini li{display:flex;gap:12px;align-items:center;padding:12px 14px;background:#fcfcfa;border:1px solid var(--linea);border-radius:16px}
+.eq-mini .av{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--tinta);color:var(--menta);font:700 14px var(--display)}
+.eq-mini b{display:block;font:600 15px/1.25 var(--display)}
+.eq-mini small{display:block;margin-top:2px;color:var(--tinta2);font-size:13px;line-height:1.3}
+.eq-dato{margin:0 0 20px;font:600 13px/1.5 var(--mono);letter-spacing:.04em;color:var(--verde)}
+.eq-pag{padding-top:clamp(96px,12vw,140px)}
+.eq-pag .cab h1{font:700 clamp(32px,5vw,60px)/1.02 var(--display);margin:0 0 14px;letter-spacing:-.035em}
+.eq-pag .cab h1::after{content:"";display:block;width:64px;height:5px;margin-top:16px;border-radius:3px;background:linear-gradient(90deg,var(--verde),var(--menta))}
+.eq-pag .sobretitulo a{color:inherit}
+#evidencia{scroll-margin-top:70px}
+@media (max-width:1000px){.eq-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.eq-mini{grid-template-columns:1fr;gap:8px}.eq-mini li{padding:10px 12px}}
+/* alineación con la columna de contenido (.seccion>* centra con margin auto; estas reglas no deben anularlo) */
+.sp-tabs{max-width:var(--max);margin:0 auto 22px;grid-template-columns:repeat(3,minmax(0,180px))}
+.eq-mini{margin:0 auto 18px}
+.eq-dato{margin:0 auto 20px}
+.eq-acc{margin:0 auto}
+@media (max-width:760px){.sp-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}

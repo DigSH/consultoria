@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261128s">
+<link rel="stylesheet" href="styles.css?v=20261128w">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -44,11 +44,10 @@
   <nav aria-label="Principal">
     <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-enlaces">Menú</button>
     <div class="enlaces" id="nav-enlaces">
-      <a href="#buscador">Empiece</a>
       <a href="#servicios">Servicios</a>
       <a href="#surco">App</a>
       <a href="laboratorio.html">Mapas</a>
-      <a href="#evidencia">Publicaciones</a>
+      <a href="equipo.html#evidencia">Publicaciones</a>
       <a href="#equipo">Equipo</a>
     </div>
     <a class="boton boton-chico" href="#contacto">Escríbanos</a>
@@ -120,41 +119,23 @@
     <li><span class="num">04</span><h3>Acompañamiento</h3><p>Seguimiento periódico, reportes BPA o EUDR y ajuste del plan con lo que registra la app.</p></li>
   </ol>
   <div class="cierre-acc">
-    <a class="boton" href="#buscador">Quiero mi diagnóstico de finca <span aria-hidden="true">→</span></a>
+    <a class="boton" href="#servicios">Quiero mi diagnóstico de finca <span aria-hidden="true">→</span></a>
     <p class="dato-campo"><b>300+</b> productores en talleres de campo <span>Epsea · ADR</span></p>
   </div>
 </section>
 
-<!-- ============ EMBUDO (2 pasos directos) ============ -->
-<section class="seccion" id="buscador">
+<!-- ============ SERVICIOS POR PERFIL (27/11/2026: fusiona el embudo y el tablero por fases) ============ -->
+<section class="seccion" id="servicios">
+  <span id="buscador" class="ancla" aria-hidden="true"></span>
   <div class="cab">
     <h2>¿En qué le ayudamos?</h2>
+    <p class="sub">Elija su perfil y toque lo que necesita para ver qué recibe.</p>
   </div>
-  <div class="buscador embudo">
-    <div class="pasos-e">
-      <fieldset class="paso-e" id="paso-1">
-        <legend><span>1</span> Perfil</legend>
-        <div class="situaciones cortas" id="e-linea" role="radiogroup" aria-label="Perfil"></div>
-      </fieldset>
-      <fieldset class="paso-e" id="paso-2">
-        <legend><span>2</span> Necesidad</legend>
-        <div class="situaciones" id="situaciones" role="radiogroup" aria-label="Necesidad"></div>
-        <p class="e-mas"><a class="e-ver" id="e-ver" href="#resultado" hidden>Ver entregable ↓</a></p>
-      </fieldset>
-    </div>
-    <aside class="resultado" id="resultado" aria-live="polite">
-      <p class="vacio">Elija su perfil y su necesidad para ver qué le entregamos.</p>
-    </aside>
+  <div class="sp-tabs" id="sp-tabs" role="tablist" aria-label="Perfil"></div>
+  <div class="sp" id="paso-2">
+    <div class="sp-lista" id="sp-lista" role="tabpanel"></div>
+    <div class="sp-col" id="sp-col-det"></div>
   </div>
-</section>
-
-<!-- ============ SERVICIOS por fase del ciclo (tablero de ruta; detalle al tocar) ============ -->
-<section class="seccion oscura" id="servicios">
-  <div class="cab">
-    <h2>Servicios</h2>
-    <p class="sf-intro">Cada servicio entra en una fase del recorrido. Toque uno para ver qué recibe.</p>
-  </div>
-  <div class="sf" id="serv-fases"></div>
 </section>
 
 <!-- ============ SURCO, LA APP DE LA CONSULTORÍA ============ -->
@@ -220,39 +201,15 @@
   </div>
 </section>
 
-<!-- ============ EVIDENCIA Y PUBLICACIONES ============ -->
-<section class="seccion" id="evidencia">
-  <div class="cab">
-    <h2>Publicaciones</h2>
-    <p class="sub">Lo que el equipo ha investigado y publicado, conectado con los servicios que hoy le ofrecemos.</p>
-  </div>
-
-  <figure class="tarjeta ancha" id="publicaciones">
-    <figcaption>
-      <h3>Mapa de conocimiento del equipo</h3>
-      <div class="kg-ley" id="g-leyenda"></div>
-    </figcaption>
-    <div class="lienzo kg" id="g-pubs"></div>
-    <div class="detalle-pub" id="detalle-pub" aria-live="polite"></div>
-    <details class="mas-pubs">
-      <summary>Ver listado completo (7 artículos y 2 cartillas)</summary>
-      <ul class="pubs" id="lista-pubs"></ul>
-      <ul class="pubs" id="lista-cartillas"></ul>
-    </details>
-  </figure>
-</section>
-
-<!-- ============ EQUIPO ============ -->
-<section class="seccion claro2" id="equipo">
+<!-- ============ EQUIPO: franja de confianza; el detalle y las publicaciones viven en equipo.html ============ -->
+<section class="seccion claro2 eq-franja" id="equipo">
   <div class="cab">
     <h2>Equipo</h2>
+    <p class="sub">Cuatro profesionales formados en la UPTC responden por su proyecto.</p>
   </div>
-  <div class="carrusel" id="equipo-car" role="region" aria-roledescription="carrusel" aria-label="Integrantes del equipo">
-    <button type="button" class="car-flecha" id="car-prev" aria-label="Integrante anterior">‹</button>
-    <div class="equipo" id="equipo-lista" tabindex="0"></div>
-    <button type="button" class="car-flecha" id="car-next" aria-label="Integrante siguiente">›</button>
-  </div>
-  <div class="car-pts" id="equipo-pts" aria-label="Posición en el carrusel"></div>
+  <ul class="eq-mini" id="eq-mini"></ul>
+  <p class="eq-dato" id="eq-dato"></p>
+  <p class="eq-acc"><a class="boton" href="equipo.html">Conocer al equipo y sus publicaciones <span aria-hidden="true">→</span></a></p>
 </section>
 
 <!-- ============ VOCES (solo visible si hay testimonios o ?demo=1) ============ -->
@@ -320,9 +277,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261128t"></script>
+<script src="datos.js?v=20261128u"></script>
 <script src="comun.js?v=20261128t"></script>
-<script src="app.js?v=20261128t"></script>
-<script src="proceso.js?v=20261128t"></script>
+<script src="app.js?v=20261128v"></script>
+<script src="proceso.js?v=20261128v"></script>
 </body>
 </html>

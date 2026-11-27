@@ -23,12 +23,12 @@ window.CONSULTORIA = {
 
   /* 9 servicios esenciales con respaldo verificado */
   servicios: [
-    { id: "estadistica", fase: 1, cat: "investigacion", corto: "Estadística y SEM", responsables: ["Diego"], linea: ["academica"], icono: "tesis",
+    { id: "estadistica", fase: 1, cat: "investigacion", corto: "Estadística y SEM", responsables: ["Diego"], linea: ["academica", "empresarial"], icono: "tesis",
       titulo: "Estadística y diseño experimental",
       entrega: "Plan de análisis, código en R, tablas y figuras listas para publicación, modelos PLS-SEM y sesión de sustentación.",
       respaldo: "4 tesis asesoradas (2023–2025) · 2 escalas psicométricas validadas · artículos PLS-PM (2024, 2026)" },
 
-    { id: "cienciometria", fase: 0, cat: "investigacion", corto: "Cienciometría", responsables: ["Diego", "Zahira"], linea: ["academica"], icono: "biblio",
+    { id: "cienciometria", fase: 0, cat: "investigacion", corto: "Cienciometría", responsables: ["Diego", "Zahira"], linea: ["academica", "empresarial"], icono: "biblio",
       titulo: "Cienciometría y artículos científicos",
       entrega: "Búsqueda calibrada, redes en Bibliometrix/VOSviewer, base BibTeX/RIS y apoyo en estructura, figuras y respuesta a revisores.",
       respaldo: "12 reportes bibliométricos (OCITEB) · 7 artículos con DOI (2023–2026) · 2 cartillas UPTC" },

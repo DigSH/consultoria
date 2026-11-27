@@ -82,7 +82,7 @@
     productor: {
       serv: ["geomatica", "ia", "surco", "bpa"],
       /* la prueba de cada fase en la misma página: el ciclo sirve de índice sin encerrar el contenido */
-      prueba: [["laboratorio.html#ideam", "Ver mapas en vivo"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
+      prueba: [["laboratorio.html#ideam", "Ver mapas en vivo"], ["equipo.html#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero mi diagnóstico de finca",
       hitos: ["Visita", "Reporte BPA o EUDR", "Ajuste del plan"]
     },
@@ -94,7 +94,7 @@
         ["Acompañamiento", "Reportes consolidados BPA o EUDR para compradores y auditorías, y ajuste del plan."]
       ],
       serv: ["geomatica", "tableros", "surco", "bpa"],
-      prueba: [["laboratorio.html#eudr", "Pruebe el validador EUDR"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
+      prueba: [["laboratorio.html#eudr", "Pruebe el validador EUDR"], ["equipo.html#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero el diagnóstico de mi organización",
       tel: { tit: "Organización", sub: "3 fincas · 1 hato", filas: ["Finca 1", "Finca 2", "Finca 3", "Hato"], datos: ["BPA al día", "Riego hoy", "EUDR listo", "12 bovinos"], alerta: "Reporte comprador" },
       hitos: ["Comité", "Reporte consolidado", "Auditoría"],
@@ -115,8 +115,10 @@
         ["Acompañamiento", "Hasta la sustentación y la respuesta a revisores."]
       ],
       serv: ["cienciometria", "estadistica", "gobernanza", "proyectos"],
-      prueba: [["#equipo", "Conocer al equipo"], ["laboratorio.html#iguaque", "Ver un estudio longitudinal"], ["#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
+      prueba: [["#equipo", "Conocer al equipo"], ["laboratorio.html#iguaque", "Ver un estudio longitudinal"], ["equipo.html#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero asesoría para mi investigación",
+      titulo: "De la pregunta a la publicación",
+      sub: "Cuatro fases. Al final usted se queda con un análisis reproducible: código, base depurada, tablas y figuras.",
       pec: false,
       capas: ["Diseño experimental", "Estadística en R", "Modelos PLS-SEM", "Figuras y tablas"],
       tel: { tit: "Ensayo", sub: "3 tratamientos · testigo", filas: ["T1", "T2", "T3", "Testigo"], datos: ["Datos al día", "Datos al día", "Datos al día", "Datos al día"], alerta: "Base depurada" },
@@ -208,6 +210,10 @@
     });
     var cta = sec.querySelector(".cierre-acc .boton");
     if (cta) cta.firstChild.textContent = PERFILES[id].cta + " ";
+    /* título y subtítulo: los del HTML salvo que el perfil traiga los suyos (Investigación) */
+    var h2 = sec.querySelector(".cab h2"), sub = sec.querySelector(".cab .sub");
+    if (h2 && !h2.dataset.base) { h2.dataset.base = h2.textContent; sub.dataset.base = sub.firstChild.textContent; }
+    if (h2) { h2.textContent = PERFILES[id].titulo || h2.dataset.base; sub.firstChild.textContent = PERFILES[id].sub ? PERFILES[id].sub + " " : sub.dataset.base; }
     if (desdeAqui && window.consultoriaEmbudo) window.consultoriaEmbudo.linea(id);
     if (cambia && typeof escenaSVG === "function" && escena.firstChild) { escenaSVG(); actual = -1; medir(); }
   }
@@ -546,8 +552,9 @@
     el("circle", { cx: q[0], cy: q[1], r: 13, fill: "#5ad69a" }, b);
     el("path", { d: "M" + (q[0] - 5) + " " + (q[1] + 4) + "h10M" + q[0] + " " + (q[1] - 6) + "c-4 0 -5 3 -5 6v4h10v-4c0 -3 -1 -6 -5 -6z", fill: "none", stroke: "#0e1512", "stroke-width": 1.8, "stroke-linejoin": "round" }, b);
   });
-  /* indicadores de la finca con cambios favorables (valores ilustrativos, la nota lo dice) */
-  var IND = [["Rendimiento", "+12 %", 1], ["Agua por kg", "\u221218 %", -1], ["Costo por kg", "\u22129 %", -1], ["Alertas atendidas", "+35 %", 1]];
+  /* indicadores que se siguen en la app: solo el nombre y una tendencia dibujada, sin cifras (27/11/2026: las cifras
+     ilustrativas parecían resultados reales) */
+  var IND = [["Rendimiento", "por lote", 1], ["Uso de agua", "por kg", -1], ["Costo", "por kg", -1], ["Alertas", "atendidas", 1]];
   var posI = estrecho ? [[180, 494], [412, 494], [180, 574], [412, 574]] : [[606, 86], [630, 170], [24, 262], [38, 340]];
   var wI = estrecho ? 204 : 162, hI = 62;
   if (PF.ind !== false) IND.forEach(function (d, i) {
@@ -556,12 +563,12 @@
     fl.style.animationDelay = (i * 0.7) + "s";
     el("rect", { x: x, y: y, width: wI, height: hI, rx: 14, "class": "pr-ind-caja" }, fl);
     el("text", { x: x + 14, y: y + 23, "class": "pr-ind-n" }, fl, d[0]);
-    el("text", { x: x + 14, y: y + 48, "class": "pr-ind-v" }, fl, (d[2] > 0 ? "\u25B2 " : "\u25BC ") + d[1]);
+    el("text", { x: x + 14, y: y + 48, "class": "pr-ind-v" }, fl, d[1]);
     var sx = x + wI - 62, sy = y + 18, serie = d[2] > 0 ? [26, 22, 23, 16, 12, 6] : [6, 9, 8, 15, 19, 25];
     el("polyline", { points: serie.map(function (v, k) { return (sx + k * 9.6).toFixed(1) + "," + (sy + v).toFixed(1); }).join(" "), "class": "pr-ind-linea" }, fl);
     el("circle", { cx: sx + 48, cy: sy + serie[5], r: 3.2, "class": "pr-ind-pt" }, fl);
   });
-  if (PF.ind !== false) el("text", { x: 400, y: estrecho ? 668 : 510, "text-anchor": "middle", "class": "pr-nota" }, f3, "Indicadores ilustrativos");
+  if (PF.ind !== false) el("text", { x: 400, y: estrecho ? 668 : 510, "text-anchor": "middle", "class": "pr-nota" }, f3, "Indicadores que usted sigue en Surco");
   var doc = g(f3, "pr-doc");
   if (estrecho) doc.setAttribute("transform", "translate(126 -70)");
   el("rect", { x: 70, y: 128, width: 92, height: 116, rx: 10, fill: "#e9eee9" }, doc);
