@@ -686,7 +686,7 @@
 
     var manual = false, raf = 0, ultPt = [885, 275];
     hero.addEventListener("pointermove", function (e) {
-      if (e.target.closest && e.target.closest(".gis-hud")) return;
+      if (e.target.closest && e.target.closest(".gis-hud, .hud-diag")) return;
       manual = true;
       ultPt = aCoordSVG(e);
       if (raf) return;
@@ -697,7 +697,7 @@
 
     /* tocar el terreno (no el texto ni los botones) da el diagnóstico de ejemplo del perfil */
     hero.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest("a, button, .gis-hud, h1, p, li")) return;
+      if (e.target.closest && e.target.closest("a, button, .gis-hud, .hud-diag, h1, p, li")) return;
       mostrarDiag(aCoordSVG(e), true);
     });
 
@@ -1049,7 +1049,7 @@
       return v;
     }
 
-    var svg, W = 0, sel = null, visto = reduce;
+    var svg, W = 0, sel = null, fijado = null, visto = reduce;
     function activar(n) {
       sel = n;
       var v = n ? vecinos(n) : null;
@@ -1096,11 +1096,14 @@
           el("text", { y: -26, "text-anchor": "middle", "class": "kg-mini" }, g, "SERVICIO");
         }
         n.g = g;
-        var ir = function () { activar(n); };
-        g.addEventListener("pointerenter", ir); g.addEventListener("focus", ir); g.addEventListener("click", ir);
-        g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ir(); } });
+        /* pasar el puntero o el foco muestra el nodo; clic o Enter lo deja fijo (sus enlaces están fuera del dibujo) */
+        var ver = function () { activar(n); };
+        var fijar = function () { fijado = fijado && fijado.id === n.id ? null : n; activar(fijado || n); };
+        g.addEventListener("pointerenter", ver); g.addEventListener("focus", ver); g.addEventListener("click", fijar);
+        g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fijar(); } });
       });
-      svg.addEventListener("pointerleave", function () { activar(null); });
+      if (fijado) fijado = byId[fijado.id] || null;
+      svg.addEventListener("pointerleave", function () { activar(fijado); });
       activar(sel && byId[sel.id] ? sel : null);
       if (visto) { cont.classList.add("kg-vivo"); [].forEach.call(cont.querySelectorAll(".kg-n,.kg-a"), function (x) { x.style.transitionDelay = "0s"; }); }
     }
@@ -1202,6 +1205,8 @@
     var wa = $("#c-wa"); wa.textContent = c.whatsappVisible; wa.href = "https://wa.me/" + c.whatsapp;
     var ma = $("#c-mail"); ma.textContent = c.correo; ma.href = "mailto:" + c.correo;
     var f = $("#formu"), via = "whatsapp";
+    var pedido = (location.search.match(/[?&]servicio=([a-z0-9-]+)/) || [])[1];
+    if (pedido && f.servicio.querySelector('option[value="' + pedido + '"]')) f.servicio.value = pedido;
     [].forEach.call(f.querySelectorAll("button"), function (b) { b.addEventListener("click", function () { via = b.dataset.via; }); });
     var aviso = $("#formu-aviso");
     function marca(campo, ok) { if (ok) campo.removeAttribute("aria-invalid"); else campo.setAttribute("aria-invalid", "true"); }
@@ -1213,6 +1218,7 @@
       if (!nombre) falta.push("su nombre"); if (!caso) falta.push("su caso");
       if (falta.length) { aviso.textContent = "Falta " + falta.join(" y ") + "."; (nombre ? f.caso : f.nombre).focus(); return; }
       aviso.textContent = "";
+      document.dispatchEvent(new CustomEvent("formulario-ok", { detail: via }));
       var sv = serv(f.servicio.value), t = sv ? sv.titulo : "otro tema";
       var msg = "Hola, equipo de Consultoría. Soy " + nombre + ". Me interesa: " + t + ".\n\n" + caso;
       if (via === "correo") {

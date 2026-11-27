@@ -78,7 +78,7 @@
       })
       .catch(function (e) {
         clearTimeout(t);
-        cuenta.innerHTML = 'No se pudieron cargar las estaciones (' + esc(e.message) + '). Puedes ver el catálogo en <a href="https://www.datos.gov.co/resource/hp9r-jxuu" target="_blank" rel="noopener">datos.gov.co</a>.';
+        cuenta.innerHTML = 'No se pudieron cargar las estaciones (' + esc(e.message) + '). Puede ver el catálogo en <a href="https://www.datos.gov.co/resource/hp9r-jxuu" target="_blank" rel="noopener">datos.gov.co</a>.';
         window.__ideam = { error: e.message };
       });
     return map;
@@ -161,7 +161,7 @@
       avisos.forEach(function (a) { items.push(fila("aviso", a)); });
       items.push(fila("ok", "<b>" + n + " vértices</b>, polígono cerrado automáticamente al descargar."));
       items.push(fila("ok", "Área esférica (±0,5 %): <b>" + ha.toLocaleString("es-CO", { maximumFractionDigits: 2 }) + " ha</b> · perímetro " + Math.round(per).toLocaleString("es-CO") + " m."));
-      if (repetidos) { items.push(fila("mal", "<b>" + repetidos + " vértice(s) repetido(s)</b> o a menos de 1 cm del siguiente: separa los puntos.")); mal++; }
+      if (repetidos) { items.push(fila("mal", "<b>" + repetidos + " vértice(s) repetido(s)</b> o a menos de 1 cm del siguiente: separe los puntos.")); mal++; }
       if (ha < 0.0001) { items.push(fila("mal", "<b>El área es prácticamente cero</b> (menos de 1 m²): los vértices están repetidos o alineados.")); mal++; }
       if (cruces) { items.push(fila("mal", "<b>El contorno se cruza consigo mismo</b> (" + cruces + " cruce(s)). Las plataformas lo rechazan: corrija los vértices."));  mal++; }
       else items.push(fila("ok", "Sin cruces del contorno."));
@@ -174,7 +174,7 @@
 
       res.innerHTML = "<ul>" + items.join("") + "</ul>" +
         '<p class="val-veredicto ' + (mal ? "mal" : "ok") + '">' + (mal ? "Hay " + mal + " problema(s) bloqueante(s)." : "Geometría válida para presentar.") + "</p>" +
-        '<p class="val-cta">¿Necesitas cruzar este polígono con alertas satelitales de deforestación y armar el expediente EUDR? <a href="#contacto" data-serv="geo">Solicítalo aquí →</a></p>';
+        '<p class="val-cta">¿Necesita cruzar este polígono con alertas satelitales de pérdida de cobertura arbórea y armar el expediente EUDR? <a href="index.html?servicio=geomatica#contacto" data-serv="geomatica">Solicítelo aquí →</a></p>';
       if (!mal) {
         var ring = pts.slice(); if (cw) ring.reverse();
         ring = ring.map(function (p) { return [+p[0].toFixed(6), +p[1].toFixed(6)]; });

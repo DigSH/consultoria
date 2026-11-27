@@ -1,5 +1,4 @@
-/* Datos de la web. TODO lo que aparece en el sitio sale de acá y de
-   C:\proyectos\Laboral\job-hunter-cgiar\data\perfil.json (base factual).
+/* Datos de la web. TODO lo que aparece en el sitio sale de acá (hechos verificados del equipo).
    Cambiar un hecho = cambiarlo aquí. Nada se inventa. */
 window.CONSULTORIA = {
   /* medición anónima sin cookies: poner aquí el código de la cuenta de GoatCounter (p. ej. "consultoria-uptc");

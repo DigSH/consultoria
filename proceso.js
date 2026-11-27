@@ -114,7 +114,7 @@
         ["Entrega reproducible", "Código, base de datos depurada con su diccionario, tablas y figuras."],
         ["Acompañamiento", "Hasta la sustentación y la respuesta a revisores."]
       ],
-      serv: ["cienciometria", "estadistica", "gobernanza", "cienciometria"],
+      serv: ["cienciometria", "estadistica", "gobernanza", "proyectos"],
       prueba: [["#equipo", "Conocer al equipo"], ["laboratorio.html#iguaque", "Ver un estudio longitudinal"], ["#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero asesoría para mi investigación",
       pec: false,

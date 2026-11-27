@@ -97,10 +97,14 @@
         guardar(si ? "si" : "no"); caja.hidden = true;
         if (si) cargarGtm();
         else if (gtmCargado) {   /* retiró el permiso: borrar las cookies de Google Analytics y recargar sin GTM */
+          /* GA4 guarda sus cookies en el dominio del sitio (digsh.github.io); .github.io es sufijo público y no se puede
+             tocar, así que se borran sin dominio, con el dominio exacto y con el punto delante */
+          window["ga-disable-" + gtm] = true;
+          var host = location.hostname;
           document.cookie.split(";").forEach(function (c) {
             var n = c.split("=")[0].trim();
-            if (/^_ga|^_gid|^_gat/.test(n)) document.cookie = n + "=; Max-Age=0; path=/; domain=" + location.hostname.replace(/^[^.]+\./, ".");
-            if (/^_ga|^_gid|^_gat/.test(n)) document.cookie = n + "=; Max-Age=0; path=/";
+            if (!/^_ga|^_gid|^_gat/.test(n)) return;
+            ["", "; domain=" + host, "; domain=." + host].forEach(function (d) { document.cookie = n + "=; Max-Age=0; path=/" + d; });
           });
           location.reload();
         }
@@ -124,7 +128,8 @@
       else if (a.dataset && a.dataset.evento === "prueba") medir("prueba/" + (a.getAttribute("href") || "").replace(/^.*#/, ""), "Prueba de la fase");
       else if (a.dataset && a.dataset.serv) medir("cotizar/" + a.dataset.serv, "Cotizar servicio");
     }, true);
-    var f = $("#formu"); if (f) f.addEventListener("submit", function () { medir("formulario/envio/" + perfilActual, "Envío del formulario"); }, true);
+    /* app.js emite «formulario-ok» solo cuando el formulario pasó la validación: un intento con campos vacíos no cuenta */
+    document.addEventListener("formulario-ok", function () { medir("formulario/envio/" + perfilActual, "Envío del formulario"); });
     if ("IntersectionObserver" in window) {
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (e) { if (e.isIntersecting) { medir("seccion/" + e.target.id, "Llegó a la sección", true); io.unobserve(e.target); } });

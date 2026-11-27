@@ -1,16 +1,21 @@
 # consultoria
 
 Web piloto de la consultoría (Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo): consultoría académica y empresarial, estadística, datos y proyectos para el agro y la academia.
-Sitio estático: HTML + CSS + JS sin dependencias, sin cookies ni rastreadores.
+Sitio estático: HTML + CSS + JS sin dependencias. Mide visitas de forma anónima con GoatCounter (sin cookies) y usa
+Google Analytics 4 solo si la persona lo acepta en el aviso de permiso.
 
 ## Archivos
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` | Estructura de la página |
-| `styles.css` | Diseño (azul tinta, cian, coral) |
-| `app.js` | Relieve del hero, buscador, gráficas SVG, formulario |
-| `gis.js` | Laboratorio GIS: mapa de estaciones del IDEAM (datos en vivo) y validador de polígonos de predio |
+| `index.html` | Portada |
+| `laboratorio.html` | Laboratorio GIS: estudio del páramo Iguaque - Merchán, estaciones del IDEAM y validador EUDR |
+| `styles.css` | Diseño (negro verdoso, blanco y verde; variables en `:root`) |
+| `comun.js` | Lo que comparten las dos páginas: menú, aparición al desplazarse, medición con permiso |
+| `app.js` | Visor del inicio, embudo, servicios, mapa de publicaciones, equipo, formulario |
+| `proceso.js` | «Cómo trabajamos»: recorrido de 4 fases con diorama en SVG |
+| `gis.js` | Mapa de estaciones del IDEAM (datos en vivo) y validador de polígonos de predio |
+| `iguaque.js` | Estudio longitudinal del páramo (datos en `datos/`) |
 | `vendor/leaflet/` | Leaflet 1.9.4 (BSD-2) incluido en el repo, sin CDN |
 | `datos.js` | **Todo el contenido que cambia**: servicios, cifras, publicaciones, trayectoria, testimonios, contacto |
 | `docs/TESTIMONIOS.md` | Cómo pedir y publicar testimonios reales |
@@ -22,8 +27,8 @@ Con `?demo=1` al final de la dirección se ven tarjetas de testimonio de ejemplo
 
 ## Reglas de contenido
 
-- Todo lo que dice la página sale de `C:\proyectos\Laboral\job-hunter-cgiar\data\perfil.json`
-  (hechos verificados). Un hecho nuevo se cambia en `perfil.json` y en `datos.js`.
+- Todo lo que dice la página sale de los hechos verificados del equipo, reunidos en `datos.js`.
+  Un hecho nuevo se cambia en `datos.js`.
 - Las **publicaciones** de `datos.js` tienen DOI comprobado en Crossref el 16/11/2026.
   Quedó fuera *Cultura* (2024): solo se encontró un preprint en Zenodo, no el artículo de revista.
   Se sumará cuando haya enlace a la revista.
@@ -38,7 +43,6 @@ Con `?demo=1` al final de la dirección se ven tarjetas de testimonio de ejemplo
 - **Validador de predios**: corre todo en el navegador, no envía datos. Revisa cierre, autocruces, coordenadas
   invertidas o fuera de Colombia, decimales (≥ 6), sentido del anillo (RFC 7946) y el umbral de 4 ha.
   El área es esférica (±0,5 %); no sustituye el cribado satelital ni la debida diligencia completa.
-- Las competencias GIS de `datos.js` (`gis`) salen de `perfil.json`. GDAL y rasterio **no** figuran: aún no hay evidencia pública.
 - Pendiente: casos GIS con cliente (mapa o captura) cuando haya autorización, y el repositorio EUDR verificado.
 
 ## Publicar
@@ -47,7 +51,7 @@ Publicada con GitHub Pages (rama `main`, raíz): https://digsh.github.io/consult
 
 ## Embudo (fase 1) y equipo
 
-- El inicio tiene dos entradas (investigador o estudiante / empresa, asociación o entidad) que alimentan un embudo de 4 pasos: quién eres, qué necesitas, qué tienes, para cuándo. Todo corre en el navegador; el resultado abre WhatsApp o rellena el formulario. No se guarda nada.
+- El embudo «¿En qué le ayudamos?» tiene 2 pasos: perfil (productor, empresa o investigación) y situación. Todo corre en el navegador; el resultado abre WhatsApp o rellena el formulario. No se guarda nada.
 - Fase 2 (pendiente): chat con LLM. La clave de la API **no puede ir en esta página estática**; necesita un intermediario (p. ej. Cloudflare Workers), catálogo cerrado de servicios, aviso de tratamiento de datos (Ley 1581 de 2012) y traspaso final a una persona.
 - `equipo/` (hojas de vida con teléfono y correo) está en `.gitignore`: **nunca se sube** a este repositorio público.
 - Equipo en `datos.js`: el enfoque en papa y arándano está como «enfoque», no «experto», hasta tener evidencia. La maestría de Zahira no figura en su hoja de vida: se añade cuando ella la confirme.
@@ -61,7 +65,7 @@ No se publican números de contrato ni nombres de clientes. La maestría de Zahi
 
 ## Líneas de servicio, responsables y servicios en preparación
 
-- `datos.js` define 4 líneas (`lineasServicio`) y 8 servicios, todos con respaldo verificado (desde la simplificación del 16/11/2026 no se publican servicios «en preparación»).
+- `datos.js` define 9 servicios, todos con respaldo verificado, cada uno con su fase del recorrido (`fase` 0 a 3).
 - Un servicio en preparación **no lleva respaldo** (la web lo dice). Pasa a activo cuando el equipo aporte soportes: añadir `para`, `entrega` y `respaldo` y quitar `estado`.
 - `responsables` sale de lo dicho por el equipo (no son credenciales verificadas). «Piloto certificado», «experto» y similares se publican solo con soporte (certificado, número, proyecto).
 - Tres perfiles en el embudo: investigador, empresa y productor. Cada servicio debe ser alcanzable desde alguna situación.
@@ -70,7 +74,6 @@ No se publican números de contrato ni nombres de clientes. La maestría de Zahi
 ## Pendientes
 
 1. Confirmar el nombre comercial (hoy «Consultoría Sanabria», provisional).
-   La paleta (cian, coral y azul tinta) se cambia en las variables del inicio de `styles.css`.
 2. Conseguir 2 o 3 testimonios reales (ver `docs/TESTIMONIOS.md`) y pasarlos a `datos.js`.
 3. Enlace del repositorio EUDR y de un caso de tablero público, para sumarlos como prueba cuando estén verificados.
 4. Dominio propio (opcional) y correo de la consultoría distinto del personal.
