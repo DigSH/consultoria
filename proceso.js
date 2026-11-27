@@ -247,7 +247,7 @@
   estrecho = innerWidth < 640;
   semilla = 7;
   escena.innerHTML = "";
-  var svg = el("svg", { viewBox: estrecho ? "168 26 464 740" : "0 0 800 520", preserveAspectRatio: "xMidYMid meet" }, escena);
+  var svg = el("svg", { viewBox: estrecho ? "168 26 464 740" : "0 58 800 462", preserveAspectRatio: "xMidYMid meet" }, escena);
   /* si se redibuja fuera de pantalla, nace en pausa (app.js, pausarFuera, la reanuda al volver) */
   if (sec.classList.contains("fuera") && svg.pauseAnimations) svg.pauseAnimations();
   leyenda = []; etqMovil = [];

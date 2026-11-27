@@ -1039,3 +1039,20 @@ section[hidden]{display:none!important}
 .permiso-cambiar{background:none;border:0;padding:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer;opacity:.8}
 .permiso-cambiar[hidden]{display:none}
 @media print{.permiso{display:none!important}}
+/* «Cómo trabajamos» en escritorios bajos (zoom o escala de Windows alta, 27/11/2026): el panel se compacta para
+   que el diorama reciba más alto (medido: 1200×620 pasaba de 280 px de dibujo con 214 px de panel) */
+@media (min-width:861px) and (max-height:820px){
+  .pr-fijo{padding-top:68px;padding-bottom:12px}
+  .pr-panel{padding-top:10px;gap:6px 28px;align-items:center}
+  .pr-num{font-size:34px}.pr-num span{font-size:15px}
+  .pr-prog{margin-top:6px}
+  .pr-fase h3{font-size:clamp(22px,2.3vw,30px);margin-bottom:2px}
+  .pr-fase p{font-size:15px;line-height:1.4}
+  .pr-serv{padding:10px 14px}
+  .pr-serv .e{display:none}
+  .pr-serv h4{margin-bottom:6px}
+}
+@media (min-width:861px) and (max-height:640px){
+  .pr-serv .k{display:none}
+  .pr-fase p{font-size:14px}
+}
