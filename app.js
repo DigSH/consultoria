@@ -838,6 +838,7 @@
       x.addEventListener("click", function (e) {
         e.preventDefault();
         if (linea !== x.dataset.linea) elegir(x.dataset.linea, true); else anunciar(linea);
+        if (window.consultoriaProceso) { window.consultoriaProceso.irA(0); return; }
         var pr = $("#proceso");
         (pr || $("#servicios")).scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       });

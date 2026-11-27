@@ -593,9 +593,29 @@
     servicio(i);
     ajustarLeyenda();
   }
+  /* fusión con el inicio (27/11/2026, prototipo): con #proceso.pr-fusion la pista sube hasta quedar bajo el inicio.
+     Al llegar al pie del inicio (G.ini) el escenario aparece con un fundido sobre el visor (hasta G.fin) y desde ahí
+     corren las 4 fases en G.fases px, la misma distancia que sin fusión (1,4 pantallas en escritorio, 1,2 en < 861 px). */
+  var hero = document.getElementById("inicio"), fusion = sec.classList.contains("pr-fusion") && !!hero;
+  var fijo = pista.querySelector(".pr-fijo"), G = { ini: 0, fin: 1, fases: 1 };
+  function encajar() {
+    if (!fusion) return;
+    var vh = innerHeight;
+    pista.style.marginTop = "0px";
+    var d = pista.getBoundingClientRect().top - hero.getBoundingClientRect().top;
+    G.ini = Math.max(0, hero.offsetHeight - vh);
+    G.fin = G.ini + Math.round(vh * 0.35);
+    G.fases = Math.round(vh * (innerWidth <= 860 ? 1.2 : 1.4));
+    pista.style.marginTop = (-d) + "px";
+    pista.style.height = (G.fin + G.fases + vh) + "px";
+  }
   function medir() {
-    var r = pista.getBoundingClientRect(), total = pista.offsetHeight - innerHeight;
-    var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+    var r = pista.getBoundingClientRect(), total = pista.offsetHeight - innerHeight, p;
+    if (fusion) {
+      var t = -r.top, op = Math.min(1, Math.max(0, (t - G.ini) / (G.fin - G.ini)));
+      fijo.style.opacity = op; fijo.classList.toggle("pr-activo", op > 0.6);
+      p = Math.min(1, Math.max(0, (t - G.fin) / G.fases));
+    } else p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
     var x = p * n, i = Math.min(n - 1, Math.floor(x));
     barras.forEach(function (b, k) { b.firstChild.style.transform = "scaleX(" + Math.max(0, Math.min(1, x - k)) + ")"; });
     poner(i);
@@ -603,8 +623,15 @@
   }
   function irA(i) {
     var total = pista.offsetHeight - innerHeight, top = pista.getBoundingClientRect().top + scrollY;
-    scrollTo({ top: top + total * (i + 0.5) / n, behavior: reduce ? "auto" : "smooth" });
+    var y = fusion ? top + G.fin + G.fases * (i + 0.5) / n : top + total * (i + 0.5) / n;
+    scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
   }
+  window.consultoriaProceso = { irA: irA };
+  /* con la fusión, un enlace a #proceso (botones del inicio, «Ver cómo lo hacemos») lleva a la fase 1 */
+  document.addEventListener("click", function (e) {
+    var a = fusion && e.target.closest && e.target.closest('a[href="#proceso"]');
+    if (a && !a.hasAttribute("data-linea")) { e.preventDefault(); irA(0); }
+  });
   var pend = false;
   function alDesplazar() { if (pend) return; pend = true; requestAnimationFrame(function () { pend = false; medir(); }); }
   sec.classList.add("pr-js");
@@ -627,7 +654,12 @@
   addEventListener("resize", function () {
     if ((innerWidth < 640) !== estrecho) escenaSVG();
     ajustarLeyenda();
+    encajar();
     alDesplazar();
   });
+  /* el alto del inicio cambia cuando cargan las fuentes y termina la animación del titular */
+  addEventListener("load", function () { encajar(); medir(); });
+  setTimeout(function () { encajar(); medir(); }, 2500);
+  encajar();
   medir();
 })();

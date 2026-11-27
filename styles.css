@@ -1183,3 +1183,14 @@ section[hidden]{display:none!important}
 .eq-dato{margin:0 auto 20px}
 .eq-acc{margin:0 auto}
 @media (max-width:760px){.sp-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* ---------- Inicio y «Cómo trabajamos» fusionados (27/11/2026, prototipo): proceso.js sube la pista bajo el inicio ---------- */
+#proceso.pr-fusion{padding-top:0}
+.pr-fusion.pr-js .cab{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.pr-fusion .pr-pista{position:relative;z-index:6;pointer-events:none}
+.pr-fusion .pr-fijo{background:var(--tinta);opacity:0}
+.pr-fusion .pr-fijo.pr-activo{pointer-events:auto}
+/* el escenario cubre todo el ancho sobre el inicio (sombra de 100vmax recortada a lo alto: sin desborde horizontal) */
+.pr-fusion .pr-fijo{box-shadow:0 0 0 100vmax var(--tinta);clip-path:inset(0 -100vmax)}
+/* mientras el escenario no se ve, ni él ni sus hijos reciben toques (algunos hijos traen pointer-events propio) */
+.pr-fusion .pr-fijo:not(.pr-activo),.pr-fusion .pr-fijo:not(.pr-activo) *{pointer-events:none!important}
