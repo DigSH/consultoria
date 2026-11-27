@@ -40,15 +40,18 @@
     a.href = "https://wa.me/" + D.contacto.whatsapp + "?text=" + encodeURIComponent(a.getAttribute("data-wa"));
   });
 
-  /* ---------- aparición al hacer scroll ---------- */
-  (function rev() {
+  /* ---------- aparición al hacer scroll ----------
+     Corre al terminar de cargar todos los scripts: app.js crea después tarjetas .rev (equipo, cifras, voces)
+     y, si se buscaran antes, se quedarían invisibles (pasó el 27/11/2026 con el equipo vacío). */
+  function rev() {
     var nodos = document.querySelectorAll(".rev");
     if (reduce || !("IntersectionObserver" in window)) { [].forEach.call(nodos, function (n) { n.classList.add("ya"); }); return; }
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("ya"); io.unobserve(e.target); } });
     }, { threshold: .15 });
     [].forEach.call(nodos, function (n, i) { n.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(n); });
-  })();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", rev); else rev();
 
   /* ---------- medición anónima y sin cookies (GoatCounter); inactiva mientras datos.js no traiga el código ----------
      Cuenta: perfil elegido, clics en WhatsApp por sección, enlaces de prueba de cada fase, «Cotizar», envío del
