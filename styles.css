@@ -960,14 +960,39 @@ section[hidden]{display:none!important}
 }
 @media (max-width:860px){.hero-nota.gis-hud{padding-top:18px}}
 .pr-vaca-c{fill:#f2efe6;stroke:#0e1512;stroke-width:1}
-/* servicios en teléfono: carrusel deslizable en vez de 9 tarjetas apiladas (4,2 pantallas medidas el 26/11/2026) */
-.serv-pos{display:none}
-@media (max-width:640px){
-  #rejilla{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
-    margin:0 -16px;padding:4px 16px 14px;scroll-padding:0 16px;scrollbar-width:none}
-  #rejilla::-webkit-scrollbar{display:none}
-  #rejilla>.serv{flex:0 0 84%;scroll-snap-align:start}
-  #rejilla>.serv[hidden]{display:none}
-  #rejilla>.serv:hover{transform:none}
-  .serv-pos{display:block;margin:4px 0 0;text-align:center;font:600 12px var(--mono);color:#9bd8b6;min-height:1.4em}
+/* servicios por fase (27/11/2026): tablero de ruta de 4 columnas; en < 761 px, línea de tiempo vertical */
+.sf-intro{margin:10px 0 0;color:#b9c4bc;font-size:16px}
+.sf{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;align-items:start}
+.sf-fase{display:flex;flex-direction:column;gap:8px}
+.sf-cab{position:relative;padding:20px 0 6px;border-top:2px solid #2a3830}
+.sf-cab::before{content:"";position:absolute;left:0;top:-7px;width:12px;height:12px;border-radius:50%;background:var(--menta);box-shadow:0 0 0 4px rgba(90,214,154,.18)}
+.sf-cab .n{font:600 12px var(--mono);color:var(--menta);letter-spacing:.08em}
+.sf-cab h3{margin:2px 0 0;color:#fff;font-size:18px}
+.sf-item{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:12px 14px;text-align:left;cursor:pointer;
+  background:#17211c;border:1px solid #2a3830;border-radius:var(--r-m);color:#dde5de;font:600 15px/1.3 var(--sans);transition:border-color .2s,background .2s,opacity .2s}
+.sf-item svg{flex:none;width:30px;height:30px;fill:none;stroke:var(--menta);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sf-item:hover{border-color:var(--menta)}
+.sf-item[aria-expanded=true]{background:#1d2a23;border-color:var(--menta);color:#fff;box-shadow:0 18px 36px -22px rgba(0,0,0,.7)}
+.sf-item.atenuado{opacity:.32}
+.sf-det{grid-column:1/-1;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;margin-top:10px;padding:26px 28px;
+  background:#17211c;border:1px solid var(--menta);border-radius:var(--r-l)}
+.sf-det[hidden]{display:none}
+.sf-det .k{margin:0;font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--menta)}
+.sf-det h3{margin:6px 0 10px;color:#fff;font-size:22px}
+.sf-recibe{margin:0;color:#dde5de;font-size:16px}
+.sf-recibe b{color:#fff}
+.sf-det .resp{margin:0 0 16px;padding:0 0 14px;border-bottom:1px dashed #3a4a40;font:12.5px/1.6 var(--mono);color:#9bd8b6}
+.sf-det .resp b{color:var(--menta);font-weight:600}
+.sf-acc{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.sf-acc .cta{color:var(--menta);font-weight:600}
+@media (max-width:1100px) and (min-width:761px){.sf{grid-template-columns:repeat(2,1fr);row-gap:26px}}
+@media (max-width:760px){
+  .sf{grid-template-columns:1fr;gap:20px}
+  .sf-fase{padding-left:20px;border-left:2px solid #2a3830}
+  .sf-cab{border-top:0;padding:0 0 4px}
+  .sf-cab::before{left:-27px;top:4px}
+  .sf-det{grid-template-columns:1fr;gap:14px;margin:2px 0 6px;padding:18px}
+  .sf-det h3{font-size:19px}
 }
+@media print{.sf-det[hidden]{display:none!important}}
+@media (max-width:860px){.sf-acc .cta{display:inline-flex;align-items:center;min-height:40px}}

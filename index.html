@@ -32,7 +32,7 @@
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261128a">
+<link rel="stylesheet" href="styles.css?v=20261128c">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -149,14 +149,14 @@
   </div>
 </section>
 
-<!-- ============ SERVICIOS (8 tarjetas esenciales en una sola rejilla) ============ -->
+<!-- ============ SERVICIOS por fase del ciclo (tablero de ruta; detalle al tocar) ============ -->
 <section class="seccion oscura" id="servicios">
   <div class="cab">
     <h2>Servicios</h2>
+    <p class="sf-intro">Cada servicio entra en una fase del recorrido. Toque uno para ver qué recibe.</p>
   </div>
-  <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios"></div>
-  <div class="rejilla" id="rejilla" role="region" aria-label="Servicios" tabindex="0"></div>
-  <p class="serv-pos" id="serv-pos" aria-hidden="true"></p>
+  <div class="filtros" id="filtros" role="group" aria-label="Resaltar servicios por línea"></div>
+  <div class="sf" id="serv-fases"></div>
 </section>
 
 <!-- ============ SURCO, LA APP DE LA CONSULTORÍA ============ -->
@@ -359,9 +359,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261128a"></script>
+<script src="datos.js?v=20261128b"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261128b"></script>
+<script src="app.js?v=20261128d"></script>
 <script src="gis.js?v=20261118c"></script>
 <script src="iguaque.js?v=20261118c"></script>
 <script src="proceso.js?v=20261128a"></script>

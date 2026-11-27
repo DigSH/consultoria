@@ -5,6 +5,8 @@ window.CONSULTORIA = {
   /* medición anónima sin cookies: poner aquí el código de la cuenta de GoatCounter (p. ej. "consultoria-uptc");
      vacío = no se carga nada ni se muestra el aviso */
   analitica: { goatcounter: "" },
+  /* fases del ciclo para ordenar los servicios (las mismas de «Cómo trabajamos») */
+  fasesServicio: ["Diagnóstico", "Análisis y plan", "Implementación", "Acompañamiento"],
   contacto: {
     nombre: "Diego Israel Sanabria Higuera",
     whatsapp: "573158091128",
@@ -22,47 +24,47 @@ window.CONSULTORIA = {
 
   /* 9 servicios esenciales con respaldo verificado */
   servicios: [
-    { id: "estadistica", cat: "investigacion", corto: "Estadística y SEM", responsables: ["Diego"], linea: ["academica"], icono: "tesis",
+    { id: "estadistica", fase: 1, cat: "investigacion", corto: "Estadística y SEM", responsables: ["Diego"], linea: ["academica"], icono: "tesis",
       titulo: "Estadística y diseño experimental",
       entrega: "Plan de análisis, código en R, tablas y figuras listas para publicación, modelos PLS-SEM y sesión de sustentación.",
       respaldo: "4 tesis asesoradas (2023–2025) · 2 escalas psicométricas validadas · artículos PLS-PM (2024, 2026)" },
 
-    { id: "cienciometria", cat: "investigacion", corto: "Cienciometría", responsables: ["Diego", "Zahira"], linea: ["academica"], icono: "biblio",
+    { id: "cienciometria", fase: 0, cat: "investigacion", corto: "Cienciometría", responsables: ["Diego", "Zahira"], linea: ["academica"], icono: "biblio",
       titulo: "Cienciometría y artículos científicos",
       entrega: "Búsqueda calibrada, redes en Bibliometrix/VOSviewer, base BibTeX/RIS y apoyo en estructura, figuras y respuesta a revisores.",
       respaldo: "12 reportes bibliométricos (OCITEB) · 7 artículos con DOI (2023–2026) · 2 cartillas UPTC" },
 
-    { id: "tableros", cat: "datos", corto: "Power BI", responsables: ["Diego"], linea: ["empresarial"], icono: "bi",
+    { id: "tableros", fase: 1, cat: "datos", corto: "Power BI", responsables: ["Diego"], linea: ["empresarial"], icono: "bi",
       titulo: "Tableros y modelos en Power BI",
       entrega: "Pipeline de datos, modelo relacional en estrella, medidas DAX, tablero interactivo y manual de actualización.",
       respaldo: "Tableros públicos de indicadores de CTeI · PostgreSQL y ETL en Python en producción" },
 
-    { id: "gobernanza", cat: "datos", corto: "Datos y ETL", responsables: ["Diego"], linea: ["academica", "empresarial"], icono: "etl",
+    { id: "gobernanza", fase: 2, cat: "datos", corto: "Datos y ETL", responsables: ["Diego"], linea: ["academica", "empresarial"], icono: "etl",
       titulo: "Gobernanza y limpieza de bases (ETL)",
       entrega: "Auditoría de duplicados y nulos, depuración automática, base en PostgreSQL y diccionario de datos.",
       respaldo: "Base de 10 000+ registros de investigación · procesos ETL multifuente en producción" },
 
-    { id: "ia", cat: "datos", corto: "IA agrícola", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "ia",
+    { id: "ia", fase: 1, cat: "datos", corto: "IA agrícola", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "ia",
       titulo: "Modelos de IA a medida para fincas",
       entrega: "Visión por computador y proyección de cosecha entrenados con sus datos, con error medido y tablero de uso.",
       respaldo: "IA por imagen en tomate, arándano, cacao y banano, y peso de bovinos y porcinos (Surco AgTech, YOLOv8) · Certificación IA MinTIC (2024)" },
 
-    { id: "surco", cat: "datos", corto: "App Surco", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "app",
+    { id: "surco", fase: 2, cat: "datos", corto: "App Surco", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "app",
       titulo: "Surco configurado para su finca u organización",
       entrega: "Fincas, lotes y polígonos cargados, cultivos y labores, usuarios con roles, alertas, cuaderno BPA, módulo EUDR y capacitación de uso.",
       respaldo: "App publicada en Google Play · caso de uso con Arándanos de la Fuente · tablero por organización con roles" },
 
-    { id: "geomatica", cat: "datos", corto: "GIS, dron y EUDR", responsables: ["Stiven", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "geo",
+    { id: "geomatica", fase: 0, cat: "datos", corto: "GIS, dron y EUDR", responsables: ["Stiven", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "geo",
       titulo: "Geomática, dron y trazabilidad EUDR",
       entrega: "Polígonos prediales y expediente EUDR, ortomosaicos y modelos de superficie con dron (RGB), conteo de plantas y mapas en QGIS.",
       respaldo: "Prototipo de debida diligencia EUDR con Whisp, Hansen/UMD y RADD-Sentinel-1 · QGIS, Google Earth Engine y dron 48 MP" },
 
-    { id: "bpa", cat: "agro", corto: "BPA y ensayos", responsables: ["Faiver", "Diego"], linea: ["empresarial", "productor"], icono: "bpa",
+    { id: "bpa", fase: 3, cat: "agro", corto: "BPA y ensayos", responsables: ["Faiver", "Diego"], linea: ["empresarial", "productor"], icono: "bpa",
       titulo: "Buenas Prácticas Agrícolas y ensayos en campo",
       entrega: "Diagnóstico y plan de adecuación para certificación BPA; protocolo, seguimiento fenológico (BBCH) y análisis estadístico de ensayos.",
       respaldo: "Acompañamiento a la certificación BPA de un vivero (Tunja, 2025) · ensayo factorial de 120 UE en R · evaluación de biofertilizantes (2024)" },
 
-    { id: "proyectos", cat: "proyectos", corto: "Proyectos", responsables: ["Zahira", "Faiver", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "proyectos",
+    { id: "proyectos", fase: 3, cat: "proyectos", corto: "Proyectos", responsables: ["Zahira", "Faiver", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "proyectos",
       titulo: "Formulación de proyectos y asociatividad",
       entrega: "Estructuración técnica y financiera para convocatorias, informes de avance y talleres de asociatividad hasta el registro legal.",
       respaldo: "Proyectos universidad-empresa en OTRI y VIE-UPTC · talleres con 300+ productores y 3–5 asociaciones acompañadas hasta su registro" }

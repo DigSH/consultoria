@@ -865,25 +865,71 @@
     render();
   })();
 
-  /* ---------- servicios: 8 tarjetas esenciales en una sola rejilla ---------- */
+  /* ---------- servicios: tablero por fases del ciclo; tocar un servicio abre su detalle ----------
+     En escritorio el detalle va bajo el tablero (ancho completo); en < 761 px va justo debajo del servicio tocado. */
   (function servicios() {
-    var rej = $("#rejilla"), fil = $("#filtros"), sel = $("#f-servicio");
-    D.servicios.forEach(function (s) {
-      h("article", { "class": "serv rev", "data-cat": s.cat, "data-id": s.id }, rej,
-        '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg>' +
-        '<h3>' + esc(s.titulo) + '</h3>' +
-        '<p>' + esc(s.entrega) + '</p>' +
-        '<p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>' +
-        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Cotizar →</a>');
-      if (sel) h("option", { value: s.id }, sel, esc(s.titulo));
+    var box = $("#serv-fases"), fil = $("#filtros"), sel = $("#f-servicio");
+    if (!box) return;
+    var FASES = D.fasesServicio || ["Diagnóstico", "Análisis y plan", "Implementación", "Acompañamiento"];
+    var det = h("div", { "class": "sf-det", id: "sf-det", role: "region", "aria-live": "polite", hidden: "" }, null);
+    var botones = [], elegido = null, tocado = false;
+    FASES.forEach(function (nombre, f) {
+      var col = h("div", { "class": "sf-fase" }, box,
+        '<div class="sf-cab"><span class="n">' + ("0" + (f + 1)).slice(-2) + '</span><h3>' + esc(nombre) + '</h3></div>');
+      D.servicios.filter(function (s) { return s.fase === f; }).forEach(function (s) {
+        var b = h("button", { type: "button", "class": "sf-item", "data-id": s.id, "data-cat": s.cat, "aria-expanded": "false", "aria-controls": "sf-det" }, col,
+          '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg><span>' + esc(s.titulo) + '</span>');
+        b.addEventListener("click", function () { tocado = true; abrir(s, b, true); });
+        botones.push(b);
+      });
     });
+    D.servicios.forEach(function (s) { if (sel) h("option", { value: s.id }, sel, esc(s.titulo)); });
     if (sel) h("option", { value: "otro" }, sel, "Otro tema");
+
+    function abrir(s, b, desplazar) {
+      if (elegido === b && !det.hidden && desplazar) { cerrar(); return; }
+      botones.forEach(function (x) { x.setAttribute("aria-expanded", x === b ? "true" : "false"); });
+      elegido = b;
+      det.innerHTML = '<div class="sf-det-t"><p class="k">Fase ' + (s.fase + 1) + ' · ' + esc(FASES[s.fase]) + '</p><h3>' + esc(s.titulo) + '</h3>' +
+        '<p class="sf-recibe"><b>Usted recibe:</b> ' + esc(s.entrega) + '</p></div>' +
+        '<div class="sf-det-l"><p class="resp"><b>RESPALDO</b> ' + esc(s.respaldo) + '</p>' +
+        '<div class="sf-acc"><a class="boton boton-chico" target="_blank" rel="noopener" href="' +
+        waLink("Hola, equipo de Consultoría. Me interesa: " + s.titulo + ".") + '">Escribir por WhatsApp</a>' +
+        '<a class="cta" href="#contacto" data-serv="' + esc(s.id) + '">Cotizar por formulario →</a></div></div>';
+      det.hidden = false;
+      /* en teléfono, debajo del servicio; en escritorio, al final del tablero */
+      if (window.innerWidth <= 760) b.parentNode.insertBefore(det, b.nextSibling); else box.appendChild(det);
+      /* si el detalle queda fuera de la vista (teléfono, o tablero de 2 columnas), la página baja hasta él */
+      if (desplazar) {
+        var r = det.getBoundingClientRect();
+        if (r.top < 70 || r.bottom > window.innerHeight) det.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+      }
+    }
+    function cerrar() { det.hidden = true; if (elegido) elegido.setAttribute("aria-expanded", "false"); elegido = null; }
+    function primeroDe(perfil) {
+      var s = D.servicios.filter(function (x) { return !perfil || x.linea.indexOf(perfil) >= 0; })
+        .sort(function (p, q) { return p.fase - q.fase; })[0];
+      return s && box.querySelector('.sf-item[data-id="' + s.id + '"]');
+    }
+    /* de entrada se abre el primer servicio del perfil productor (el de toda la página); si el visitante elige otro, el primero del suyo */
+    var b0 = primeroDe("productor"); if (b0) abrir(D.servicios.filter(function (s) { return s.id === b0.dataset.id; })[0], b0, false);
+    document.addEventListener("perfil", function (e) {
+      if (tocado) return;
+      var b = primeroDe(e.detail); if (b) abrir(D.servicios.filter(function (s) { return s.id === b.dataset.id; })[0], b, false);
+    });
+    window.addEventListener("resize", function () {
+      if (!elegido || det.hidden) return;
+      var movil = window.innerWidth <= 760, dentro = det.parentNode === box;
+      if (movil && dentro) elegido.parentNode.insertBefore(det, elegido.nextSibling);
+      else if (!movil && !dentro) box.appendChild(det);
+    });
 
     document.addEventListener("click", function (e) {
       var l = e.target.closest && e.target.closest("[data-serv]"); if (!l) return;
       if (sel) sel.value = l.dataset.serv;
     });
 
+    /* los filtros resaltan (no ocultan): el tablero conserva sus cuatro fases */
     var cats = [{ k: "todas", t: "Todos (" + D.servicios.length + ")" }];
     Object.keys(D.lineasServicio).forEach(function (k) {
       var n = D.servicios.filter(function (s) { return s.cat === k; }).length;
@@ -893,25 +939,9 @@
       var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f.t));
       b.addEventListener("click", function () {
         [].forEach.call(fil.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-        [].forEach.call(rej.children, function (c) { c.hidden = f.k !== "todas" && c.dataset.cat !== f.k; });
-        rej.scrollLeft = 0; posicion();
+        botones.forEach(function (x) { x.classList.toggle("atenuado", f.k !== "todas" && x.dataset.cat !== f.k); });
       });
     });
-
-    /* en teléfono la rejilla es un carrusel deslizable (CSS, < 641 px): «2 de 9 · deslice» */
-    var pos = $("#serv-pos");
-    function posicion() {
-      if (!pos) return;
-      var vis = [].filter.call(rej.children, function (c) { return !c.hidden; });
-      if (rej.scrollWidth <= rej.clientWidth + 4 || !vis.length) { pos.textContent = ""; return; }
-      var paso = vis.length > 1 ? vis[1].offsetLeft - vis[0].offsetLeft : rej.clientWidth;
-      var k = Math.min(vis.length, Math.round(rej.scrollLeft / paso) + 1);
-      pos.textContent = k + " de " + vis.length + (k < vis.length ? " · deslice →" : "");
-    }
-    var tPos = 0;
-    rej.addEventListener("scroll", function () { if (!tPos) tPos = requestAnimationFrame(function () { tPos = 0; posicion(); }); }, { passive: true });
-    window.addEventListener("resize", posicion);
-    posicion();
   })();
 
   /* ---------- cifras con conteo ---------- */
