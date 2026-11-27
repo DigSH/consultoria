@@ -6,7 +6,7 @@
 <title>Consultoría · Estadística, datos y proyectos para el agro y la academia</title>
 <meta name="description" content="Consultoría académica, empresarial y agrícola en Tunja, Boyacá: estadística, bibliometría, Power BI, gobernanza de datos, geomática con dron, trazabilidad EUDR, Buenas Prácticas Agrícolas y formulación de proyectos.">
 <meta property="og:title" content="Consultoría · Estadística, datos y proyectos para el agro y la academia">
-<meta property="og:description" content="Evidencia verificable para producir, decidir e investigar. Cada cifra se entrega con su código y cada mapa con su fuente.">
+<meta property="og:description" content="Su consultoría no termina en un informe: queda funcionando en su finca. Diagnóstico con datos, plan con evidencia y la app Surco configurada para usted.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://digsh.github.io/consultoria/">
 <meta property="og:image" content="https://digsh.github.io/consultoria/og-portada.png">
@@ -31,7 +31,8 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="styles.css?v=20261118c">
+<link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css?v=20261126e">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -46,8 +47,9 @@
     <div class="enlaces" id="nav-enlaces">
       <a href="#buscador">Empiece</a>
       <a href="#servicios">Servicios</a>
+      <a href="#surco">App</a>
       <a href="#mapas">Mapas</a>
-      <a href="#evidencia">Evidencia</a>
+      <a href="#evidencia">Publicaciones</a>
       <a href="#equipo">Equipo</a>
     </div>
     <a class="boton boton-chico" href="#contacto">Escríbanos</a>
@@ -59,8 +61,13 @@
 <section class="hero" id="inicio">
   <svg class="relieve" id="relieve" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
   <div class="hero-in">
-    <h1>Evidencia <em>verificable</em> para producir, decidir e investigar.</h1>
-    <p class="lema">Ponemos la analítica de datos y la inteligencia artificial al servicio de su finca para lograr procesos más eficientes, decisiones mejor sustentadas y resultados que puede comprobar.</p>
+    <h1>Su consultoría no termina en un informe. <em>Queda funcionando</em> en su finca.</h1>
+    <p class="lema">Diagnosticamos su finca u organización con datos, le entregamos un plan con evidencia y lo dejamos configurado en Surco, nuestra app, para que usted registre labores, reciba alertas y genere sus reportes.</p>
+    <ul class="hero-vin">
+      <li>Diagnóstico en campo con dron, suelo y registros</li>
+      <li>Plan con cifras que usted puede comprobar</li>
+      <li>App configurada para sus lotes y cultivos</li>
+    </ul>
     <div class="hero-acc">
       <a class="boton" href="#buscador" data-linea="productor">Productor o finca <span aria-hidden="true">→</span></a>
       <a class="boton" href="#buscador" data-linea="empresarial">Empresa o entidad <span aria-hidden="true">→</span></a>
@@ -93,6 +100,25 @@
   </aside>
 </section>
 
+<!-- ============ CÓMO TRABAJAMOS (4 pasos) ============ -->
+<section class="seccion oscura" id="proceso">
+  <div class="cab">
+    <p class="sobretitulo">Cómo trabajamos</p>
+    <h2>De la visita a la app funcionando</h2>
+    <p class="sub">Cuatro pasos. Al final usted se queda con el plan y con la herramienta para seguirlo.</p>
+  </div>
+  <ol class="pasos">
+    <li><span class="num">01</span><h3>Diagnóstico</h3><p>Visitamos su finca, volamos el dron, tomamos suelo y revisamos sus registros.</p></li>
+    <li><span class="num">02</span><h3>Análisis y plan</h3><p>Estadística, mapas e IA sobre sus datos. Le entregamos un plan con metas medibles.</p></li>
+    <li><span class="num">03</span><h3>Implementación de app</h3><p>Sus fincas, lotes, cultivos, usuarios y alertas quedan cargados en Surco.</p></li>
+    <li><span class="num">04</span><h3>Acompañamiento</h3><p>Seguimiento periódico, reportes BPA o EUDR y ajuste del plan con lo que registra la app.</p></li>
+  </ol>
+  <div class="cierre-acc">
+    <a class="boton" href="#buscador">Quiero mi diagnóstico de finca <span aria-hidden="true">→</span></a>
+    <p class="dato-campo"><b>300+</b> productores en talleres de campo <span>Epsea · ADR</span></p>
+  </div>
+</section>
+
 <!-- ============ EMBUDO (2 pasos directos) ============ -->
 <section class="seccion" id="buscador">
   <div class="cab">
@@ -123,6 +149,36 @@
   </div>
   <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios"></div>
   <div class="rejilla" id="rejilla"></div>
+</section>
+
+<!-- ============ SURCO, LA APP DE LA CONSULTORÍA ============ -->
+<section class="seccion" id="surco">
+  <div class="surco">
+    <div class="surco-txt">
+      <p class="sobretitulo">La herramienta de la consultoría</p>
+      <h2>Surco: Su cultivo en datos, en el celular</h2>
+      <p class="sub">Surco es la app de agricultura con IA de Surco AgTech, cofundada por Diego Sanabria y Zahira Rodríguez, consultores del equipo. En cada acompañamiento la configuramos para su finca u organización.</p>
+      <ul class="surco-mod">
+        <li><b>Diagnóstico por foto</b> de enfermedades en cultivos como cacao, banano, arándano y tomate, también sin internet.</li>
+        <li><b>Cuaderno de campo</b> para BPA, con exportación por periodo en PDF.</li>
+        <li><b>Trazabilidad EUDR</b>: polígono del predio, declaración y reporte exportable.</li>
+        <li><b>Organizaciones</b> con varias fincas, roles de usuario y tablero de gerente.</li>
+        <li><b>Alertas y labores</b> por lote, y canal de WhatsApp con precios SIPSA.</li>
+      </ul>
+      <div class="hero-acc">
+        <a class="boton" href="https://play.google.com/store/apps/details?id=com.surco.app" target="_blank" rel="noopener">Ver Surco en Google Play <span aria-hidden="true">→</span></a>
+        <a class="boton boton-claro" href="https://digsh.github.io/Surco-Agrotech/" target="_blank" rel="noopener">Conocer la web de Surco</a>
+      </div>
+      <p class="surco-rumbo"><b>Hacia dónde vamos</b>Estamos construyendo con nuestros clientes el gemelo digital de su cultivo: sensores en campo, modelos calibrados y simulación de decisiones.</p>
+    </div>
+    <aside class="piloto" aria-label="Caso de uso">
+      <p class="sobretitulo">Caso de uso</p>
+      <img src="img/aliados/arandanos-de-la-fuente.jpg" width="120" height="120" alt="Logo de Arándanos de la Fuente" loading="lazy">
+      <h3>Arándanos de la Fuente</h3>
+      <p>Caso de uso de Surco en cultivo de arándano.</p>
+      <p class="piloto-conf"><b>Qué configuramos</b> Fincas y lotes con sus polígonos, cultivos y labores, usuarios y roles, alertas y reportes BPA o EUDR.</p>
+    </aside>
+  </div>
 </section>
 
 <!-- ============ LABORATORIO GIS (solo los 2 visores en vivo) ============ -->
@@ -207,17 +263,17 @@
 <!-- ============ EVIDENCIA Y PUBLICACIONES ============ -->
 <section class="seccion" id="evidencia">
   <div class="cab">
-    <h2>Evidencia y publicaciones</h2>
+    <h2>Publicaciones</h2>
+    <p class="sub">Lo que el equipo ha investigado y publicado, conectado con los servicios que hoy le ofrecemos.</p>
   </div>
-
-  <div class="cifras" id="cifras"></div>
 
   <figure class="tarjeta ancha" id="publicaciones">
     <figcaption>
-      <h3>Artículos con DOI verificado</h3>
+      <h3>Mapa de conocimiento del equipo</h3>
+      <div class="kg-ley" id="g-leyenda"></div>
     </figcaption>
-    <div class="lienzo" id="g-pubs"></div>
-    <div class="detalle-pub" id="detalle-pub" aria-live="polite">Toque un punto para ver el artículo.</div>
+    <div class="lienzo kg" id="g-pubs"></div>
+    <div class="detalle-pub" id="detalle-pub" aria-live="polite"></div>
     <details class="mas-pubs">
       <summary>Ver listado completo (7 artículos y 2 cartillas)</summary>
       <ul class="pubs" id="lista-pubs"></ul>
@@ -289,13 +345,14 @@
     <symbol id="i-proyectos" viewBox="0 0 40 40"><rect x="9" y="6" width="22" height="28" rx="2"/><path d="M14 14h12M14 20h12M14 26h7"/></symbol>
     <symbol id="i-ia" viewBox="0 0 40 40"><circle cx="20" cy="23" r="8"/><path d="M20 15c0-3 2-5 5-5M5 12V5h7M28 5h7v7M5 28v7h7M35 28v7h-7"/></symbol>
     <symbol id="i-bpa" viewBox="0 0 40 40"><path d="M20 35V17M20 24c-6 0-9-4-9-9 6 0 9 3 9 9zM20 20c0-5 3-8 9-8 0 5-3 8-9 8z"/><path d="M26 29l3 3 6-7"/></symbol>
+    <symbol id="i-app" viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="3"/><path d="M17 31h6M15 20l3 3 7-7"/></symbol>
     <symbol id="i-etl" viewBox="0 0 40 40"><ellipse cx="20" cy="9" rx="11" ry="4"/><path d="M9 9v10c0 2 5 4 11 4s11-2 11-4V9M9 19v10c0 2 5 4 11 4s11-2 11-4V19"/></symbol>
   </defs>
 </svg>
 
-<script src="datos.js?v=20261118c"></script>
+<script src="datos.js?v=20261126g"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261118c"></script>
+<script src="app.js?v=20261126a"></script>
 <script src="gis.js?v=20261118c"></script>
 <script src="iguaque.js?v=20261118c"></script>
 </body>

@@ -766,6 +766,7 @@
   /* ---------- cifras con conteo ---------- */
   (function cifras() {
     var box = $("#cifras");
+    if (!box) return;
     D.cifras.forEach(function (c) {
       h("div", { "class": "cifra rev" }, box,
         '<div class="n" data-n="' + c.n + '" data-s="' + c.sufijo + '">0</div><div class="e">' + esc(c.etiqueta) + '</div><div class="f">' + esc(c.fuente) + '</div>');
@@ -787,52 +788,204 @@
     finales.push(function () { [].forEach.call(box.querySelectorAll(".n"), function (n) { n.textContent = Math.round(+n.dataset.n).toLocaleString("es-CO") + n.dataset.s; }); });
   })();
 
-  /* ---------- publicaciones por año + listado desplegable ---------- */
+  /* ---------- mapa de conocimiento: equipo → publicaciones → áreas → servicios ---------- */
   (function pubs() {
-    var cont = $("#g-pubs"), det = $("#detalle-pub");
+    var cont = $("#g-pubs"), det = $("#detalle-pub"), ley = $("#g-leyenda");
     if (!cont) return;
-    var W = 760, H = 260, m = { l: 20, r: 20, t: 22, b: 42 };
-    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Publicaciones por año, 2023 a 2026" }, cont);
-    var anios = [2023, 2024, 2025, 2026], colores = { "PLS-SEM": "#14633f", "Bibliometría": "#b08a2e", "Complejidad y economía": "#6b766f", "Territorio rural": "#6b766f", "Economía solidaria": "#6b766f" };
-    var etiquetaTema = function (t) { return /PLS/.test(t) ? "PLS-SEM" : t === "Bibliometría" ? "Bibliometría" : "Territorio y economía"; };
-    var xs = function (a) { return m.l + (anios.indexOf(a) + .5) * ((W - m.l - m.r) / anios.length); };
-    var base = H - m.b, r = 16;
-    el("line", { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: "#0e1512", "stroke-width": 2 }, svg);
-    for (var g = 1; g <= 4; g++) {
-      var y = base - g * (r * 2 + 4) + r + 2;
-      el("line", { x1: m.l, x2: W - m.r, y1: y + r + 2, y2: y + r + 2, stroke: "#d5dad2", "stroke-dasharray": "3 5" }, svg);
+    var TINTA = "#0e1512", MENTA = "#5ad69a", PAPEL = "#fcfcfa";
+    /* colores de área validados (dataviz validate_palette, claro sobre #fcfcfa, todos los pares) */
+    var AREAS = [
+      { id: "a-pls", t: "Modelos PLS-SEM", tc: "PLS-SEM", c: "#0f7a5a", serv: "estadistica" },
+      { id: "a-bib", t: "Bibliometría", tc: "Bibliometría", c: "#3f68b5", serv: "cienciometria" },
+      { id: "a-ter", t: "Territorio, economía y agro", tc: "Territorio y agro", c: "#c2701a", serv: null }
+    ];
+    function areaDe(tema) { return /PLS/.test(tema) ? "a-pls" : tema === "Bibliometría" ? "a-bib" : "a-ter"; }
+
+    var N = [], L = [], byId = {};
+    function nodo(o) { N.push(o); byId[o.id] = o; return o; }
+    var pubs = D.publicaciones.map(function (p, i) {
+      return { id: "p" + i, tipo: "art", anio: p.anio, titulo: p.titulo, rev: p.rev, doi: p.doi, equipo: p.equipo, area: areaDe(p.tema), capa: 1 };
+    }).concat((D.cartillas || []).map(function (c, i) {
+      return { id: "c" + i, tipo: "cart", anio: c.anio, titulo: c.titulo, rev: c.ed, url: c.url, equipo: c.equipo, area: "a-ter", capa: 1 };
+    }));
+    var autores = [];
+    pubs.forEach(function (p) { p.equipo.forEach(function (a) { if (autores.indexOf(a) < 0) autores.push(a); }); });
+    autores.forEach(function (a, i) {
+      var eq = D.equipo.filter(function (e) { return e.nombre.indexOf(a) === 0; })[0];
+      nodo({ id: "m" + i, tipo: "per", t: a, ini: eq ? eq.ini : a.charAt(0), rol: eq ? eq.rol : "", capa: 0 });
+    });
+    pubs.forEach(nodo);
+    AREAS.forEach(function (a) { nodo({ id: a.id, tipo: "area", t: a.t, tc: a.tc, c: a.c, serv: a.serv, capa: 2 }); });
+    AREAS.forEach(function (a) {
+      var s = a.serv && serv(a.serv);
+      if (s) nodo({ id: "s-" + s.id, tipo: "serv", t: s.corto, titulo: s.titulo, capa: 3 });
+    });
+    pubs.forEach(function (p) {
+      p.equipo.forEach(function (a) { L.push({ s: byId["m" + autores.indexOf(a)], t: p, k: "autor" }); });
+      L.push({ s: p, t: byId[p.area], k: "area" });
+    });
+    AREAS.forEach(function (a) { if (a.serv && byId["s-" + a.serv]) L.push({ s: byId[a.id], t: byId["s-" + a.serv], k: "serv" }); });
+    function color(n) { return n.tipo === "area" ? n.c : (n.tipo === "art" || n.tipo === "cart") ? byId[n.area].c : TINTA; }
+    function ancho(n) { return n.tipo === "serv" ? n.t.length * 7.6 + 30 : 0; }
+    function rad(n) { return n.tipo === "per" ? 23 : n.tipo === "area" ? 21 : n.tipo === "serv" ? 18 : 15; }
+
+    /* disposición en capas ordenadas: equipo → publicaciones → áreas → servicios.
+       Las publicaciones se reparten por área y año; cada integrante y cada área se ubican en el
+       promedio de sus publicaciones (menos cruces) y se separan lo mínimo para no taparse. */
+    function disponer(W, H, vert) {
+      var capas = vert ? [0.08, 0.37, 0.68, 0.9] : [0.09, 0.4, 0.68, 0.9];
+      var span = vert ? W : H, pad = vert ? 24 : 36;
+      function put(n, c) { n.c2 = c; var m = capas[n.capa] * (vert ? H : W); if (vert) { n.x = c; n.y = m; } else { n.x = m; n.y = c; } }
+      var orden = AREAS.map(function (a) { return a.id; });
+      var ps = pubs.slice().sort(function (a, b) { return orden.indexOf(a.area) - orden.indexOf(b.area) || a.anio - b.anio || (a.tipo < b.tipo ? -1 : 1); });
+      ps.forEach(function (p, i) { put(p, pad + (span - 2 * pad) * (i + 0.5) / ps.length); });
+      function media(lista) { return lista.reduce(function (s, p) { return s + p.c2; }, 0) / (lista.length || 1); }
+      function repartir(lista, sep, borde) {
+        lista.sort(function (a, b) { return a.c2 - b.c2; });
+        for (var i = 1; i < lista.length; i++) if (lista[i].c2 < lista[i - 1].c2 + sep) lista[i].c2 = lista[i - 1].c2 + sep;
+        var exceso = lista[lista.length - 1].c2 - (span - borde);
+        if (exceso > 0) lista.forEach(function (n) { n.c2 -= exceso; });
+        for (i = lista.length - 2; i >= 0; i--) if (lista[i].c2 > lista[i + 1].c2 - sep) lista[i].c2 = lista[i + 1].c2 - sep;
+        var falta = borde - lista[0].c2;
+        if (falta > 0) lista.forEach(function (n) { n.c2 += falta; });
+        lista.forEach(function (n) { put(n, n.c2); });
+      }
+      var gente = N.filter(function (n) { return n.tipo === "per"; });
+      gente.forEach(function (n) { n.c2 = media(pubs.filter(function (p) { return p.equipo.indexOf(n.t) >= 0; })); });
+      repartir(gente, vert ? 130 : 96, vert ? 60 : 50);
+      var areas = N.filter(function (n) { return n.tipo === "area"; });
+      areas.forEach(function (n) { n.c2 = media(pubs.filter(function (p) { return p.area === n.id; })); });
+      repartir(areas, vert ? 108 : 104, vert ? 54 : 50);
+      var servs = N.filter(function (n) { return n.tipo === "serv"; });
+      servs.forEach(function (n) { n.c2 = byId[AREAS.filter(function (a) { return "s-" + a.serv === n.id; })[0].id].c2; });
+      repartir(servs, vert ? 158 : 70, vert ? 80 : 40);
     }
-    anios.forEach(function (a) { el("text", { x: xs(a), y: H - 14, "text-anchor": "middle", "font-size": 15, "font-weight": 600 }, svg, a); });
-    var pila = {}, ultima = null;
-    D.publicaciones.slice().sort(function (a, b) { return a.anio - b.anio; }).forEach(function (p, idx) {
-      pila[p.anio] = (pila[p.anio] || 0) + 1;
-      var cx = xs(p.anio), cy = base - 4 - r - (pila[p.anio] - 1) * (r * 2 + 4);
-      var col = colores[p.tema] || "#14633f";
-      var c = el("circle", { cx: cx, cy: cy, r: r, fill: col, "class": "punto-pub", tabindex: 0, role: "button", "aria-label": p.anio + ": " + p.titulo, stroke: "#fcfcfa", "stroke-width": 3 }, svg);
-      if (!reduce) { c.style.transform = "translateY(" + (base - 4 - r - cy) + "px)"; c.style.opacity = 0; c.style.transition = "transform .7s cubic-bezier(.2,1.4,.4,1) " + (idx * .12) + "s, opacity .3s " + (idx * .12) + "s"; }
-      var mostrar = function () {
-        det.innerHTML = '<b>' + esc(p.titulo) + '</b><br>' + esc(p.rev) + ' · ' + p.anio + ' · ' + esc(etiquetaTema(p.tema)) + ' <a href="https://doi.org/' + p.doi + '" target="_blank" rel="noopener">doi.org/' + esc(p.doi) + '</a>';
-        [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (x) { x.setAttribute("r", r); });
-        c.setAttribute("r", r + 4);
-      };
-      c.addEventListener("pointerenter", mostrar); c.addEventListener("focus", mostrar); c.addEventListener("click", mostrar);
-      c.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); mostrar(); } });
-      c._fin = function () { c.style.transform = "none"; c.style.opacity = 1; };
-      if (!ultima || p.anio >= ultima.anio) ultima = { anio: p.anio, f: mostrar };
+    function curva(a, b, vert) {
+      var m;
+      if (vert) { m = (a.y + b.y) / 2; return "M" + a.x.toFixed(1) + " " + a.y.toFixed(1) + "C" + a.x.toFixed(1) + " " + m.toFixed(1) + " " + b.x.toFixed(1) + " " + m.toFixed(1) + " " + b.x.toFixed(1) + " " + b.y.toFixed(1); }
+      m = (a.x + b.x) / 2; return "M" + a.x.toFixed(1) + " " + a.y.toFixed(1) + "C" + m.toFixed(1) + " " + a.y.toFixed(1) + " " + m.toFixed(1) + " " + b.y.toFixed(1) + " " + b.x.toFixed(1) + " " + b.y.toFixed(1);
+    }
+
+    function detalle(n) {
+      if (!n) {
+        var arts = pubs.filter(function (p) { return p.tipo === "art"; }).length;
+        det.innerHTML = '<b>' + arts + ' artículos con DOI y ' + (pubs.length - arts) + ' cartillas</b> conectan a ' + autores.length +
+          ' integrantes con ' + AREAS.length + ' áreas de conocimiento y los servicios que respaldan. Toque o pase el cursor por un nodo para ver el detalle.';
+        return;
+      }
+      var vec = vecinos(n), html;
+      if (n.tipo === "art" || n.tipo === "cart") {
+        html = '<b>' + esc(n.titulo) + '</b><br>' + esc(n.rev) + ' · ' + n.anio + ' · ' + esc(byId[n.area].t) + ' · ' + esc(n.equipo.join(", ")) +
+          (n.doi ? ' <a href="https://doi.org/' + n.doi + '" target="_blank" rel="noopener">doi.org/' + esc(n.doi) + '</a>'
+                 : ' <a href="' + esc(n.url) + '" target="_blank" rel="noopener">Repositorio UPTC</a>');
+      } else if (n.tipo === "per") {
+        var suyas = pubs.filter(function (p) { return p.equipo.indexOf(n.t) >= 0; }), areas = [];
+        suyas.forEach(function (p) { var t = byId[p.area].t; if (areas.indexOf(t) < 0) areas.push(t); });
+        html = '<b>' + esc(n.t) + '</b>' + (n.rol ? ' · ' + esc(n.rol) : '') + '<br>' + suyas.length + ' publicaciones en ' + esc(areas.join(", ")) + '.';
+      } else if (n.tipo === "area") {
+        var deArea = pubs.filter(function (p) { return p.area === n.id; }), s = n.serv && serv(n.serv);
+        html = '<b>' + esc(n.t) + '</b><br>' + deArea.length + ' publicaciones (' + deArea.map(function (p) { return p.anio; }).sort().join(", ") + ')' +
+          (s ? '. Respaldan el servicio <a href="#servicios">' + esc(s.titulo) + '</a>.' : '.');
+      } else {
+        var area = AREAS.filter(function (a) { return "s-" + a.serv === n.id; })[0];
+        var cuantas = pubs.filter(function (p) { return p.area === area.id; }).length;
+        html = '<b>' + esc(n.titulo) + '</b><br>Respaldado por ' + cuantas + ' publicaciones del área ' + esc(area.t) + '. <a href="#servicios">Ver servicio</a>';
+      }
+      det.innerHTML = html;
+      return vec;
+    }
+    /* cadena completa del nodo: hacia atrás (quién y qué lo respalda) y hacia adelante (a qué sirve) */
+    function vecinos(n) {
+      var v = {}; v[n.id] = 1;
+      function ir(x, adelante) {
+        L.forEach(function (l) {
+          var de = adelante ? l.s : l.t, a = adelante ? l.t : l.s;
+          if (de === x && !v[a.id]) { v[a.id] = 1; ir(a, adelante); }
+        });
+      }
+      ir(n, true); ir(n, false);
+      return v;
+    }
+
+    var svg, W = 0, sel = null, visto = reduce;
+    function activar(n) {
+      sel = n;
+      var v = n ? vecinos(n) : null;
+      detalle(n);
+      N.forEach(function (x) { x.g.classList.toggle("kg-dim", !!v && !v[x.id]); x.g.classList.toggle("kg-sel", x === n); });
+      L.forEach(function (l) { l.el.classList.toggle("kg-dim", !!v && !(v[l.s.id] && v[l.t.id])); });
+    }
+
+    function dibujar() {
+      W = Math.max(300, Math.round(cont.clientWidth || 760));
+      var vert = W < 640, H = vert ? 600 : 500, rp = vert ? 13 : 15;
+      disponer(W, H, vert);
+      cont.innerHTML = "";
+      svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "group", "aria-label": "Mapa de conocimiento del equipo: integrantes, publicaciones, áreas y servicios" }, cont);
+      var gA = el("g", {}, svg), gN = el("g", {}, svg);
+      L.forEach(function (l) {
+        l.el = el("path", { d: curva(l.s, l.t, vert), pathLength: 1,
+          "class": "kg-a kg-" + l.k, stroke: l.k === "area" ? byId[l.t.id].c : TINTA }, gA);
+        l.el.style.transitionDelay = (0.25 + l.s.capa * 0.22) + "s";
+      });
+      N.forEach(function (n) {
+        var g = el("g", { "class": "kg-n kg-" + n.tipo, transform: "translate(" + n.x.toFixed(1) + " " + n.y.toFixed(1) + ")", tabindex: 0, role: "button",
+          "aria-label": n.tipo === "art" || n.tipo === "cart" ? n.anio + ": " + n.titulo : n.titulo || n.t }, gN);
+        g.style.transitionDelay = (n.capa * 0.22) + "s";
+        var c = color(n);
+        if (n.tipo === "per") {
+          el("circle", { r: 23, fill: TINTA, stroke: MENTA, "stroke-width": 2.5, "class": "kg-forma" }, g);
+          el("text", { y: 5, "text-anchor": "middle", "class": "kg-ini" }, g, n.ini);
+          el("text", { y: 41, "text-anchor": "middle", "class": "kg-et" }, g, vert ? n.t.split(" ")[0] + " " + n.t.split(" ")[1].charAt(0) + "." : n.t);
+        } else if (n.tipo === "art") {
+          el("circle", { r: rp, fill: c, stroke: PAPEL, "stroke-width": 2.5, "class": "kg-forma" }, g);
+          el("text", { y: 3.5, "text-anchor": "middle", "class": "kg-anio" }, g, vert ? "’" + String(n.anio).slice(2) : n.anio);
+        } else if (n.tipo === "cart") {
+          el("rect", { x: -rp, y: -rp, width: 2 * rp, height: 2 * rp, rx: 7, fill: c, stroke: PAPEL, "stroke-width": 2.5, "class": "kg-forma" }, g);
+          el("text", { y: 3.5, "text-anchor": "middle", "class": "kg-anio" }, g, vert ? "’" + String(n.anio).slice(2) : n.anio);
+        } else if (n.tipo === "area") {
+          el("circle", { r: 30, fill: c, opacity: 0.16 }, g);
+          el("circle", { r: 21, fill: c, stroke: PAPEL, "stroke-width": 3, "class": "kg-forma" }, g);
+          el("text", { y: 48, "text-anchor": "middle", "class": "kg-et" }, g, vert ? n.tc : n.t);
+        } else {
+          var w = ancho(n);
+          el("rect", { x: -w / 2, y: -18, width: w, height: 36, rx: 18, fill: TINTA, "class": "kg-forma" }, g);
+          el("text", { y: 5, "text-anchor": "middle", "class": "kg-serv-t" }, g, n.t);
+          el("text", { y: -26, "text-anchor": "middle", "class": "kg-mini" }, g, "SERVICIO");
+        }
+        n.g = g;
+        var ir = function () { activar(n); };
+        g.addEventListener("pointerenter", ir); g.addEventListener("focus", ir); g.addEventListener("click", ir);
+        g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ir(); } });
+      });
+      svg.addEventListener("pointerleave", function () { activar(null); });
+      activar(sel && byId[sel.id] ? sel : null);
+      if (visto) { cont.classList.add("kg-vivo"); [].forEach.call(cont.querySelectorAll(".kg-n,.kg-a"), function (x) { x.style.transitionDelay = "0s"; }); }
+    }
+
+    if (ley) {
+      ley.innerHTML =
+        '<span><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="' + TINTA + '" stroke="' + MENTA + '" stroke-width="2"/></svg>Integrante</span>' +
+        '<span><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#6b766f"/></svg>Artículo con DOI</span>' +
+        '<span><svg width="16" height="16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="4" fill="#6b766f"/></svg>Cartilla</span>' +
+        AREAS.map(function (a) { return '<span><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="' + a.c + '"/></svg>' + esc(a.t) + '</span>'; }).join("") +
+        '<span><svg width="26" height="16" aria-hidden="true"><rect x="1" y="2" width="24" height="12" rx="6" fill="' + TINTA + '"/></svg>Servicio</span>';
+    }
+
+    /* tras la entrada, sin retrasos: el resaltado al pasar el cursor debe ser inmediato */
+    function sinRetraso() { [].forEach.call(cont.querySelectorAll(".kg-n,.kg-a"), function (x) { x.style.transitionDelay = "0s"; }); }
+    dibujar();
+    if (visto) sinRetraso();
+    function mirar() {
+      if (visto) return;
+      var r = cont.getBoundingClientRect();
+      if (r.top < innerHeight * 0.85 && r.bottom > 0) { visto = true; cont.classList.add("kg-vivo"); setTimeout(sinRetraso, 1900); }
+    }
+    window.addEventListener("scroll", mirar, { passive: true }); mirar();
+    var t; window.addEventListener("resize", function () {
+      clearTimeout(t); t = setTimeout(function () { if (Math.abs((cont.clientWidth || 0) - W) > 30) dibujar(); }, 200);
     });
-    if (ultima) ultima.f();
-    var leg = [["PLS-SEM", "#14633f"], ["Bibliometría", "#b08a2e"], ["Territorio y economía", "#6b766f"]];
-    var gLeg = el("g", {}, svg);
-    leg.forEach(function (l, i) {
-      var x = m.l + 10 + i * 170;
-      el("circle", { cx: x, cy: 14, r: 6, fill: l[1] }, gLeg);
-      el("text", { x: x + 12, y: 18, "font-size": 12 }, gLeg, l[0]);
-    });
-    try { var bb = gLeg.getBBox(); if (bb.width) gLeg.setAttribute("transform", "translate(" + ((W - bb.width) / 2 - bb.x).toFixed(1) + " 0)"); } catch (e) {}
-    var io = new IntersectionObserver(function (es) {
-      if (es[0].isIntersecting) { [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (c) { c._fin(); }); io.disconnect(); }
-    }, { threshold: .4 }); io.observe(cont);
-    finales.push(function () { [].forEach.call(svg.querySelectorAll("circle.punto-pub"), function (c) { c.style.transition = "none"; c._fin(); }); });
+    finales.push(function () { visto = true; cont.classList.add("kg-vivo"); });
 
     var ul = $("#lista-pubs");
     if (ul) D.publicaciones.forEach(function (p) {

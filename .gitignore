@@ -9,3 +9,7 @@ equipo/
 
 # Auditorías internas (traen datos de contratos y de personas): no se publican
 AUDITORIA_WEB.md
+
+# documentos internos del rediseno (no publicar)
+PLAN_REDISENO.md
+PROPUESTA_DE_VALOR.md

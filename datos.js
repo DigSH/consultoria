@@ -17,7 +17,7 @@ window.CONSULTORIA = {
     proyectos: { titulo: "Proyectos" }
   },
 
-  /* 8 servicios esenciales con respaldo verificado */
+  /* 9 servicios esenciales con respaldo verificado */
   servicios: [
     { id: "estadistica", cat: "investigacion", corto: "Estadística y SEM", responsables: ["Diego"], linea: ["academica"], icono: "tesis",
       titulo: "Estadística y diseño experimental",
@@ -42,7 +42,12 @@ window.CONSULTORIA = {
     { id: "ia", cat: "datos", corto: "IA agrícola", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "ia",
       titulo: "Modelos de IA a medida para fincas",
       entrega: "Visión por computador y proyección de cosecha entrenados con sus datos, con error medido y tablero de uso.",
-      respaldo: "Diagnóstico por imagen en 7 cultivos (Surco AgTech, YOLOv8/EfficientNet) · Certificación IA MinTIC (2024)" },
+      respaldo: "IA por imagen en tomate, arándano, cacao y banano, y peso de bovinos y porcinos (Surco AgTech, YOLOv8) · Certificación IA MinTIC (2024)" },
+
+    { id: "surco", cat: "datos", corto: "App Surco", responsables: ["Diego"], linea: ["empresarial", "productor"], icono: "app",
+      titulo: "Surco configurado para su finca u organización",
+      entrega: "Fincas, lotes y polígonos cargados, cultivos y labores, usuarios con roles, alertas, cuaderno BPA, módulo EUDR y capacitación de uso.",
+      respaldo: "App publicada en Google Play · caso de uso con Arándanos de la Fuente · tablero por organización con roles" },
 
     { id: "geomatica", cat: "datos", corto: "GIS, dron y EUDR", responsables: ["Stiven", "Diego"], linea: ["academica", "empresarial", "productor"], icono: "geo",
       titulo: "Geomática, dron y trazabilidad EUDR",
@@ -72,6 +77,7 @@ window.CONSULTORIA = {
     { texto: "Pasar reportes dispersos en Excel a un tablero en Power BI", servicio: "tableros", linea: ["empresarial"] },
     { texto: "Limpiar y ordenar una base de datos con duplicados o errores", servicio: "gobernanza", linea: ["academica", "empresarial"] },
     { texto: "Mapear lotes con dron, medir relieve o validar predios EUDR", servicio: "geomatica", linea: ["academica", "empresarial", "productor"] },
+    { texto: "Llevar el registro de mi finca en una app: labores, alertas, BPA y EUDR", servicio: "surco", linea: ["empresarial", "productor"] },
     { texto: "Contar fruta, detectar daño o proyectar cosecha con IA", servicio: "ia", linea: ["empresarial", "productor"] },
     { texto: "Preparar una finca o vivero para la certificación BPA o evaluar un insumo en campo", servicio: "bpa", linea: ["empresarial", "productor"] },
     { texto: "Formular un proyecto, rendir informes o formalizar una asociación", servicio: "proyectos", linea: ["academica", "empresarial", "productor"] },
@@ -81,10 +87,10 @@ window.CONSULTORIA = {
   equipo: [
     { ini: "DS", corto: "Diego", nombre: "Diego Sanabria Higuera", rol: "Estadística, datos y geomática",
       titulo: "Ing. Agrónomo y Esp. en Estadística (UPTC) · Maestría en Ciencias Agrarias (en curso)",
-      respaldo: "7 artículos con DOI · 12 reportes OCITEB · cofundador Surco AgTech", orcid: "0009-0007-3157-6140" },
+      respaldo: "7 artículos con DOI · investigador OCITEB VIE-UPTC · cofundador Surco AgTech", orcid: "0009-0007-3157-6140" },
     { ini: "ZR", corto: "Zahira", nombre: "Zahira Rodríguez Bautista", rol: "Gestión y seguimiento de proyectos",
       titulo: "Administradora de Empresas (UPTC)",
-      respaldo: "Coautora de 2 artículos · joven investigadora VIE-UPTC y apoyo OTRI", orcid: "0009-0004-4188-8488" },
+      respaldo: "Coautora de 2 artículos · joven investigadora VIE-UPTC y apoyo OTRI · cofundadora Surco AgTech", orcid: "0009-0004-4188-8488" },
     { ini: "SS", corto: "Stiven", nombre: "Stiven Santana", rol: "Agronomía y territorio · enfoque en papa",
       titulo: "Ing. Agrónomo y Esp. en Desarrollo Territorial (UPTC)" },
     { ini: "FS", corto: "Faiver", nombre: "Faiver Salcedo", rol: "Agronomía y territorio · enfoque en arándano",
@@ -117,12 +123,13 @@ window.CONSULTORIA = {
       url: "https://repositorio.uptc.edu.co/bitstream/001/9055/1/Plan_manejo_tecnologico_cultivo_pitahaya.pdf" }
   ],
 
+  /* cifras: ya no se muestran en la web (26/11/2026); se conservan como registro */
   cifras: [
     { n: 10000, sufijo: "+", etiqueta: "registros gestionados", fuente: "OCITEB · UPTC" },
     { n: 12, sufijo: "", etiqueta: "reportes bibliométricos", fuente: "OCITEB · UPTC" },
     { n: 4, sufijo: "", etiqueta: "sedes consolidadas", fuente: "UPTC" },
     { n: 300, sufijo: "+", etiqueta: "productores en talleres", fuente: "Epsea · ADR" },
-    { n: 7, sufijo: "", etiqueta: "cultivos con IA por imagen", fuente: "Surco AgTech" },
+    { n: 4, sufijo: "", etiqueta: "cultivos con IA por imagen", fuente: "Surco AgTech" },
     { n: 120, sufijo: "", etiqueta: "unidades en ensayo propio", fuente: "UPTC · CIDE" }
   ],
 
