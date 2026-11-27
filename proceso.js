@@ -94,7 +94,7 @@
   estrecho = innerWidth < 640;
   semilla = 7;
   escena.innerHTML = "";
-  var svg = el("svg", { viewBox: estrecho ? "168 26 464 712" : "0 0 800 520", preserveAspectRatio: "xMidYMid meet" }, escena);
+  var svg = el("svg", { viewBox: estrecho ? "168 26 464 740" : "0 0 800 520", preserveAspectRatio: "xMidYMid meet" }, escena);
   var defs = el("defs", {}, svg);
   var rg = el("radialGradient", { id: "pr-halo" }, defs);
   el("stop", { offset: "0", "stop-color": "#5ad69a", "stop-opacity": ".22" }, rg);
@@ -120,7 +120,8 @@
   var LOTES = [
     { x: -4.7, y: -4.7, w: 4.2, d: 4.2, c: "#1d7a4e" },
     { x: 0.5, y: -4.7, w: 4.2, d: 4.2, c: "#237f52" },
-    { x: -4.7, y: 0.5, w: 9.4, d: 4.2, c: "#18673f" }
+    { x: -4.7, y: 0.5, w: 4.2, d: 4.2, c: "#18673f" },
+    { x: 0.5, y: 0.5, w: 4.2, d: 4.2, c: "#5f9e4c", pasto: true }
   ];
   var gLotes = g(svg, "pr-lotes");
   LOTES.forEach(function (l) { poly(gLotes, [[l.x, l.y, 0.02], [l.x + l.w, l.y, 0.02], [l.x + l.w, l.y + l.d, 0.02], [l.x, l.y + l.d, 0.02]], { fill: l.c }); });
@@ -133,6 +134,7 @@
   /* plantas por hileras, ordenadas para pintar de atrás hacia adelante */
   var plantas = [];
   LOTES.forEach(function (l) {
+    if (l.pasto) return;
     for (var px = l.x + 0.6; px < l.x + l.w; px += 1.0) for (var py = l.y + 0.6; py < l.y + l.d; py += 1.05) plantas.push([px, py]);
   });
   plantas.sort(function (a, b) { return (a[0] + a[1]) - (b[0] + b[1]); });
@@ -145,6 +147,30 @@
     el("circle", { cx: q[0], cy: q[1] - 11, r: 6.6, fill: "#2a9a62" }, pg);
     el("circle", { cx: q[0] - 1.8, cy: q[1] - 13, r: 3.4, fill: "#5ad69a", opacity: ".85" }, pg);
   });
+
+  var gPot = g(svg, "pr-potrero"), P = LOTES[3];
+  for (var hb = 0; hb < 34; hb++) {
+    var hq = iso(P.x + 0.3 + azar() * (P.w - 0.6), P.y + 0.3 + azar() * (P.d - 0.6), 0.02);
+    el("path", { d: "M" + (hq[0] - 3) + " " + hq[1] + "l2 -5l1 5l2 -4l1 4", "class": "pr-hierba" }, gPot);
+  }
+  var cerca = [[P.x + .1, P.y + .1], [P.x + P.w - .1, P.y + .1], [P.x + P.w - .1, P.y + P.d - .1], [P.x + .1, P.y + P.d - .1]];
+  el("polygon", { points: pts(cerca.map(function (c) { return [c[0], c[1], 0.35]; })), "class": "pr-cerca" }, gPot);
+  for (var ci = 0; ci < 4; ci++) for (var cs = 0; cs < 4; cs++) {
+    var c0 = cerca[ci], c1 = cerca[(ci + 1) % 4], f = cs / 4, cx = c0[0] + (c1[0] - c0[0]) * f, cyy = c0[1] + (c1[1] - c0[1]) * f;
+    var a0 = iso(cx, cyy, 0), a1 = iso(cx, cyy, 0.45);
+    el("line", { x1: a0[0], y1: a0[1], x2: a1[0], y2: a1[1], "class": "pr-poste" }, gPot);
+  }
+  function vaca(x, y, flip) {
+    var q = iso(x, y, 0), s = flip ? -1 : 1, v = g(gPot, "pr-vaca");
+    el("ellipse", { cx: q[0], cy: q[1] + 1, rx: 13, ry: 3.6, fill: "rgba(0,0,0,.3)" }, v);
+    [-7, -3, 4, 8].forEach(function (dx) { el("line", { x1: q[0] + dx * s, y1: q[1] - 6, x2: q[0] + dx * s, y2: q[1], stroke: "#2b2b26", "stroke-width": 2, "stroke-linecap": "round" }, v); });
+    el("ellipse", { cx: q[0], cy: q[1] - 10, rx: 11.5, ry: 6.5, fill: "#f3f1ea", stroke: "#0e1512", "stroke-width": 1 }, v);
+    el("ellipse", { cx: q[0] - 4 * s, cy: q[1] - 12, rx: 3.6, ry: 2.6, fill: "#22221f" }, v);
+    el("ellipse", { cx: q[0] + 4 * s, cy: q[1] - 8, rx: 2.6, ry: 2, fill: "#22221f" }, v);
+    el("ellipse", { cx: q[0] + 12 * s, cy: q[1] - 13, rx: 4.6, ry: 4, fill: "#f3f1ea", stroke: "#0e1512", "stroke-width": 1 }, v);
+    el("ellipse", { cx: q[0] + 15 * s, cy: q[1] - 11.5, rx: 2.4, ry: 1.8, fill: "#d9a79a" }, v);
+  }
+  vaca(1.7, 1.6, false); vaca(3.5, 2.6, true); vaca(2.0, 3.6, false);
 
   /* ===== fase 1: diagnóstico (el dron recorre el cultivo al ritmo del desplazamiento) ===== */
   var f0 = g(svg, "pr-f pr-f0");
@@ -233,17 +259,17 @@
     etiqueta(cg, izq[0] - 12, izq[1] - 4, cp.t, "fin");
   });
 
-  /* ===== fase 3: implementación de app (lotes conectados al teléfono) ===== */
+  /* ===== fase 3: implementación de app (lotes y potrero en Surco, con sus funciones) ===== */
   var f2 = g(svg, "pr-f pr-f2");
-  var tel = estrecho ? { x: 334, y: 478, w: 132, h: 250 } : { x: 628, y: 118, w: 132, h: 250 };
+  var tel = estrecho ? { x: 334, y: 470, w: 132, h: 282 } : { x: 628, y: 104, w: 132, h: 282 };
   var cards = [];
   LOTES.forEach(function (l, i) {
-    var c = iso(l.x + l.w / 2, l.y + l.d / 2, 0.6), cy = tel.y + 86 + i * 46;
+    var c = iso(l.x + l.w / 2, l.y + l.d / 2, 0.6), cy = tel.y + 86 + i * 42;
     cards.push(cy);
     el("path", { d: "M" + c[0] + " " + c[1] + "C" + (c[0] + (estrecho ? 0 : 120)) + " " + (c[1] + (estrecho ? 90 : -40)) + " " + (tel.x - 70) + " " + cy + " " + (tel.x + 8) + " " + cy, "class": "pr-enlace" }, f2);
     var pin = g(f2, "pr-pin");
-    el("path", { d: "M" + c[0] + " " + c[1] + "c-9 -10 -9 -22 0 -22s9 12 0 22z", fill: "#5ad69a", stroke: "#0e1512", "stroke-width": 1.5 }, pin);
-    el("text", { x: c[0], y: c[1] - 12, "text-anchor": "middle", "class": "pr-pin-n" }, pin, String(i + 1));
+    el("path", { d: "M" + c[0] + " " + c[1] + "c-9 -10 -9 -22 0 -22s9 12 0 22z", fill: l.pasto ? "#d9b26a" : "#5ad69a", stroke: "#0e1512", "stroke-width": 1.5 }, pin);
+    el("text", { x: c[0], y: c[1] - 12, "text-anchor": "middle", "class": "pr-pin-n" }, pin, l.pasto ? "P" : String(i + 1));
   });
   var t = g(f2, "pr-tel");
   el("rect", { x: tel.x + 7, y: tel.y + 7, width: tel.w, height: tel.h, rx: 22, fill: "#5c6a61" }, t);
@@ -251,18 +277,55 @@
   el("rect", { x: tel.x + 7, y: tel.y + 9, width: tel.w - 14, height: tel.h - 18, rx: 15, fill: "#fcfcfa" }, t);
   el("rect", { x: tel.x + tel.w / 2 - 18, y: tel.y + 14, width: 36, height: 7, rx: 3.5, fill: "#0e1512" }, t);
   el("text", { x: tel.x + 18, y: tel.y + 44, "class": "pr-tel-tit" }, t, "Surco");
-  el("text", { x: tel.x + 18, y: tel.y + 58, "class": "pr-tel-sub" }, t, "Finca · 3 lotes");
+  el("text", { x: tel.x + 18, y: tel.y + 58, "class": "pr-tel-sub" }, t, "3 lotes · 1 potrero");
+  var nombres = ["Lote 1", "Lote 2", "Lote 3", "Potrero"], datos = ["Fenología", "Riego hoy", "Sin alertas", "12 bovinos"];
   LOTES.forEach(function (l, i) {
     var cy = cards[i];
-    el("rect", { x: tel.x + 14, y: cy - 17, width: tel.w - 28, height: 36, rx: 9, fill: "#eceee8" }, t);
-    el("circle", { cx: tel.x + 28, cy: cy + 1, r: 6, fill: l.c }, t);
-    el("rect", { x: tel.x + 40, y: cy - 7, width: 56, height: 5, rx: 2.5, fill: "#0e1512", opacity: ".75" }, t);
-    el("rect", { x: tel.x + 40, y: cy + 3, width: 36 + i * 9, height: 4, rx: 2, fill: "#6b766f", opacity: ".6" }, t);
+    el("rect", { x: tel.x + 14, y: cy - 16, width: tel.w - 28, height: 34, rx: 9, fill: "#eceee8" }, t);
+    el("circle", { cx: tel.x + 27, cy: cy + 1, r: 6, fill: l.c }, t);
+    el("text", { x: tel.x + 39, y: cy - 1, "class": "pr-tel-l" }, t, nombres[i]);
+    el("text", { x: tel.x + 39, y: cy + 11, "class": "pr-tel-d" }, t, datos[i]);
   });
-  var al = tel.y + tel.h - 38;
+  var al = tel.y + tel.h - 36;
   el("rect", { x: tel.x + 14, y: al - 12, width: tel.w - 28, height: 24, rx: 12, fill: "#5ad69a" }, t);
-  el("text", { x: tel.x + tel.w / 2, y: al + 4, "text-anchor": "middle", "class": "pr-tel-al" }, t, "Riego: lote 2");
-  etiqueta(f2, 210, 132, "Lotes y polígonos", "medio");
+  el("text", { x: tel.x + tel.w / 2, y: al + 4, "text-anchor": "middle", "class": "pr-tel-al" }, t, "Vacuna: 3 bovinos");
+
+  /* funciones de la app: agrícolas y pecuarias */
+  var FUN = [
+    ["foto", "Diagnóstico por foto", "Sin internet, en 4 cultivos", 0],
+    ["gota", "Riego y clima", "Balance hídrico por lote", 0],
+    ["doc", "Cuaderno BPA y EUDR", "Reportes en PDF", 0],
+    ["moneda", "Costos y precios", "Economía y precios SIPSA", 0],
+    ["kg", "Peso por foto", "Bovinos y porcinos", 1],
+    ["hato", "Hato y sanidad", "Vacunas y reproducción", 1]
+  ];
+  function icono(p, tipo, x, y, pec) {
+    el("circle", { cx: x, cy: y, r: 15, "class": pec ? "pr-fun-ic pr-fun-pec" : "pr-fun-ic" }, p);
+    var a = { fill: "none", stroke: "#0e1512", "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" };
+    function trazo(d) { var o = {}; for (var k in a) o[k] = a[k]; o.d = d; el("path", o, p); }
+    if (tipo === "foto") { trazo("M" + (x - 7) + " " + (y - 3) + "h3l2 -3h4l2 3h3v9h-14z"); el("circle", { cx: x, cy: y + 1.5, r: 2.8, fill: "none", stroke: "#0e1512", "stroke-width": 1.8 }, p); }
+    else if (tipo === "gota") trazo("M" + x + " " + (y - 8) + "c4 5 6 8 6 11a6 6 0 0 1 -12 0c0 -3 2 -6 6 -11z");
+    else if (tipo === "doc") trazo("M" + (x - 5) + " " + (y - 7) + "h7l3 3v11h-10zM" + (x - 2) + " " + (y + 1) + "h4M" + (x - 2) + " " + (y + 4) + "h4");
+    else if (tipo === "moneda") { el("circle", { cx: x, cy: y, r: 7, fill: "none", stroke: "#0e1512", "stroke-width": 1.8 }, p); el("text", { x: x, y: y + 4, "text-anchor": "middle", "class": "pr-fun-sim" }, p, "$"); }
+    else if (tipo === "kg") el("text", { x: x, y: y + 4, "text-anchor": "middle", "class": "pr-fun-sim" }, p, "kg");
+    else trazo("M" + (x - 6) + " " + (y + 6) + "l9 -9M" + (x + 1) + " " + (y - 7) + "l6 6M" + (x - 3) + " " + (y - 1) + "l4 4M" + (x + 4) + " " + (y - 4) + "l3 -3");
+  }
+  var anchoF = estrecho ? 220 : 186;
+  FUN.forEach(function (fn, i) {
+    var x, y;
+    if (estrecho) { x = 176 + (i % 2) * 228; y = 40 + Math.floor(i / 2) * 50; }
+    else { x = 22; y = (fn[3] ? 108 : 86) + i * 50; }
+    var fg = g(f2, "pr-fun");
+    fg.style.transitionDelay = (0.12 + i * 0.09) + "s";
+    el("rect", { x: x, y: y, width: anchoF, height: 42, rx: 21, "class": "pr-fun-caja" + (fn[3] ? " pr-fun-caja-pec" : "") }, fg);
+    icono(fg, fn[0], x + 21, y + 21, fn[3]);
+    el("text", { x: x + 44, y: y + (estrecho ? 26 : 19), "class": "pr-fun-t" }, fg, fn[1]);
+    if (!estrecho) el("text", { x: x + 44, y: y + 33, "class": "pr-fun-s" }, fg, fn[2]);
+  });
+  if (!estrecho) {
+    el("text", { x: 24, y: 76, "class": "pr-fun-g" }, f2, "AGRÍCOLA");
+    el("text", { x: 24, y: 298, "class": "pr-fun-g pr-fun-g-pec" }, f2, "PECUARIO");
+  }
 
   /* ===== fase 4: acompañamiento (ciclo, alertas, informe, cultivo que crece) ===== */
   var f3 = g(svg, "pr-f pr-f3");
@@ -278,7 +341,7 @@
     el("circle", { cx: x, cy: y, r: 5, "class": "pr-hito" }, f3);
     etiqueta(f3, x, y + 26, h[0], "medio");
   });
-  [[-2.6, -2.6], [2.6, -2.6], [0, 2.6]].forEach(function (c, i) {
+  [[-2.6, -2.6], [2.6, -2.6], [2.6, 2.6]].forEach(function (c, i) {
     var q = iso(c[0], c[1], 2.4), b = g(f3, "pr-aviso");
     b.style.animationDelay = (i * 0.9) + "s";
     el("circle", { cx: q[0], cy: q[1], r: 13, fill: "#5ad69a" }, b);

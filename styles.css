@@ -858,3 +858,23 @@ section[hidden]{display:none!important}
   .pr-ind-flota{animation:pr-flota 4s ease-in-out infinite}
 }
 @media (prefers-reduced-motion:reduce){.pr-ind{transition:none}}
+
+/* Cómo trabajamos, fase 3: potrero y funciones de la app (26/11/2026) */
+.pr-hierba{fill:none;stroke:#3f7a35;stroke-width:1.2;stroke-linecap:round}
+.pr-cerca{fill:none;stroke:#c9b98a;stroke-width:1.4;opacity:.9}
+.pr-poste{stroke:#8a6a32;stroke-width:2.2;stroke-linecap:round}
+.pr-tel-l{font:700 10px var(--display);fill:#0e1512}
+.pr-tel-d{font:500 8.5px var(--display);fill:#6b766f}
+.pr-fun{opacity:0;transform:translateX(-14px);transition:opacity .5s,transform .7s cubic-bezier(.2,.9,.3,1.2)}
+.pr-escena[data-paso="2"] .pr-fun{opacity:1;transform:none}
+.pr-fun-caja{fill:rgba(14,21,18,.94);stroke:rgba(90,214,154,.5);stroke-width:1.2}
+.pr-fun-caja-pec{stroke:rgba(217,178,106,.6)}
+.pr-fun-ic{fill:#5ad69a}
+.pr-fun-pec{fill:#d9b26a}
+.pr-fun-sim{font:800 10px var(--display);fill:#0e1512}
+.pr-fun-t{font:700 13px var(--display);fill:#f3f5f1}
+.pr-fun-s{font:500 10.5px var(--display);fill:#9fb0a5}
+.pr-fun-g{font:600 10px var(--mono);letter-spacing:.14em;fill:#5ad69a}
+.pr-fun-g-pec{fill:#d9b26a}
+@media (max-width:639px){.pr-fun-t{font-size:14px}}
+@media (prefers-reduced-motion:reduce){.pr-fun{transition:none}}
