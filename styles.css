@@ -756,3 +756,105 @@ section[hidden]{display:none!important}
 /* línea de rumbo (gemelo digital) en la sección Surco */
 .surco-rumbo{margin:26px 0 0;padding:16px 18px 16px 20px;border-left:3px solid var(--menta);background:var(--papel2);border-radius:0 var(--r-s) var(--r-s) 0;color:var(--tinta2);font-size:15.5px;max-width:40em}
 .surco-rumbo b{display:block;font:600 12px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--verde);margin-bottom:4px}
+
+/* ---------- Cómo trabajamos: recorrido por fases con diorama isométrico (proceso.js, 26/11/2026) ---------- */
+.pr-pista,.pr-ayuda{display:none}
+.pr-js .pr-ayuda{display:inline}
+.pr-js ol.pasos{display:none}
+.pr-js .pr-pista{display:block;height:calc(100svh * 3.6);max-width:none;margin:0 calc(-1 * clamp(16px,4vw,40px))}
+.pr-fijo{position:sticky;top:0;height:100svh;display:grid;grid-template-rows:minmax(0,1fr) auto;
+  padding:76px clamp(16px,4vw,40px) clamp(18px,3vh,34px);max-width:calc(var(--max) + 80px);margin:0 auto}
+.pr-escena{min-height:0;display:flex;align-items:center;justify-content:center}
+.pr-escena svg{width:100%;height:100%;overflow:visible}
+.pr-panel{display:grid;grid-template-columns:210px minmax(0,1fr);gap:10px 44px;align-items:end;border-top:1px solid #2a3830;padding-top:18px}
+.pr-num{margin:0;font:700 46px/1 var(--display);color:var(--menta);letter-spacing:-.03em}
+.pr-num span{font-size:18px;color:#96a59b;font-weight:600;letter-spacing:0}
+.pr-prog{display:flex;gap:6px;margin-top:14px}
+.pr-prog button{flex:1;height:22px;padding:0;border:0;background:none;cursor:pointer;position:relative}
+.pr-prog button::before{content:"";position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:#2a3830}
+.pr-prog span{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--menta);transform:scaleX(0);transform-origin:left;display:block}
+.pr-fases{display:grid}
+.pr-fase{grid-area:1/1;opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s;pointer-events:none}
+.pr-fase.activa{opacity:1;transform:none;pointer-events:auto}
+.pr-fase h3{font-size:clamp(24px,3vw,38px);margin:0 0 6px;letter-spacing:-.025em}
+.pr-fase p{margin:0;color:#b9c4bc;max-width:50ch}
+.pr-vivo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* escenario */
+.pr-fondo circle{fill:#22302a}
+.pr-sombra{fill:rgba(0,0,0,.5)}
+.pr-f{opacity:0;transition:opacity .6s ease}
+.pr-escena[data-paso="0"] .pr-f0,.pr-escena[data-paso="1"] .pr-f1,.pr-escena[data-paso="2"] .pr-f2,.pr-escena[data-paso="3"] .pr-f3{opacity:1}
+.pr-capa{transform:translateY(70px);opacity:0;transition:transform .9s cubic-bezier(.2,.9,.3,1.12),opacity .6s}
+.pr-escena[data-paso="1"] .pr-capa{transform:none;opacity:1}
+.pr-plantas,.pr-lotes{transition:opacity .6s}
+.pr-escena[data-paso="1"] .pr-plantas,.pr-escena[data-paso="1"] .pr-lotes{opacity:.5}
+.pr-plano{fill:rgba(14,21,18,.62);stroke:rgba(90,214,154,.55);stroke-width:1.2}
+.pr-guia{stroke:rgba(90,214,154,.35);stroke-dasharray:3 5}
+.pr-curva{fill:none;stroke:#5ad69a;stroke-opacity:.55;stroke-width:1.3}
+.pr-curva-m{stroke-opacity:1;stroke-width:2}
+.pr-etq rect{fill:rgba(14,21,18,.9);stroke:rgba(90,214,154,.5)}
+.pr-etq text{font:600 11.5px var(--display);fill:#e9eee9}
+.pr-cono{fill:rgba(90,214,154,.07)}
+.pr-huella{fill:rgba(90,214,154,.16);stroke:#5ad69a;stroke-width:1.5;stroke-dasharray:5 4}
+.pr-barrido{fill:none;stroke:#5ad69a;stroke-width:3;opacity:.9}
+.pr-helice{fill:rgba(233,238,233,.55)}
+.pr-led{fill:#5ad69a}
+.pr-contorno{fill:rgba(90,214,154,.1);stroke:#5ad69a;stroke-width:2.2}
+.pr-enlace{fill:none;stroke:#5ad69a;stroke-width:1.8;stroke-dasharray:4 6;opacity:.85}
+.pr-pin-n{font:800 11px var(--display);fill:#0e1512}
+.pr-tel-tit{font:800 15px var(--display);fill:#0e1512}
+.pr-tel-sub{font:500 10px var(--display);fill:#6b766f}
+.pr-tel-al{font:700 10.5px var(--display);fill:#0e1512}
+.pr-anillo{fill:none;stroke:#5ad69a;stroke-width:2;stroke-dasharray:2 7;stroke-linecap:round}
+.pr-anillo-atras{opacity:.35}
+.pr-punto{fill:#5ad69a;stroke:#0e1512;stroke-width:2}
+.pr-hito{fill:#0e1512;stroke:#5ad69a;stroke-width:2}
+.pr-planta{transform-box:fill-box;transform-origin:50% 100%;transition:transform .7s cubic-bezier(.2,.9,.3,1.3)}
+.pr-escena[data-paso="3"] .pr-planta{transform:scale(1.3)}
+@media (prefers-reduced-motion:no-preference){
+  .pr-dron{animation:pr-flota 3.2s ease-in-out infinite}
+  .pr-helice{transform-box:fill-box;transform-origin:center;animation:pr-gira .18s linear infinite}
+  .pr-barrido{animation:pr-barre 2.6s ease-in-out infinite alternate}
+  .pr-led{animation:pr-parpadeo 1.2s steps(2) infinite}
+  .pr-enlace{animation:pr-flujo 1.2s linear infinite}
+  .pr-aviso{transform-box:fill-box;transform-origin:center;animation:pr-aviso 2.7s ease-in-out infinite}
+}
+@keyframes pr-flota{50%{transform:translateY(-8px)}}
+@keyframes pr-gira{50%{transform:scaleX(.25)}}
+@keyframes pr-barre{to{transform:translate(var(--bx),var(--by))}}
+@keyframes pr-parpadeo{50%{opacity:.2}}
+@keyframes pr-flujo{to{stroke-dashoffset:-20}}
+@keyframes pr-aviso{0%,100%{transform:scale(.88)}50%{transform:scale(1.08) translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.pr-f,.pr-capa,.pr-planta,.pr-fase{transition:none}}
+@media (max-width:860px){
+  .pr-js .pr-pista{height:calc(100svh * 3.2)}
+  .pr-fijo{padding-top:66px}
+  .pr-panel{grid-template-columns:1fr;gap:8px;padding-top:12px}
+  .pr-meta{display:flex;align-items:center;gap:14px}
+  .pr-num{font-size:30px}
+  .pr-prog{flex:1;margin-top:0}
+  .pr-fase p{font-size:15px}
+}
+@media (max-width:639px){.pr-etq{display:none}}
+@media print{.pr-pista,.pr-ayuda{display:none!important}.pr-js ol.pasos{display:grid!important}}
+
+/* Cómo trabajamos v2: vuelo ligado al desplazamiento, capas de decisión e indicadores (26/11/2026) */
+.pr-rastro{fill:none;stroke:#5ad69a;stroke-width:2.4;stroke-dasharray:1 1;stroke-dashoffset:1;stroke-linejoin:round;opacity:.75}
+.pr-gota{fill:#9fd3ff;stroke:#0e1512;stroke-width:1.2}
+.pr-foco{fill:rgba(194,112,26,.55);stroke:#c2701a;stroke-width:1.5}
+.pr-foco-r{fill:none;stroke:#c2701a;stroke-width:1.2;stroke-dasharray:3 4;opacity:.8}
+.pr-insecto{fill:#e9eee9;opacity:.7}
+.pr-copa{fill:#2f8f5e;stroke:#0e1512;stroke-width:1}
+.pr-copa-m{fill:none;stroke:#e9eee9;stroke-width:1.6;stroke-dasharray:3 3}
+.pr-ind{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .8s cubic-bezier(.2,.9,.3,1.2)}
+.pr-escena[data-paso="3"] .pr-ind{opacity:1;transform:none}
+.pr-ind-caja{fill:rgba(14,21,18,.94);stroke:rgba(90,214,154,.55);stroke-width:1.2}
+.pr-ind-n{font:600 12px var(--display);fill:#b9c4bc}
+.pr-ind-v{font:800 19px var(--display);fill:#5ad69a;letter-spacing:-.01em}
+.pr-ind-linea{fill:none;stroke:#5ad69a;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.pr-ind-pt{fill:#5ad69a}
+.pr-nota{font:500 11px var(--mono);fill:#7d8b82;letter-spacing:.06em}
+@media (prefers-reduced-motion:no-preference){
+  .pr-ind-flota{animation:pr-flota 4s ease-in-out infinite}
+}
+@media (prefers-reduced-motion:reduce){.pr-ind{transition:none}}
