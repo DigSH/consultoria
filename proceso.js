@@ -82,7 +82,7 @@
     productor: {
       serv: ["geomatica", "ia", "surco", "bpa"],
       /* la prueba de cada fase en la misma página: el ciclo sirve de índice sin encerrar el contenido */
-      prueba: [["#mapas", "Ver mapas en vivo"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
+      prueba: [["laboratorio.html#ideam", "Ver mapas en vivo"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero mi diagnóstico de finca",
       hitos: ["Visita", "Reporte BPA o EUDR", "Ajuste del plan"]
     },
@@ -94,7 +94,7 @@
         ["Acompañamiento", "Reportes consolidados BPA o EUDR para compradores y auditorías, y ajuste del plan."]
       ],
       serv: ["geomatica", "tableros", "surco", "bpa"],
-      prueba: [["#mapas", "Pruebe el validador EUDR"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
+      prueba: [["laboratorio.html#eudr", "Pruebe el validador EUDR"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero el diagnóstico de mi organización",
       tel: { tit: "Organización", sub: "3 fincas · 1 hato", filas: ["Finca 1", "Finca 2", "Finca 3", "Hato"], datos: ["BPA al día", "Riego hoy", "EUDR listo", "12 bovinos"], alerta: "Reporte comprador" },
       hitos: ["Comité", "Reporte consolidado", "Auditoría"],
@@ -115,7 +115,7 @@
         ["Acompañamiento", "Hasta la sustentación y la respuesta a revisores."]
       ],
       serv: ["cienciometria", "estadistica", "gobernanza", "cienciometria"],
-      prueba: [["#equipo", "Conocer al equipo"], ["#mapas", "Ver un estudio longitudinal"], ["#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
+      prueba: [["#equipo", "Conocer al equipo"], ["laboratorio.html#iguaque", "Ver un estudio longitudinal"], ["#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero asesoría para mi investigación",
       pec: false,
       capas: ["Diseño experimental", "Estadística en R", "Modelos PLS-SEM", "Figuras y tablas"],

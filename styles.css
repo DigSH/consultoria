@@ -1056,3 +1056,21 @@ section[hidden]{display:none!important}
   .pr-serv .k{display:none}
   .pr-fase p{font-size:14px}
 }
+
+/* ---------- Laboratorio GIS (27/11/2026): aviso en la portada y página propia laboratorio.html ---------- */
+.lab-tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.lab-t{display:grid;align-content:start;justify-items:start;gap:10px;color:var(--tinta);text-decoration:none;transition:border-color .2s,transform .2s}
+.lab-t b{font:600 20px/1.2 var(--display)}
+.lab-t span:not(.etiqueta){color:var(--tinta2);font-size:15.5px;line-height:1.45}
+.lab-t .lab-ir{margin-top:4px;color:var(--verde);font-weight:600}
+.lab-t .lab-ir::after{content:" →"}
+.lab-t:hover,.lab-t:focus-visible{border-color:var(--verde);transform:translateY(-2px)}
+.lab-pag{padding-top:clamp(96px,12vw,140px)}
+.lab-pag .cab h1{font:700 clamp(32px,5vw,60px)/1.02 var(--display);margin:0 0 14px;letter-spacing:-.035em}
+.lab-pag .cab h1::after{content:"";display:block;width:64px;height:5px;margin-top:16px;border-radius:3px;background:linear-gradient(90deg,var(--verde),var(--menta))}
+.lab-pag .sobretitulo a{color:inherit}
+.lab-pag .mapa-tarjeta{scroll-margin-top:76px}
+.lab-acc{display:flex;flex-wrap:wrap;gap:12px}
+.barra .enlaces a[aria-current=page]{color:var(--verde);font-weight:600;text-decoration:underline;text-decoration-color:var(--menta);text-underline-offset:7px;text-decoration-thickness:2px}
+.barra.sol .enlaces a[aria-current=page]{color:#fff}
+.barra.abierto .enlaces a[aria-current=page]{color:var(--menta)}

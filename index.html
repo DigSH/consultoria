@@ -30,9 +30,8 @@
   {"@type":"Person","name":"Stiven Santana","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"},
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
-<link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261128k">
+<link rel="stylesheet" href="styles.css?v=20261128m">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -48,7 +47,7 @@
       <a href="#buscador">Empiece</a>
       <a href="#servicios">Servicios</a>
       <a href="#surco">App</a>
-      <a href="#mapas">Mapas</a>
+      <a href="laboratorio.html">Mapas</a>
       <a href="#evidencia">Publicaciones</a>
       <a href="#equipo">Equipo</a>
     </div>
@@ -189,83 +188,32 @@
   </div>
 </section>
 
-<!-- ============ LABORATORIO GIS (solo los 2 visores en vivo) ============ -->
-<section class="seccion gis" id="mapas">
+<!-- ============ LABORATORIO GIS: aviso; los visores viven en laboratorio.html ============ -->
+<section class="seccion gis lab-aviso" id="mapas">
   <div class="cab">
     <h2>Laboratorio GIS</h2>
+    <p class="sub">Tres herramientas en vivo con datos abiertos, en su propia página para que carguen rápido.</p>
   </div>
-
-  <article class="tarjeta mapa-tarjeta" id="iguaque">
-    <header>
-      <h3>Páramo Iguaque - Merchán: pérdida de cobertura arbórea, 2001–2025 <span class="etiqueta">estudio longitudinal</span></h3>
-      <p>Límite oficial del complejo de páramos y pérdida anual de cobertura arbórea detectada por satélite, con el corte EUDR del 31 de diciembre de 2020 como referencia.</p>
-    </header>
-    <div class="mapa-barra ig-barra">
-      <button type="button" class="chip chip-fuerte" id="ig-play" aria-pressed="false">▶ Reproducir</button>
-      <input type="range" id="ig-rango" min="2000" max="2025" step="1" value="2000" aria-label="Año del estudio">
-      <button type="button" class="chip" id="ig-bosque" aria-pressed="true">Cobertura arbórea</button>
-      <button type="button" class="chip" id="ig-vista">Ver todo</button>
-    </div>
-    <div class="val-grid ig-grid">
-      <div class="ig-mapa">
-        <div class="mapa" id="map-iguaque" role="region" aria-label="Mapa del Complejo de Páramos Iguaque - Merchán con la pérdida de cobertura arbórea por año"></div>
-        <div class="ig-anio" id="ig-anio" aria-live="off">2000</div>
-        <ul class="ig-leyenda" aria-label="Leyenda">
-          <li><i class="ig-l ig-l-lim"></i>Límite del páramo</li>
-          <li><i class="ig-l ig-l-bos"></i>Cobertura arbórea en pie</li>
-          <li><i class="ig-l ig-l-act"></i>Pérdida del año</li>
-          <li><i class="ig-l ig-l-acu"></i>Pérdida acumulada</li>
-        </ul>
-      </div>
-      <div class="val-lado ig-lado">
-        <p class="ig-k">Pérdida acumulada dentro del páramo</p>
-        <p class="ig-acum" id="ig-acum" aria-live="polite">0,0 ha</p>
-        <p class="ig-det" id="ig-det"></p>
-        <div class="ig-barras" id="ig-barras"></div>
-        <p class="ig-ley2"><i class="ig-l ig-l-pa"></i>Páramo <i class="ig-l ig-l-fr"></i>Franja exterior de 2 km</p>
-        <p class="ig-resumen" id="ig-resumen"></p>
-        <p class="mapa-cuenta" id="ig-estado" role="status">Cargando el estudio…</p>
-      </div>
-    </div>
-    <p class="mapa-fuente">Pérdida de cobertura arbórea: Hansen/UMD/Google/USGS/NASA, Global Forest Change v1.13 (30 m, dosel de al menos 30 % en 2000; CC BY 4.0). Límite: Minambiente, Resolución 1555 de 2016, escala 1:25.000. La pérdida de cobertura arbórea incluye talas, incendios y aprovechamientos; es un cribado de apoyo y requiere verificación en campo. Usa las mismas fuentes de evidencia forestal de nuestro prototipo <a href="https://digsh.github.io/EUDR-OpenAI/" target="_blank" rel="noopener">EUDR Copilot</a>.</p>
-  </article>
-
-  <article class="tarjeta mapa-tarjeta">
-    <header>
-      <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">en vivo</span></h3>
-    </header>
-    <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
-      <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
-      <button type="button" class="chip" data-f="auto" aria-pressed="false"><i class="pt pt-auto" aria-hidden="true"></i>Automáticas</button>
-      <button type="button" class="chip" data-f="conv" aria-pressed="false"><i class="pt pt-conv" aria-hidden="true"></i>Convencionales</button>
-      <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
-    </div>
-    <div class="mapa" id="map-ideam" role="region" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
-    <p class="mapa-fuente">IDEAM, conjunto <code>hp9r-jxuu</code> (datos.gov.co, CC BY-SA 4.0) · © OpenStreetMap.</p>
-  </article>
-
-  <article class="tarjeta mapa-tarjeta">
-    <header>
-      <h3>Validador de polígonos <span class="etiqueta">EUDR</span></h3>
-    </header>
-    <div class="mapa-barra">
-      <button type="button" class="chip" id="v-deshacer">Deshacer</button>
-      <button type="button" class="chip" id="v-limpiar">Limpiar</button>
-      <button type="button" class="chip" id="v-ejemplo">Ejemplo</button>
-      <button type="button" class="chip chip-fuerte" id="v-descargar" disabled>Descargar GeoJSON</button>
-    </div>
-    <div class="val-grid">
-      <div class="mapa" id="map-predio" role="region" aria-label="Mapa para dibujar el predio"></div>
-      <div class="val-lado">
-        <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haga clic en el mapa para marcar los vértices del predio.</p></div>
-        <label class="val-pega">Pegar GeoJSON
-          <textarea id="v-texto" rows="3" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.356927,5.552501],[-73.353701,5.552501],[-73.353701,5.554755],[-73.356927,5.552501]]]}'></textarea>
-        </label>
-        <button type="button" class="chip" id="v-cargar">Validar GeoJSON</button>
-      </div>
-    </div>
-    <p class="mapa-fuente">Geometría básica Reglamento (UE) 2023/1115 · © OpenStreetMap · © Esri, Maxar.</p>
-  </article>
+  <div class="lab-tarjetas">
+    <a class="tarjeta lab-t" href="laboratorio.html#iguaque">
+      <span class="etiqueta">estudio longitudinal</span>
+      <b>Páramo Iguaque - Merchán</b>
+      <span>Pérdida de cobertura arbórea año por año, 2001–2025, dentro del límite oficial del páramo.</span>
+      <span class="lab-ir">Ver el estudio</span>
+    </a>
+    <a class="tarjeta lab-t" href="laboratorio.html#ideam">
+      <span class="etiqueta">en vivo</span>
+      <b>Estaciones del IDEAM en Boyacá</b>
+      <span>Estaciones automáticas y convencionales con los datos abiertos de datos.gov.co.</span>
+      <span class="lab-ir">Ver el mapa</span>
+    </a>
+    <a class="tarjeta lab-t" href="laboratorio.html#eudr">
+      <span class="etiqueta">EUDR</span>
+      <b>Validador de polígonos</b>
+      <span>Dibuje o pegue el polígono de un predio y revise su geometría básica para el Reglamento (UE) 2023/1115.</span>
+      <span class="lab-ir">Probar el validador</span>
+    </a>
+  </div>
 </section>
 
 <!-- ============ EVIDENCIA Y PUBLICACIONES ============ -->
@@ -369,10 +317,8 @@
 </svg>
 
 <script src="datos.js?v=20261128e"></script>
-<script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261128g"></script>
-<script src="gis.js?v=20261118c"></script>
-<script src="iguaque.js?v=20261118c"></script>
-<script src="proceso.js?v=20261128i"></script>
+<script src="comun.js?v=20261128m"></script>
+<script src="app.js?v=20261128m"></script>
+<script src="proceso.js?v=20261128m"></script>
 </body>
 </html>

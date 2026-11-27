@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio GIS · Consultoría</title>
+<meta name="description" content="Mapas en vivo de la consultoría: estudio de pérdida de cobertura arbórea del páramo Iguaque - Merchán (2001–2025), estaciones del IDEAM en Boyacá y validador de polígonos para la EUDR.">
+<meta property="og:title" content="Laboratorio GIS · Consultoría">
+<meta property="og:description" content="Estudio longitudinal del páramo Iguaque - Merchán, estaciones del IDEAM en vivo y validador de polígonos EUDR.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://digsh.github.io/consultoria/laboratorio.html">
+<meta property="og:image" content="https://digsh.github.io/consultoria/og-portada.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_CO">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://digsh.github.io/consultoria/laboratorio.html">
+<meta name="theme-color" content="#f6f7f4">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
+<link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css?v=20261128m">
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="barra" id="barra">
+  <a class="marca" href="index.html" aria-label="Consultoría, inicio">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><use href="#logo"/></svg>
+    <span>Consultoría</span>
+  </a>
+  <nav aria-label="Principal">
+    <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-enlaces">Menú</button>
+    <div class="enlaces" id="nav-enlaces">
+      <a href="index.html#buscador">Empiece</a>
+      <a href="index.html#servicios">Servicios</a>
+      <a href="index.html#surco">App</a>
+      <a href="laboratorio.html" aria-current="page">Mapas</a>
+      <a href="index.html#evidencia">Publicaciones</a>
+      <a href="index.html#equipo">Equipo</a>
+    </div>
+    <a class="boton boton-chico" href="index.html#contacto">Escríbanos</a>
+  </nav>
+</header>
+
+<main id="contenido" tabindex="-1">
+<section class="seccion gis lab-pag" id="mapas">
+  <div class="cab">
+    <p class="sobretitulo"><a href="index.html">Consultoría</a> · Laboratorio GIS</p>
+    <h1>Mapas y datos en vivo</h1>
+    <p class="sub">Herramientas que usamos en los servicios de geomática y trazabilidad, abiertas para que usted las pruebe con datos públicos.</p>
+  </div>
+
+  <article class="tarjeta mapa-tarjeta" id="iguaque">
+    <header>
+      <h3>Páramo Iguaque - Merchán: pérdida de cobertura arbórea, 2001–2025 <span class="etiqueta">estudio longitudinal</span></h3>
+      <p>Límite oficial del complejo de páramos y pérdida anual de cobertura arbórea detectada por satélite, con el corte EUDR del 31 de diciembre de 2020 como referencia.</p>
+    </header>
+    <div class="mapa-barra ig-barra">
+      <button type="button" class="chip chip-fuerte" id="ig-play" aria-pressed="false">▶ Reproducir</button>
+      <input type="range" id="ig-rango" min="2000" max="2025" step="1" value="2000" aria-label="Año del estudio">
+      <button type="button" class="chip" id="ig-bosque" aria-pressed="true">Cobertura arbórea</button>
+      <button type="button" class="chip" id="ig-vista">Ver todo</button>
+    </div>
+    <div class="val-grid ig-grid">
+      <div class="ig-mapa">
+        <div class="mapa" id="map-iguaque" role="region" aria-label="Mapa del Complejo de Páramos Iguaque - Merchán con la pérdida de cobertura arbórea por año"></div>
+        <div class="ig-anio" id="ig-anio" aria-live="off">2000</div>
+        <ul class="ig-leyenda" aria-label="Leyenda">
+          <li><i class="ig-l ig-l-lim"></i>Límite del páramo</li>
+          <li><i class="ig-l ig-l-bos"></i>Cobertura arbórea en pie</li>
+          <li><i class="ig-l ig-l-act"></i>Pérdida del año</li>
+          <li><i class="ig-l ig-l-acu"></i>Pérdida acumulada</li>
+        </ul>
+      </div>
+      <div class="val-lado ig-lado">
+        <p class="ig-k">Pérdida acumulada dentro del páramo</p>
+        <p class="ig-acum" id="ig-acum" aria-live="polite">0,0 ha</p>
+        <p class="ig-det" id="ig-det"></p>
+        <div class="ig-barras" id="ig-barras"></div>
+        <p class="ig-ley2"><i class="ig-l ig-l-pa"></i>Páramo <i class="ig-l ig-l-fr"></i>Franja exterior de 2 km</p>
+        <p class="ig-resumen" id="ig-resumen"></p>
+        <p class="mapa-cuenta" id="ig-estado" role="status">Cargando el estudio…</p>
+      </div>
+    </div>
+    <p class="mapa-fuente">Pérdida de cobertura arbórea: Hansen/UMD/Google/USGS/NASA, Global Forest Change v1.13 (30 m, dosel de al menos 30 % en 2000; CC BY 4.0). Límite: Minambiente, Resolución 1555 de 2016, escala 1:25.000. La pérdida de cobertura arbórea incluye talas, incendios y aprovechamientos; es un cribado de apoyo y requiere verificación en campo. Usa las mismas fuentes de evidencia forestal de nuestro prototipo <a href="https://digsh.github.io/EUDR-OpenAI/" target="_blank" rel="noopener">EUDR Copilot</a>.</p>
+  </article>
+
+  <article class="tarjeta mapa-tarjeta" id="ideam">
+    <header>
+      <h3>Estaciones del IDEAM en Boyacá <span class="etiqueta">en vivo</span></h3>
+    </header>
+    <div class="mapa-barra" role="group" aria-label="Filtrar estaciones">
+      <button type="button" class="chip" data-f="todas" aria-pressed="true">Todas</button>
+      <button type="button" class="chip" data-f="auto" aria-pressed="false"><i class="pt pt-auto" aria-hidden="true"></i>Automáticas</button>
+      <button type="button" class="chip" data-f="conv" aria-pressed="false"><i class="pt pt-conv" aria-hidden="true"></i>Convencionales</button>
+      <span class="mapa-cuenta" id="ideam-cuenta" aria-live="polite">Cargando estaciones…</span>
+    </div>
+    <div class="mapa" id="map-ideam" role="region" aria-label="Mapa de estaciones del IDEAM en Boyacá"></div>
+    <p class="mapa-fuente">IDEAM, conjunto <code>hp9r-jxuu</code> (datos.gov.co, CC BY-SA 4.0) · © OpenStreetMap.</p>
+  </article>
+
+  <article class="tarjeta mapa-tarjeta" id="eudr">
+    <header>
+      <h3>Validador de polígonos <span class="etiqueta">EUDR</span></h3>
+    </header>
+    <div class="mapa-barra">
+      <button type="button" class="chip" id="v-deshacer">Deshacer</button>
+      <button type="button" class="chip" id="v-limpiar">Limpiar</button>
+      <button type="button" class="chip" id="v-ejemplo">Ejemplo</button>
+      <button type="button" class="chip chip-fuerte" id="v-descargar" disabled>Descargar GeoJSON</button>
+    </div>
+    <div class="val-grid">
+      <div class="mapa" id="map-predio" role="region" aria-label="Mapa para dibujar el predio"></div>
+      <div class="val-lado">
+        <div class="val-res" id="val-res" aria-live="polite"><p class="vacio">Haga clic en el mapa para marcar los vértices del predio.</p></div>
+        <label class="val-pega">Pegar GeoJSON
+          <textarea id="v-texto" rows="3" spellcheck="false" placeholder='{"type":"Polygon","coordinates":[[[-73.356927,5.552501],[-73.353701,5.552501],[-73.353701,5.554755],[-73.356927,5.552501]]]}'></textarea>
+        </label>
+        <button type="button" class="chip" id="v-cargar">Validar GeoJSON</button>
+      </div>
+    </div>
+    <p class="mapa-fuente">Geometría básica Reglamento (UE) 2023/1115 · © OpenStreetMap · © Esri, Maxar.</p>
+  </article>
+</section>
+
+<section class="seccion oscura cierre lab-cierre" id="lab-contacto">
+  <div class="cab">
+    <h2>¿Quiere verlo con sus predios?</h2>
+    <p class="sub">Hacemos estos mapas con los polígonos, estaciones y años que necesite su finca, su proyecto o su expediente EUDR.</p>
+  </div>
+  <div class="lab-acc">
+    <a class="boton" data-wa="Hola, vi el Laboratorio GIS de la consultoría y quiero hablar de mapas para mi caso." target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    <a class="boton boton-claro" href="index.html#servicios">Ver los servicios</a>
+  </div>
+</section>
+</main>
+
+<footer class="pie">
+  <p>© 2026 Consultoría · Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo</p>
+  <p class="pie-s" id="aviso-medicion" hidden>Contamos visitas y clics de forma anónima, sin cookies ni datos personales (GoatCounter).</p>
+  <p class="pie-s"><button type="button" class="permiso-cambiar" id="permiso-cambiar" hidden>Preferencias de Google Analytics</button></p>
+</footer>
+
+<div class="permiso" id="permiso" role="dialog" aria-label="Permiso para medir con Google Analytics" hidden>
+  <p>¿Nos permite medir su visita con Google Analytics? Usa cookies de Google y nos ayuda a mejorar la página. No registramos nombres, teléfonos ni lo que usted escribe.</p>
+  <div class="permiso-acc">
+    <button type="button" class="permiso-no" data-permiso="no">Rechazar</button>
+    <button type="button" class="permiso-si" data-permiso="si">Aceptar</button>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#0e1512"/><path d="M5 22c4-2 7-2 11 0s7 2 11 0M5 17c4-2 7-2 11 0s7 2 11 0M5 12c4-2 7-2 11 0s7 2 11 0" fill="none" stroke="#5ad69a" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<script src="datos.js?v=20261128e"></script>
+<script src="vendor/leaflet/leaflet.min.js"></script>
+<script src="comun.js?v=20261128m"></script>
+<script src="gis.js?v=20261128m"></script>
+<script src="iguaque.js?v=20261128m"></script>
+</body>
+</html>
