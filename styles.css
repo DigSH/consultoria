@@ -831,7 +831,11 @@ section[hidden]{display:none!important}
   .pr-prog{flex:1;margin-top:0}
   .pr-fase p{font-size:15px}
 }
-@media (max-width:639px){.pr-etq{display:none}}
+@media (max-width:639px){.pr-etq{display:none}.pr-etq.pr-etq-movil{display:inline}}
+/* teléfono, fase 2: número en la punta de cada capa y leyenda bajo el diorama (proceso.js) */
+.pr-capa-num{fill:rgba(14,21,18,.92);stroke:var(--menta);stroke-width:1.5}
+.pr-capa-num-t{font:700 12.5px var(--display);fill:var(--menta)}
+.pr-capa-ley{font:600 17px var(--display);fill:#e9eee9}
 @media print{.pr-pista,.pr-ayuda{display:none!important}.pr-js ol.pasos{display:grid!important}}
 
 /* Cómo trabajamos v2: vuelo ligado al desplazamiento, capas de decisión e indicadores (26/11/2026) */
@@ -872,7 +876,7 @@ section[hidden]{display:none!important}
 .pr-fun-s{font:500 10.5px var(--display);fill:#9fb0a5}
 .pr-fun-g{font:600 10px var(--mono);letter-spacing:.14em;fill:#5ad69a}
 .pr-fun-g-pec{fill:#d9b26a}
-@media (max-width:639px){.pr-fun-t{font-size:14px}}
+@media (max-width:639px){.pr-fun-t{font-size:15px}.pr-ind-n{font-size:14px}.pr-ind-v{font-size:21px}.pr-nota{font-size:15px}}
 @media (prefers-reduced-motion:reduce){.pr-fun{transition:none}}
 
 /* Cómo trabajamos integrado al embudo: perfil, servicio por fase y cierre (27/11/2026) */

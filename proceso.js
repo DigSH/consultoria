@@ -35,12 +35,35 @@
     for (var i = 0; i <= n; i++) { var t = i / n * Math.PI * 2, q = iso(cx + r * Math.cos(t), cy + r * Math.sin(t), z); d += (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }
     return d + "Z";
   }
+  /* rótulo en píldora. colocarEtq lo (re)coloca: f = escala (1 = 11,5 px); minX/maxX = bordes visibles.
+     El ancho sale del texto medido cuando se puede (getComputedTextLength); si no, de una estimación. */
   function etiqueta(p, x, y, txt, ancla) {
-    var w = txt.length * 6.4 + 22, gx = ancla === "fin" ? x - w : ancla === "medio" ? x - w / 2 : x;
     var e = g(p, "pr-etq");
-    el("rect", { x: gx, y: y - 12, width: w, height: 24, rx: 12 }, e);
-    el("text", { x: gx + w / 2, y: y + 4, "text-anchor": "middle" }, e, txt);
+    el("rect", {}, e);
+    el("text", { "text-anchor": "middle" }, e, txt);
+    colocarEtq(e, x, y, ancla, 1);
     return e;
+  }
+  function colocarEtq(e, x, y, ancla, f, minX, maxX) {
+    var r = e.firstChild, t = e.lastChild;
+    t.style.fontSize = f !== 1 ? (11.5 * f) + "px" : "";
+    var tw = 0; try { tw = t.getComputedTextLength(); } catch (err) {}
+    var w = (tw > 0 ? tw : t.textContent.length * 6.6 * f) + 22 * f;
+    var gx = ancla === "fin" ? x - w : ancla === "medio" ? x - w / 2 : x;
+    if (maxX != null && gx + w > maxX) gx = maxX - w;
+    if (minX != null && gx < minX) gx = minX;
+    r.setAttribute("x", gx); r.setAttribute("y", y - 12 * f); r.setAttribute("width", w);
+    r.setAttribute("height", 24 * f); r.setAttribute("rx", 12 * f);
+    t.setAttribute("x", gx + w / 2); t.setAttribute("y", y + 4 * f);
+  }
+  /* teléfono: número junto al objeto (en pMarca, se mueve con él) y fila de leyenda bajo el diorama (en pLey) */
+  function marcaLey(pMarca, mx, my, pLey, num, fila, nombre) {
+    el("circle", { cx: mx, cy: my, r: 11, "class": "pr-capa-num" }, pMarca);
+    el("text", { x: mx, y: my + 4.5, "class": "pr-capa-num-t", "text-anchor": "middle" }, pMarca, num);
+    leyenda.push({ fila: fila,
+      c: el("circle", { "class": "pr-capa-num" }, pLey),
+      n: el("text", { "class": "pr-capa-num-t", "text-anchor": "middle" }, pLey, num),
+      t: el("text", { "class": "pr-capa-ley" }, pLey, nombre) });
   }
   var semilla = 7;
   function azar() { semilla = (semilla * 16807) % 2147483647; return (semilla - 1) / 2147483646; }
@@ -190,7 +213,25 @@
   }
 
   /* ---------- el diorama (apaisado; en pantallas angostas, vertical) ---------- */
-  var estrecho = null, RUTA = null, rastro = null, vuelo = null;
+  var estrecho = null, RUTA = null, rastro = null, vuelo = null, leyenda = [], etqMovil = [];
+  /* teléfono: leyendas de las fases 1 y 2 (letra de al menos 12 px en pantalla) y rótulos de la fase 4 (unos 10 px),
+     medidos con el tamaño real del SVG (en pantallas bajas manda el alto, el diorama se encoge y sobra ancho) */
+  function ajustarLeyenda() {
+    if (!leyenda.length && !etqMovil.length) return;
+    var svg = escena.querySelector("svg"), r = svg && svg.getBoundingClientRect(), esc = 0;
+    if (r && r.width > 0 && r.height > 0) esc = Math.min(r.width / 464, r.height / 740);
+    var f = esc ? Math.max(17, 12 / esc) : 17;
+    var fe = esc ? Math.min(1.6, Math.max(1, 10.5 / (11.5 * esc))) : 1;
+    var minX = esc ? 400 - r.width / esc / 2 + 4 : 172, maxX = esc ? 400 + r.width / esc / 2 - 4 : 628;
+    etqMovil.forEach(function (m) { colocarEtq(m.e, m.x, m.y, m.ancla, fe, minX, maxX); });
+    var paso = Math.max(40, f * 1.5), x = Math.min(262, 400 - f * 7);
+    leyenda.forEach(function (l) {
+      var y = 492 + l.fila * paso;
+      l.c.setAttribute("cx", x); l.c.setAttribute("cy", y); l.c.setAttribute("r", f * 0.76);
+      l.n.setAttribute("x", x); l.n.setAttribute("y", y + f * 0.3); l.n.style.fontSize = (f * 0.82) + "px";
+      l.t.setAttribute("x", x + f * 1.4); l.t.setAttribute("y", y + f * 0.38); l.t.style.fontSize = f + "px";
+    });
+  }
   function volar(t) {
     if (!vuelo) return;
     var tramos = [], tot = 0;
@@ -209,6 +250,7 @@
   var svg = el("svg", { viewBox: estrecho ? "168 26 464 740" : "0 0 800 520", preserveAspectRatio: "xMidYMid meet" }, escena);
   /* si se redibuja fuera de pantalla, nace en pausa (app.js, pausarFuera, la reanuda al volver) */
   if (sec.classList.contains("fuera") && svg.pauseAnimations) svg.pauseAnimations();
+  leyenda = []; etqMovil = [];
   var defs = el("defs", {}, svg);
   var rg = el("radialGradient", { id: "pr-halo" }, defs);
   el("stop", { offset: "0", "stop-color": "#5ad69a", "stop-opacity": ".22" }, rg);
@@ -298,9 +340,14 @@
   caja(nucleo, -1.9, 4.6, 0.02, 0.7, 0.7, 0.45, ["#8a6a32", "#6b4f26", "#523c1c"]);
   caja(nucleo, -1.9, 4.6, 0.47, 0.7, 0.7, 0.45, ["#a3814a", "#8a6a32", "#6d5326"]);
   caja(nucleo, -1.9, 4.6, 0.92, 0.7, 0.7, 0.35, ["#4a8a52", "#3d2c14", "#2f220f"]);
-  etiqueta(f0, bq[0] - 16, bq[1] - 60, "Muestra de suelo", "fin");
   var reg = iso(4.2, 4.6, 0);
-  etiqueta(f0, reg[0] + 34, reg[1] + 26, "Revisión de registros");
+  if (!estrecho) {
+    etiqueta(f0, bq[0] - 16, bq[1] - 60, "Muestra de suelo", "fin");
+    etiqueta(f0, reg[0] + 34, reg[1] + 26, "Revisión de registros");
+  } else {
+    marcaLey(f0, bq[0] - 20, bq[1] - 46, f0, "2", 1, "Muestra de suelo");
+    marcaLey(f0, reg[0] + 24, reg[1] + 22, f0, "3", 2, "Revisión de registros");
+  }
   /* el vuelo se dibuja centrado en (0, 0) y se traslada en pantalla: la proyección es lineal */
   vuelo = g(f0, "pr-vuelo");
   var hz = 1.5, huella = [[-hz, -hz, 0.05], [hz, -hz, 0.05], [hz, hz, 0.05], [-hz, hz, 0.05]];
@@ -322,7 +369,8 @@
   el("rect", { x: dp[0] - 13, y: dp[1] + 2, width: 26, height: 4, rx: 2, fill: "#9aa59c" }, dron);
   el("circle", { cx: dp[0], cy: dp[1] + 8, r: 3.4, fill: "#0e1512", stroke: "#5ad69a", "stroke-width": 1.5 }, dron);
   el("circle", { cx: dp[0] + 8, cy: dp[1] - 3, r: 1.8, "class": "pr-led" }, dron);
-  etiqueta(vuelo, dp[0] + 40, dp[1] - 22, "Vuelo de dron");
+  if (!estrecho) etiqueta(vuelo, dp[0] + 40, dp[1] - 22, "Vuelo de dron");
+  else marcaLey(vuelo, dp[0] + 34, dp[1] - 16, f0, "1", 0, "Vuelo de dron");
 
   /* ===== fase 2: análisis (cuatro capas de decisión que se elevan) ===== */
   var f1 = g(svg, "pr-f pr-f1");
@@ -384,7 +432,13 @@
       }
     }
     var izq = iso(-lim, lim, z);
-    etiqueta(cg, izq[0] - 12, izq[1] - 4, PF.capas ? PF.capas[k] : cp.t, "fin");
+    var nombre = PF.capas ? PF.capas[k] : cp.t;
+    if (!estrecho) etiqueta(cg, izq[0] - 12, izq[1] - 4, nombre, "fin");
+    else {
+      /* teléfono: a la izquierda de las capas no cabe el rótulo (el dibujo llena el ancho). Cada capa lleva un número
+         en su punta y la leyenda va debajo del diorama, en el espacio que esta fase deja libre (1 = capa de arriba) */
+      marcaLey(cg, izq[0] - 12, izq[1], cg, String(capas.length - k), capas.length - 1 - k, nombre);
+    }
   });
 
   /* ===== fase 2 (pecuario): marcos de aforo y anillos en el potrero, bajo la capa «Hato y pastos» ===== */
@@ -483,7 +537,8 @@
   PF.hitos.map(function (hh, k) { return [hh, [0.22, 0.5, 0.78][k]]; }).forEach(function (h) {
     var ang = Math.PI * (1 - h[1]), x = CX + rx * Math.cos(ang), y = CY + ry * Math.sin(ang);
     el("circle", { cx: x, cy: y, r: 5, "class": "pr-hito" }, f3);
-    etiqueta(f3, x, y + 26, h[0], "medio");
+    var eh = etiqueta(f3, x, y + 26, h[0], "medio");
+    if (estrecho) { eh.classList.add("pr-etq-movil"); etqMovil.push({ e: eh, x: x, y: y + 26, ancla: "medio" }); }
   });
   [[-2.6, -2.6], [2.6, -2.6], [2.6, 2.6]].forEach(function (c, i) {
     var q = iso(c[0], c[1], 2.4), b = g(f3, "pr-aviso");
@@ -516,6 +571,7 @@
   if (!estrecho) etiqueta(f3, 116, 108, "Informe del periodo", "medio");
   }
   escenaSVG();
+  ajustarLeyenda();
 
   /* ---------- desplazamiento → fase ---------- */
   var actual = -1;
@@ -528,6 +584,7 @@
     barras.forEach(function (b, k) { b.setAttribute("aria-current", k === i ? "step" : "false"); });
     vivo.textContent = "Fase " + (i + 1) + " de " + n + ": " + textos()[i].t + ".";
     servicio(i);
+    ajustarLeyenda();
   }
   function medir() {
     var r = pista.getBoundingClientRect(), total = pista.offsetHeight - innerHeight;
@@ -562,6 +619,7 @@
   addEventListener("scroll", alDesplazar, { passive: true });
   addEventListener("resize", function () {
     if ((innerWidth < 640) !== estrecho) escenaSVG();
+    ajustarLeyenda();
     alDesplazar();
   });
   medir();
