@@ -838,23 +838,37 @@
   })();
 
   /* ---------- servicios: tablero por fases del ciclo; tocar un servicio abre su detalle ----------
-     En escritorio el detalle va bajo el tablero (ancho completo); en < 761 px va justo debajo del servicio tocado. */
+     En escritorio el detalle va bajo el tablero (ancho completo); en < 761 px va justo debajo del servicio tocado.
+     En < 761 px se ve una fase a la vez, elegida con las pestañas .sf-tabs (el CSS oculta las demás).
+     De entrada no hay detalle abierto (27/11/2026): abierto ocupaba una pantalla en el teléfono. */
   (function servicios() {
-    var box = $("#serv-fases"), fil = $("#filtros"), sel = $("#f-servicio");
+    var box = $("#serv-fases"), sel = $("#f-servicio");
     if (!box) return;
     var FASES = D.fasesServicio || ["Diagnóstico", "Análisis y plan", "Implementación", "Acompañamiento"];
     var det = h("div", { "class": "sf-det", id: "sf-det", role: "region", "aria-live": "polite", hidden: "" }, null);
-    var botones = [], elegido = null, tocado = false;
+    var botones = [], elegido = null, cols = [], pest = [];
+    var tabs = h("div", { "class": "sf-tabs", role: "tablist", "aria-label": "Fases del recorrido" }, null);
+    box.parentNode.insertBefore(tabs, box);
     FASES.forEach(function (nombre, f) {
-      var col = h("div", { "class": "sf-fase" }, box,
+      var t = h("button", { type: "button", "class": "sf-tab", role: "tab", id: "sf-t" + f, "aria-controls": "sf-f" + f, "aria-selected": f === 0 ? "true" : "false" }, tabs,
+        '<span class="n">' + ("0" + (f + 1)).slice(-2) + '</span>' + esc(nombre));
+      t.addEventListener("click", function () { fase(f); });
+      pest.push(t);
+      var col = h("div", { "class": "sf-fase" + (f === 0 ? " sf-activa" : ""), id: "sf-f" + f, role: "tabpanel", "aria-labelledby": "sf-t" + f }, box,
         '<div class="sf-cab"><span class="n">' + ("0" + (f + 1)).slice(-2) + '</span><h3>' + esc(nombre) + '</h3></div>');
       D.servicios.filter(function (s) { return s.fase === f; }).forEach(function (s) {
         var b = h("button", { type: "button", "class": "sf-item", "data-id": s.id, "data-cat": s.cat, "aria-expanded": "false", "aria-controls": "sf-det" }, col,
           '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#i-' + s.icono + '"/></svg><span>' + esc(s.titulo) + '</span>');
-        b.addEventListener("click", function () { tocado = true; abrir(s, b, true); });
+        b.addEventListener("click", function () { abrir(s, b, true); });
         botones.push(b);
       });
+      cols.push(col);
     });
+    function fase(f) {
+      pest.forEach(function (t, k) { t.setAttribute("aria-selected", k === f ? "true" : "false"); });
+      cols.forEach(function (c, k) { c.classList.toggle("sf-activa", k === f); });
+      if (elegido && elegido.parentNode !== cols[f]) cerrar();
+    }
     D.servicios.forEach(function (s) { if (sel) h("option", { value: s.id }, sel, esc(s.titulo)); });
     if (sel) h("option", { value: "otro" }, sel, "Otro tema");
 
@@ -878,17 +892,6 @@
       }
     }
     function cerrar() { det.hidden = true; if (elegido) elegido.setAttribute("aria-expanded", "false"); elegido = null; }
-    function primeroDe(perfil) {
-      var s = D.servicios.filter(function (x) { return !perfil || x.linea.indexOf(perfil) >= 0; })
-        .sort(function (p, q) { return p.fase - q.fase; })[0];
-      return s && box.querySelector('.sf-item[data-id="' + s.id + '"]');
-    }
-    /* de entrada se abre el primer servicio del perfil productor (el de toda la página); si el visitante elige otro, el primero del suyo */
-    var b0 = primeroDe("productor"); if (b0) abrir(D.servicios.filter(function (s) { return s.id === b0.dataset.id; })[0], b0, false);
-    document.addEventListener("perfil", function (e) {
-      if (tocado) return;
-      var b = primeroDe(e.detail); if (b) abrir(D.servicios.filter(function (s) { return s.id === b.dataset.id; })[0], b, false);
-    });
     window.addEventListener("resize", function () {
       if (!elegido || det.hidden) return;
       var movil = window.innerWidth <= 760, dentro = det.parentNode === box;
@@ -899,20 +902,6 @@
     document.addEventListener("click", function (e) {
       var l = e.target.closest && e.target.closest("[data-serv]"); if (!l) return;
       if (sel) sel.value = l.dataset.serv;
-    });
-
-    /* los filtros resaltan (no ocultan): el tablero conserva sus cuatro fases */
-    var cats = [{ k: "todas", t: "Todos (" + D.servicios.length + ")" }];
-    Object.keys(D.lineasServicio).forEach(function (k) {
-      var n = D.servicios.filter(function (s) { return s.cat === k; }).length;
-      if (n) cats.push({ k: k, t: D.lineasServicio[k].titulo + " (" + n + ")" });
-    });
-    cats.forEach(function (f, i) {
-      var b = h("button", { type: "button", "class": "chip", "aria-pressed": i === 0 ? "true" : "false" }, fil, esc(f.t));
-      b.addEventListener("click", function () {
-        [].forEach.call(fil.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-        botones.forEach(function (x) { x.classList.toggle("atenuado", f.k !== "todas" && x.dataset.cat !== f.k); });
-      });
     });
   })();
 

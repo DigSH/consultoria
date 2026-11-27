@@ -1074,3 +1074,50 @@ section[hidden]{display:none!important}
 .barra .enlaces a[aria-current=page]{color:var(--verde);font-weight:600;text-decoration:underline;text-decoration-color:var(--menta);text-underline-offset:7px;text-decoration-thickness:2px}
 .barra.sol .enlaces a[aria-current=page]{color:#fff}
 .barra.abierto .enlaces a[aria-current=page]{color:var(--menta)}
+
+/* ---------- Servicios en teléfono (27/11/2026): una fase a la vez con pestañas 2 × 2 ---------- */
+.sf-tabs{display:none}
+@media (max-width:760px){
+  .sf-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 18px}
+  .sf-tab{display:flex;align-items:center;gap:8px;min-height:46px;padding:8px 12px;border-radius:14px;border:1px solid #2a3830;
+    background:#141d18;color:#dde5de;font:600 14px var(--display);text-align:left;cursor:pointer}
+  .sf-tab .n{font:600 11px var(--mono);color:var(--menta);letter-spacing:.06em}
+  .sf-tab[aria-selected=true]{background:var(--menta);border-color:var(--menta);color:var(--tinta)}
+  .sf-tab[aria-selected=true] .n{color:var(--tinta)}
+  .sf-fase{display:none}
+  .sf-fase.sf-activa{display:flex}
+  .sf-fase .sf-cab{display:none}
+  .sf-fase{padding-left:0;border-left:0}
+}
+@media print{.sf-tabs{display:none!important}.sf-fase{display:flex!important}.sf-fase .sf-cab{display:block!important}}
+
+/* ---------- Surco con pantallas reales (27/11/2026): img/surco/ sale de la web de Surco AgTech (assets/img) ---------- */
+.surco{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:center}
+.surco-mod{margin-bottom:12px}
+.surco-mas{margin:0 0 26px;color:var(--tinta2);font-size:15px;max-width:40em}
+.surco-mas b{color:var(--tinta)}
+.surco-pantallas{display:flex;justify-content:center;align-items:flex-start;gap:14px}
+.surco-pantallas figure{margin:0;flex:0 1 170px;min-width:0;text-align:center}
+.surco-pantallas figure:nth-child(2){margin-top:36px}
+.surco-pantallas img{display:block;width:100%;height:auto;border-radius:22px;border:5px solid var(--tinta);background:var(--tinta);box-shadow:var(--sombra)}
+.surco-pantallas figcaption{margin-top:10px;font:600 11.5px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta2)}
+.surco-caso{display:flex;gap:18px;align-items:center;margin-top:clamp(28px,4vw,44px);padding:18px 22px;background:#fcfcfa;border:1px solid var(--linea);border-radius:var(--r-l);box-shadow:var(--sombra)}
+.surco-caso img{flex:none;width:76px;height:76px;border-radius:50%}
+.surco-caso .k{margin:0;font:600 12px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--bronce)}
+.surco-caso h3{margin:2px 0 4px;font-size:19px}
+.surco-caso p:not(.k){margin:0;color:var(--tinta2);font-size:15px}
+.surco-caso b{color:var(--tinta)}
+@media (max-width:860px){
+  .surco{grid-template-columns:1fr}
+  .surco-pantallas{justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px;margin:0 calc(-1 * clamp(16px,4vw,40px));padding-left:clamp(16px,4vw,40px)}
+  .surco-pantallas::-webkit-scrollbar{display:none}
+  .surco-pantallas figure{flex:0 0 40%;scroll-snap-align:start}
+  .surco-pantallas figure:nth-child(2){margin-top:0}
+  .surco-caso{align-items:flex-start;padding:16px}
+  .surco-caso img{width:56px;height:56px}
+}
+.surco-rumbo{margin:22px 0 0;padding:0;border-left:0;background:none;border-radius:0;font-size:14.5px}
+.surco-rumbo b{display:inline;margin:0 6px 0 0}
+@media (max-width:860px){
+  .surco-pantallas{scroll-padding-inline:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px)}
+}

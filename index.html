@@ -31,7 +31,7 @@
   {"@type":"Person","name":"Faiver Salcedo","jobTitle":"Ingeniero Agrónomo, Especialista en Desarrollo Territorial"}]}
 </script>
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261128o">
+<link rel="stylesheet" href="styles.css?v=20261128s">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -154,7 +154,6 @@
     <h2>Servicios</h2>
     <p class="sf-intro">Cada servicio entra en una fase del recorrido. Toque uno para ver qué recibe.</p>
   </div>
-  <div class="filtros" id="filtros" role="group" aria-label="Resaltar servicios por línea"></div>
   <div class="sf" id="serv-fases"></div>
 </section>
 
@@ -169,23 +168,28 @@
         <li><b>Diagnóstico por foto</b> de enfermedades en cultivos como cacao, banano, arándano y tomate, también sin internet.</li>
         <li><b>Cuaderno de campo</b> para BPA, con exportación por periodo en PDF.</li>
         <li><b>Trazabilidad EUDR</b>: polígono del predio, declaración y reporte exportable.</li>
-        <li><b>Organizaciones</b> con varias fincas, roles de usuario y tablero de gerente.</li>
-        <li><b>Alertas y labores</b> por lote, y canal de WhatsApp con precios SIPSA.</li>
       </ul>
+      <p class="surco-mas"><b>También:</b> organizaciones con varias fincas, roles de usuario y tablero de gerente; alertas y labores por lote, y canal de WhatsApp con precios SIPSA.</p>
       <div class="hero-acc">
         <a class="boton" href="https://play.google.com/store/apps/details?id=com.surco.app" target="_blank" rel="noopener">Ver Surco en Google Play <span aria-hidden="true">→</span></a>
         <a class="boton boton-claro" href="https://digsh.github.io/Surco-Agrotech/" target="_blank" rel="noopener">Conocer la web de Surco</a>
       </div>
       <p class="surco-rumbo"><b>Hacia dónde vamos</b>Estamos construyendo con nuestros clientes el gemelo digital de su cultivo: sensores en campo, modelos calibrados y simulación de decisiones.</p>
     </div>
-    <aside class="piloto" aria-label="Caso de uso">
-      <p class="sobretitulo">Caso de uso</p>
-      <img src="img/aliados/arandanos-de-la-fuente.jpg" width="120" height="120" alt="Logo de Arándanos de la Fuente" loading="lazy">
-      <h3>Arándanos de la Fuente</h3>
-      <p>Caso de uso de Surco en cultivo de arándano.</p>
-      <p class="piloto-conf"><b>Qué configuramos</b> Fincas y lotes con sus polígonos, cultivos y labores, usuarios y roles, alertas y reportes BPA o EUDR.</p>
-    </aside>
+    <div class="surco-pantallas" role="group" aria-label="Pantallas de la app Surco">
+      <figure><img src="img/surco/diagnostico-cacao.jpg" width="400" height="894" loading="lazy" alt="Pantalla de Surco: diagnóstico por foto de una mazorca de cacao con las zonas afectadas marcadas"><figcaption>Diagnóstico por foto</figcaption></figure>
+      <figure><img src="img/surco/conteo-arandanos.jpg" width="400" height="894" loading="lazy" alt="Pantalla de Surco: conteo de arándanos por foto, con los frutos detectados marcados en la imagen"><figcaption>Conteo de arándanos</figcaption></figure>
+      <figure><img src="img/surco/herramientas-ia.jpg" width="400" height="894" loading="lazy" alt="Pantalla de Surco: menú de herramientas de IA con asistente agronómico y detección de enfermedades"><figcaption>Herramientas de IA</figcaption></figure>
+    </div>
   </div>
+  <aside class="surco-caso" aria-label="Caso de uso">
+    <img src="img/aliados/arandanos-de-la-fuente.jpg" width="120" height="120" alt="Logo de Arándanos de la Fuente" loading="lazy">
+    <div>
+      <p class="k">Caso de uso</p>
+      <h3>Arándanos de la Fuente</h3>
+      <p><b>Qué configuramos:</b> fincas y lotes con sus polígonos, cultivos y labores, usuarios y roles, alertas y reportes BPA o EUDR.</p>
+    </div>
+  </aside>
 </section>
 
 <!-- ============ LABORATORIO GIS: aviso; los visores viven en laboratorio.html ============ -->
@@ -318,7 +322,7 @@
 
 <script src="datos.js?v=20261128e"></script>
 <script src="comun.js?v=20261128n"></script>
-<script src="app.js?v=20261128m"></script>
+<script src="app.js?v=20261128p"></script>
 <script src="proceso.js?v=20261128m"></script>
 </body>
 </html>
