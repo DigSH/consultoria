@@ -324,7 +324,10 @@
     var a = iso(c[0] * 0.74, c[1] * 0.74, 0.1), b = iso(c[0] * 0.74, c[1] * 0.74, 6.9);
     el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], "class": "pr-guia" }, f1);
   });
-  var capas = [
+  var capas = PF.pec !== false ? [
+    { z: 1.3, t: "Nutrición y Riego" }, { z: 2.7, t: "Plagas y Enfermedades" }, { z: 4.1, t: "Podas" },
+    { z: 5.5, t: "Hato y pastos", hato: true }, { z: 6.9, t: "Proyecciones" }
+  ] : [
     { z: 1.5, t: "Nutrición y Riego" }, { z: 3.3, t: "Plagas y Enfermedades" },
     { z: 5.1, t: "Podas" }, { z: 6.9, t: "Proyecciones" }
   ];
@@ -356,6 +359,17 @@
         el("ellipse", { cx: q2[0], cy: q2[1], rx: 7, ry: 4, "class": "pr-copa" }, cg);
         if (marca) el("ellipse", { cx: q2[0], cy: q2[1], rx: 11, ry: 6.4, "class": "pr-copa-m" }, cg);
       }
+    } else if (cp.hato) {     /* hato y pastos: cuatro potreros de rotación por aforo y el hato pastando */
+      var AFORO = ["#5ab07f", "#a9c98f", "#d8c78a", "#2f8f5e"], cerca = 0.08;
+      [[-lim, -lim], [0, -lim], [-lim, 0], [0, 0]].forEach(function (o, n) {
+        poly(cg, [[o[0] + cerca, o[1] + cerca, z], [o[0] + lim - cerca, o[1] + cerca, z], [o[0] + lim - cerca, o[1] + lim - cerca, z], [o[0] + cerca, o[1] + lim - cerca, z]],
+          { fill: AFORO[n], opacity: ".9" });
+      });
+      [[1.0, 0.9], [2.3, 1.4], [1.5, 2.4], [2.7, 2.7], [0.9, 2.0]].forEach(function (v, n) {
+        var q = iso(v[0], v[1], z);
+        if (n === 1) el("ellipse", { cx: q[0], cy: q[1], rx: 12, ry: 6, "class": "pr-vaca-anillo" }, cg);
+        el("ellipse", { cx: q[0], cy: q[1] - 2, rx: 5.5, ry: 3.2, "class": "pr-vaca-c" }, cg);
+      });
     } else {                  /* proyecciones: barras por zona */
       var alturas = [0.35, 0.6, 0.5, 0.8, 1.0, 0.7, 0.55, 0.9, 1.2];
       for (var c2 = 0; c2 < 9; c2++) {
@@ -367,7 +381,7 @@
     etiqueta(cg, izq[0] - 12, izq[1] - 4, PF.capas ? PF.capas[k] : cp.t, "fin");
   });
 
-  /* ===== fase 2 (pecuario): hato y pastos, ligado al potrero ===== */
+  /* ===== fase 2 (pecuario): marcos de aforo y anillos en el potrero, bajo la capa «Hato y pastos» ===== */
   if (PF.pec !== false) {
     var fp = g(svg, "pr-f pr-f1");
     [[1.0, 1.0], [3.85, 1.25], [3.0, 3.95]].forEach(function (m, i) {
@@ -379,32 +393,6 @@
       var q = iso(v[0], v[1], 0), a = el("ellipse", { cx: q[0], cy: q[1], rx: 17, ry: 7, "class": "pr-vaca-anillo" }, fp);
       a.style.animationDelay = (i * 0.5) + "s";
     });
-    var pc = iso(2.6, 2.6, 0.3);
-    var pw = estrecho ? { x: 214, y: 486, w: 372, h: 176 } : { x: 604, y: 140, w: 180, h: 240 };
-    var fin = estrecho ? [pw.x + pw.w / 2, pw.y] : [pw.x, pw.y + pw.h / 2];
-    el("path", { d: "M" + pc[0] + " " + pc[1] + "C" + (estrecho ? pc[0] : pc[0] + 110) + " " + (estrecho ? pc[1] + 60 : pc[1]) + " " +
-      (estrecho ? fin[0] : fin[0] - 60) + " " + (estrecho ? fin[1] - 40 : fin[1]) + " " + fin[0] + " " + fin[1], "class": "pr-enlace pr-enlace-pec" }, fp);
-    var pg = g(fp, "pr-pec");
-    el("rect", { x: pw.x, y: pw.y, width: pw.w, height: pw.h, rx: 16, "class": "pr-pec-caja" }, pg);
-    el("text", { x: pw.x + 16, y: pw.y + 26, "class": "pr-fun-t" }, pg, "Hato y pastos");
-    el("text", { x: pw.x + 16, y: pw.y + 42, "class": "pr-fun-s" }, pg, "Peso por foto y aforos");
-    var bx0 = pw.x + 16, by0 = pw.y + 130, bw = estrecho ? 20 : 16, sep = estrecho ? 10 : 8, alt = [34, 46, 40, 58, 52];
-    el("text", { x: bx0, y: pw.y + 62, "class": "pr-pec-k" }, pg, "GANANCIA DE PESO");
-    alt.forEach(function (hh, i) {
-      var r = el("rect", { x: bx0 + i * (bw + sep), y: by0 - hh, width: bw, height: hh, rx: 4, "class": "pr-pec-barra" }, pg);
-      r.style.transitionDelay = (0.4 + i * 0.08) + "s";
-    });
-    el("line", { x1: bx0 - 2, y1: by0, x2: bx0 + 5 * (bw + sep) - sep + 2, y2: by0, "class": "pr-pec-eje" }, pg);
-    var cb = estrecho ? { x: pw.x + 196, y: pw.y + 66, w: 156 } : { x: pw.x + 16, y: pw.y + 152, w: pw.w - 32 };
-    el("text", { x: cb.x, y: cb.y, "class": "pr-pec-k" }, pg, "AFORO DE PASTO");
-    el("text", { x: cb.x + cb.w, y: cb.y, "text-anchor": "end", "class": "pr-pec-v" }, pg, "72 %");
-    el("rect", { x: cb.x, y: cb.y + 8, width: cb.w, height: 8, rx: 4, "class": "pr-pec-pista" }, pg);
-    el("rect", { x: cb.x, y: cb.y + 8, width: cb.w * 0.72, height: 8, rx: 4, "class": "pr-pec-lleno" }, pg);
-    var ry2 = cb.y + (estrecho ? 44 : 46);
-    el("circle", { cx: cb.x + 6, cy: ry2 - 4, r: 5, "class": "pr-pec-pt" }, pg);
-    el("text", { x: cb.x + 18, y: ry2, "class": "pr-pec-t" }, pg, "2 vacas en celo");
-    el("circle", { cx: cb.x + 6, cy: ry2 + 18, r: 5, "class": "pr-pec-pt" }, pg);
-    el("text", { x: cb.x + 18, y: ry2 + 22, "class": "pr-pec-t" }, pg, "Vacuna en 5 días");
   }
 
   /* ===== fase 3: implementación de app (lotes y potrero en Surco, con sus funciones) ===== */
