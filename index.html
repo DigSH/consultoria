@@ -32,7 +32,7 @@
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261128c">
+<link rel="stylesheet" href="styles.css?v=20261128e">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -341,7 +341,16 @@
 <footer class="pie">
   <p>© 2026 Consultoría · Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo</p>
   <p class="pie-s" id="aviso-medicion" hidden>Contamos visitas y clics de forma anónima, sin cookies ni datos personales (GoatCounter).</p>
+  <p class="pie-s"><button type="button" class="permiso-cambiar" id="permiso-cambiar" hidden>Preferencias de Google Analytics</button></p>
 </footer>
+
+<div class="permiso" id="permiso" role="dialog" aria-label="Permiso para medir con Google Analytics" hidden>
+  <p>¿Nos permite medir su visita con Google Analytics? Usa cookies de Google y nos ayuda a mejorar la página. No registramos nombres, teléfonos ni lo que usted escribe.</p>
+  <div class="permiso-acc">
+    <button type="button" class="permiso-no" data-permiso="no">Rechazar</button>
+    <button type="button" class="permiso-si" data-permiso="si">Aceptar</button>
+  </div>
+</div>
 
 <!-- símbolos reutilizables -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -359,9 +368,9 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261128b"></script>
+<script src="datos.js?v=20261128e"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261128d"></script>
+<script src="app.js?v=20261128g"></script>
 <script src="gis.js?v=20261118c"></script>
 <script src="iguaque.js?v=20261118c"></script>
 <script src="proceso.js?v=20261128a"></script>

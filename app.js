@@ -455,9 +455,9 @@
     /* 10. HUD y gráfico de perfil topográfico en vivo */
     var hCoord = $("#hud-coord"), hCota = $("#hud-cota"), hPend = $("#hud-pend"), hObj = $("#hud-obj");
     var hTit = $("#hud-perfil-tit"), hDes = $("#hud-perfil-des"), svgPerf = $("#hud-perfil"), btnLimpiar = $("#hud-limpiar");
-    var pPerfArea = el("path", { d: "", fill: "#14633f", "fill-opacity": 0.32 }, svgPerf);
-    var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#5ad69a", "stroke-width": 2 }, svgPerf);
-    var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#5ad69a", stroke: "#080d0b", "stroke-width": 1.5 }, svgPerf);
+    var pPerfArea = el("path", { d: "", fill: "#14633f", "fill-opacity": 0.12 }, svgPerf);
+    var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#14633f", "stroke-width": 1.6 }, svgPerf);
+    var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#5ad69a", stroke: "#0e1512", "stroke-width": 1.5 }, svgPerf);
 
     /* perfil de la ladera bajo la sonda, a lo largo de la máxima pendiente (la del punto tocado si hay diagnóstico) */
     function dibujarPerfil(p1, p2) {
@@ -1289,21 +1289,65 @@
   /* ---------- medición anónima y sin cookies (GoatCounter); inactiva mientras datos.js no traiga el código ----------
      Cuenta: perfil elegido, clics en WhatsApp por sección, enlaces de prueba de cada fase, «Cotizar», envío del
      formulario y hasta qué sección llega la visita (una vez por sección). Nada de nombres, teléfonos ni textos escritos. */
+  /* Google Analytics 4 (datos.js → analitica.ga4, gtag.js directo) usa cookies: solo carga si la persona acepta en el aviso #permiso;
+     la decisión queda en localStorage («medicion-google»: "si" o "no") y se cambia desde el pie. Los mismos eventos
+     llegan a GA4 como evento «consultoria» con los parámetros accion y titulo. */
   (function medicion() {
-    var codigo = D.analitica && D.analitica.goatcounter;
-    if (!codigo || !/^[a-z0-9-]+$/.test(codigo)) return;
-    var s = document.createElement("script");
-    s.async = true; s.src = "https://gc.zgo.at/count.js";
-    s.setAttribute("data-goatcounter", "https://" + codigo + ".goatcounter.com/count");
-    document.head.appendChild(s);
-    var aviso = $("#aviso-medicion"); if (aviso) aviso.hidden = false;
-    var cola = [], hechos = {};
+    var A = D.analitica || {};
+    var codigo = A.goatcounter && /^[a-z0-9-]+$/.test(A.goatcounter) ? A.goatcounter : "";
+    var gtm = A.ga4 && /^G-[A-Z0-9]+$/.test(A.ga4) ? A.ga4 : "";
+    if (!codigo && !gtm) return;
+    var cola = [], hechos = {}, s = null;
+    if (codigo) {
+      s = document.createElement("script");
+      s.async = true; s.src = "https://gc.zgo.at/count.js";
+      s.setAttribute("data-goatcounter", "https://" + codigo + ".goatcounter.com/count");
+      document.head.appendChild(s);
+      var aviso = $("#aviso-medicion"); if (aviso) aviso.hidden = false;
+      s.addEventListener("load", function () { cola.forEach(function (ev) { window.goatcounter.count(ev); }); cola = []; });
+    }
+    var gtmCargado = false;
+    function cargarGtm() {
+      if (gtmCargado) return; gtmCargado = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag("js", new Date());
+      window.gtag("config", gtm);
+      var g = document.createElement("script");
+      g.async = true; g.src = "https://www.googletagmanager.com/gtag/js?id=" + gtm;
+      document.head.appendChild(g);
+    }
+    if (gtm) {
+      var clave = "medicion-google", caja = $("#permiso"), cambiar = $("#permiso-cambiar");
+      var decision = null; try { decision = localStorage.getItem(clave); } catch (e) {}
+      var guardar = function (v) { try { localStorage.setItem(clave, v); } catch (e) {} };
+      if (decision === "si") cargarGtm();
+      else if (decision !== "no" && caja) caja.hidden = false;
+      if (cambiar) cambiar.hidden = false;
+      if (caja) caja.addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-permiso]"); if (!b) return;
+        var si = b.dataset.permiso === "si";
+        guardar(si ? "si" : "no"); caja.hidden = true;
+        if (si) cargarGtm();
+        else if (gtmCargado) {   /* retiró el permiso: borrar las cookies de Google Analytics y recargar sin GTM */
+          document.cookie.split(";").forEach(function (c) {
+            var n = c.split("=")[0].trim();
+            if (/^_ga|^_gid|^_gat/.test(n)) document.cookie = n + "=; Max-Age=0; path=/; domain=" + location.hostname.replace(/^[^.]+\./, ".");
+            if (/^_ga|^_gid|^_gat/.test(n)) document.cookie = n + "=; Max-Age=0; path=/";
+          });
+          location.reload();
+        }
+      });
+      if (cambiar) cambiar.addEventListener("click", function () { if (caja) caja.hidden = false; });
+    }
     function medir(ruta, titulo, unaVez) {
       if (unaVez) { if (hechos[ruta]) return; hechos[ruta] = 1; }
-      var ev = { path: ruta, title: titulo || ruta, event: true };
-      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count(ev); else cola.push(ev);
+      if (codigo) {
+        var ev = { path: ruta, title: titulo || ruta, event: true };
+        if (window.goatcounter && window.goatcounter.count) window.goatcounter.count(ev); else cola.push(ev);
+      }
+      if (gtmCargado) window.gtag("event", "consultoria", { accion: ruta, titulo: titulo || ruta });
     }
-    s.addEventListener("load", function () { cola.forEach(function (ev) { window.goatcounter.count(ev); }); cola = []; });
     var perfilActual = "sin-perfil";
     document.addEventListener("perfil", function (e) { perfilActual = e.detail; medir("perfil/" + e.detail, "Perfil elegido", true); });
     document.addEventListener("click", function (e) {

@@ -4,7 +4,7 @@
 window.CONSULTORIA = {
   /* medición anónima sin cookies: poner aquí el código de la cuenta de GoatCounter (p. ej. "consultoria-uptc");
      vacío = no se carga nada ni se muestra el aviso */
-  analitica: { goatcounter: "" },
+  analitica: { goatcounter: "diegosanabria", ga4: "G-MD593Z9B3W" },
   /* fases del ciclo para ordenar los servicios (las mismas de «Cómo trabajamos») */
   fasesServicio: ["Diagnóstico", "Análisis y plan", "Implementación", "Acompañamiento"],
   contacto: {
