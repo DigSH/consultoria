@@ -156,7 +156,8 @@
     var msg = "Hola, equipo de Consultoría. Soy " + quien + ". Vi la fase «" + f.t + "» y me interesa: " + s.titulo + ".";
     cajaS.innerHTML = '<p class="k">Servicio de esta fase</p><h4></h4><p class="e"></p>' +
       '<div class="acc"><a class="boton boton-chico pr-wa" target="_blank" rel="noopener">Escribir por WhatsApp</a>' +
-      '<button type="button" class="pr-ver">Ver entregable</button></div>';
+      '<button type="button" class="pr-ver">Ver entregable</button>' +
+      (s.id === "geomatica" ? '<a class="pr-ver pr-lab" href="#mapas">Pruebe el validador EUDR</a>' : '') + '</div>';
     cajaS.querySelector("h4").textContent = s.titulo;
     cajaS.querySelector(".e").textContent = s.entrega;
     cajaS.querySelector(".pr-wa").href = waLink(msg);
@@ -200,6 +201,8 @@
   semilla = 7;
   escena.innerHTML = "";
   var svg = el("svg", { viewBox: estrecho ? "168 26 464 740" : "0 0 800 520", preserveAspectRatio: "xMidYMid meet" }, escena);
+  /* si se redibuja fuera de pantalla, nace en pausa (app.js, pausarFuera, la reanuda al volver) */
+  if (sec.classList.contains("fuera") && svg.pauseAnimations) svg.pauseAnimations();
   var defs = el("defs", {}, svg);
   var rg = el("radialGradient", { id: "pr-halo" }, defs);
   el("stop", { offset: "0", "stop-color": "#5ad69a", "stop-opacity": ".22" }, rg);

@@ -412,6 +412,24 @@
       el("text", { x: cx.toFixed(1), y: cy.toFixed(1), "text-anchor": "middle", "class": "lote-lbl" }, gL, lt.id);
     });
 
+    /* 8b. Capa de cribado EUDR (simulada, solo para el perfil de empresa): bosque en 2020 y pérdida posterior.
+       Un lote de ejemplo queda sobre la pérdida para mostrar el caso que la norma exige revisar. */
+    var gEudr = el("g", { id: "capa-eudr", hidden: "" }, gRaiz);
+    gRaiz.insertBefore(gEudr, gLotes);
+    var BOSQUE = [
+      [[700, 118], [872, 102], [892, 252], [718, 268]],
+      [[1005, 112], [1172, 98], [1190, 262], [1018, 276]],
+      [[468, 246], [604, 232], [620, 334], [484, 348]]
+    ];
+    var PERDIDA = [
+      [[768, 146], [858, 134], [872, 222], [780, 236]],
+      [[536, 276], [592, 268], [600, 318], [546, 326]]
+    ];
+    BOSQUE.forEach(function (b) { el("polygon", { points: b.map(function (p) { return p.join(","); }).join(" "), "class": "eudr-bosque" }, gEudr); });
+    PERDIDA.forEach(function (b) { el("polygon", { points: b.map(function (p) { return p.join(","); }).join(" "), "class": "eudr-perdida" }, gEudr); });
+    el("text", { x: 786, y: 122, "class": "eudr-lbl" }, gEudr, "BOSQUE 2020");
+    el("text", { x: 1032, y: 262, "class": "eudr-lbl" }, gEudr, "BOSQUE 2020");
+
     function enPoligono(x, y, pts) {
       var dentro = false;
       for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) {
@@ -421,16 +439,10 @@
       return dentro;
     }
 
-    /* 9. Capa 5: Sonda interactiva en vivo, isohipsa dinámica y transecto A-B */
+    /* 9. Capa 5: Sonda interactiva en vivo e isohipsa dinámica */
     var pIsoViva = el("path", { d: "", "class": "iso-viva" }, gSonda);
     var lHiloX = el("line", { x1: 0, y1: 0, x2: W, y2: 0, "class": "hilo" }, gSonda);
     var lHiloY = el("line", { x1: 0, y1: 0, x2: 0, y2: H, "class": "hilo" }, gSonda);
-    var lTransecto = el("line", { x1: 0, y1: 0, x2: 0, y2: 0, "class": "transecto", hidden: "" }, gSonda);
-    var cPtoA = el("circle", { cx: -20, cy: -20, r: 5.5, "class": "pto-ab", hidden: "" }, gSonda);
-    var cPtoB = el("circle", { cx: -20, cy: -20, r: 5.5, "class": "pto-ab", hidden: "" }, gSonda);
-    var tLblA = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "A");
-    var tLblB = el("text", { x: -20, y: -20, "class": "lbl-ab", hidden: "" }, gSonda, "B");
-    var tLblDist = el("text", { x: -20, y: -20, "text-anchor": "middle", "class": "lbl-ab lbl-dist", hidden: "" }, gSonda, "");
 
     var gCursor = el("g", { transform: "translate(880,280)" }, gSonda);
     el("circle", { cx: 0, cy: 0, r: 42, "class": "sonda-anillo" }, gCursor);
@@ -447,9 +459,8 @@
     var pPerfLinea = el("path", { d: "", fill: "none", stroke: "#5ad69a", "stroke-width": 2 }, svgPerf);
     var cPerfPin = el("circle", { cx: 110, cy: 26, r: 3.8, fill: "#5ad69a", stroke: "#080d0b", "stroke-width": 1.5 }, svgPerf);
 
-    var ptoA = null, ptoB = null;
-
-    function dibujarPerfil(p1, p2, cursorEnMedio) {
+    /* perfil de la ladera bajo la sonda, a lo largo de la máxima pendiente (la del punto tocado si hay diagnóstico) */
+    function dibujarPerfil(p1, p2) {
       var muestras = 32, zs = [], zMin = Infinity, zMax = -Infinity;
       for (var i = 0; i <= muestras; i++) {
         var t = i / muestras;
@@ -467,19 +478,12 @@
       var dLin = "M" + pts.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L");
       pPerfLinea.setAttribute("d", dLin);
       pPerfArea.setAttribute("d", dLin + "L" + PW + " " + PH + "L0 " + PH + "Z");
-      var idxPin = cursorEnMedio ? Math.floor(muestras / 2) : muestras;
+      var idxPin = Math.floor(muestras / 2);
       cPerfPin.setAttribute("cx", pts[idxPin][0].toFixed(1));
       cPerfPin.setAttribute("cy", pts[idxPin][1].toFixed(1));
       var distM = Math.round(Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) * ESCALA_M);
-      var dZ = Math.round(zs[muestras] - zs[0]);
-      if (cursorEnMedio) {
-        hTit.textContent = "Perfil local (" + distM + " m)";
-        hDes.textContent = Math.round(zMin) + " a " + Math.round(zMax) + " msnm";
-      } else {
-        hTit.textContent = "Transecto A-B (" + distM + " m)";
-        hDes.textContent = "ΔZ " + (dZ >= 0 ? "+" : "") + dZ + " m";
-      }
-      return { dist: distM, dz: dZ };
+      hTit.textContent = "Perfil de la ladera (" + distM + " m)";
+      hDes.textContent = Math.round(zMin) + " a " + Math.round(zMax) + " msnm";
     }
 
     function actualizarSonda(x, y) {
@@ -546,33 +550,155 @@
       if (hCota) hCota.textContent = Math.round(z).toLocaleString("es-CO") + " msnm";
       if (hPend) hPend.textContent = gr.deg.toFixed(1).replace(".", ",") + "° (" + Math.round(gr.pct) + " %) · " + gr.rum;
 
-      if (ptoA) {
-        var dest = ptoB || [x, y];
-        lTransecto.setAttribute("x1", ptoA[0].toFixed(1)); lTransecto.setAttribute("y1", ptoA[1].toFixed(1));
-        lTransecto.setAttribute("x2", dest[0].toFixed(1)); lTransecto.setAttribute("y2", dest[1].toFixed(1));
-        cPtoB.setAttribute("cx", dest[0].toFixed(1)); cPtoB.setAttribute("cy", dest[1].toFixed(1));
-        tLblB.setAttribute("x", (dest[0] + 8).toFixed(1)); tLblB.setAttribute("y", (dest[1] - 8).toFixed(1));
-        cPtoB.removeAttribute("hidden"); tLblB.removeAttribute("hidden");
-        var med = dibujarPerfil(ptoA, dest, false);
-        var txtMed = med.dist.toLocaleString("es-CO") + " m · ΔZ " + (med.dz >= 0 ? "+" : "") + med.dz + " m";
-        tLblDist.textContent = med.dist.toLocaleString("es-CO") + " m";
-        tLblDist.setAttribute("x", ((ptoA[0] + dest[0]) / 2).toFixed(1)); tLblDist.setAttribute("y", ((ptoA[1] + dest[1]) / 2 - 10).toFixed(1));
-        tLblDist.removeAttribute("hidden");
-        if (!ptoB && med.dist === 0) { tLblDist.setAttribute("hidden", ""); if (hObj) hObj.textContent = "A fijado · marque el punto B"; }
-        else if (hObj) hObj.textContent = "A-B: " + txtMed;
-      } else {
-        var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
-        dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP], true);
-        if (hObj) hObj.textContent = loteActivo ? loteActivo.id + " · " + loteActivo.uso : "Clic: medir perfil A-B";
-      }
+      var dxP = Math.cos(radAsp) * 58, dyP = Math.sin(radAsp) * 58;
+      dibujarPerfil([x - dxP, y - dyP], [x + dxP, y + dyP]);
+      if (hObj) hObj.textContent = loteActivo ? loteActivo.id + " · " + loteActivo.uso : PROMPT[perfil];
     }
 
-    function limpiarAB() {
-      ptoA = null; ptoB = null;
-      lTransecto.setAttribute("hidden", ""); cPtoA.setAttribute("hidden", ""); cPtoB.setAttribute("hidden", "");
-      tLblA.setAttribute("hidden", ""); tLblB.setAttribute("hidden", ""); tLblDist.setAttribute("hidden", "");
+    /* 9b. Diagnóstico de ejemplo al tocar el terreno, según el perfil (mismo perfil del embudo y del proceso) */
+    var perfil = "productor", diagPt = null, hDiag = $("#hud-diag");
+    var gDiag = el("g", { id: "capa-diag" }, gSonda);
+    var PROMPT = {
+      productor: "Toque el terreno: ¿se le va el suelo?",
+      empresarial: "Toque el terreno: ¿pasa el cribado EUDR?",
+      academica: "Toque el terreno: diseño de su ensayo"
+    };
+    function nivelErosion(pct) {
+      /* clases de pendiente del IGAC (0-3, 3-7, 7-12, 12-25, 25-50, 50-75, > 75 %) agrupadas en semáforo */
+      if (pct < 12) return { s: "verde", n: "bajo", cls: pct < 3 ? "plana" : pct < 7 ? "ligeramente inclinada" : "moderadamente inclinada",
+        t: "Riesgo bajo de erosión. En terreno casi plano el problema suele ser el encharcamiento: revise drenajes antes de sembrar." };
+      if (pct < 25) return { s: "ambar", n: "medio", cls: "fuertemente inclinada",
+        t: "Con cada aguacero se va suelo fértil. Siembre en contorno, deje barreras vivas y mantenga el suelo cubierto." };
+      if (pct < 50) return { s: "rojo", n: "alto", cls: "ligeramente escarpada",
+        t: "Pérdida de suelo alta si queda descubierto. Necesita curvas a nivel, zanjas de infiltración y cobertura permanente." };
+      return { s: "rojo", n: "muy alto", cls: "escarpada",
+        t: "Ladera para uso agroforestal o de conservación más que para cultivo limpio." };
+    }
+    function semaforo(s, txt) { return '<p class="dg-sem dg-' + s + '"><i></i>' + esc(txt) + "</p>"; }
+    function pintarDiag(pt) {
+      gDiag.innerHTML = "";
+      var x = pt[0], y = pt[1], z = elev(x, y), gr = grad(x, y), pct = Math.round(gr.pct), html, msg, cta;
+      el("circle", { cx: x.toFixed(1), cy: y.toFixed(1), r: 7, "class": "dg-pin" }, gDiag);
+      if (perfil === "empresarial") {
+        var perdida = PERDIDA.some(function (b) { return enPoligono(x, y, b); }), bosque = BOSQUE.some(function (b) { return enPoligono(x, y, b); });
+        var r = perdida ? { s: "rojo", h: "Pérdida de cobertura arbórea después del 31-12-2020",
+              t: "Este punto tenía bosque en 2020 y el cribado detecta pérdida posterior. Sin verificación en campo y soporte documental, el producto no puede entrar al mercado de la Unión Europea." }
+          : bosque ? { s: "ambar", h: "Bosque en pie en 2020",
+              t: "Producir aquí después de la fecha de corte incumple la norma. Mantenga la cobertura y deje el predio georreferenciado." }
+          : { s: "verde", h: "Sin bosque en 2020 en el cribado",
+              t: "Apto para continuar la debida diligencia: polígono del predio, declaración y soporte documental." };
+        html = semaforo(r.s, r.h) + '<p class="dg-txt">' + esc(r.t) + '</p><p class="dg-mini">Aplica a café, cacao, palma y ganado que se exportan a la Unión Europea.</p>';
+        msg = "Hola, equipo de Consultoría. Probé el cribado EUDR de ejemplo en su web (resultado: " + r.h.toLowerCase() + "). Quiero validar los predios de mi organización.";
+        cta = "Validar mis predios";
+        gEudr.removeAttribute("hidden");
+      } else if (perfil === "academica") {
+        /* bloques completos al azar: cada bloque sigue la curva de nivel (misma altura), los bloques avanzan pendiente abajo */
+        var gB = el("g", { transform: "translate(" + x.toFixed(1) + "," + y.toFixed(1) + ") rotate(" + gr.asp.toFixed(1) + ")" }, gDiag);
+        var orden = [["T2", "T4", "T1", "T3"], ["T3", "T1", "T4", "T2"], ["T1", "T3", "T2", "T4"]];
+        orden.forEach(function (fila, b) {
+          var yy = (b - 1) * 30;
+          el("text", { x: -64, y: yy + 4, "class": "dg-bloque-l" }, gB, "B" + (b + 1));
+          fila.forEach(function (tr, k) {
+            var xx = -48 + k * 25;
+            el("rect", { x: xx, y: yy - 11, width: 23, height: 22, rx: 3, "class": "dg-parcela dg-" + tr }, gB);
+            el("text", { x: xx + 11.5, y: yy + 4, "text-anchor": "middle", "class": "dg-parcela-l" }, gB, tr);
+          });
+        });
+        var plano = pct < 3;
+        html = semaforo(plano ? "verde" : "ambar", plano ? "Terreno homogéneo (" + pct + " %)" : "Pendiente de " + pct + " %: bloquee")
+          + '<p class="dg-txt">' + esc(plano
+            ? "Con tan poca pendiente puede usar un diseño completamente al azar."
+            : "Diseño en bloques completos al azar: cada bloque sigue la curva de nivel, así la pendiente no se confunde con el efecto de sus tratamientos. 4 tratamientos × 3 bloques = 12 parcelas.") + "</p>";
+        msg = "Hola, equipo de Consultoría. Probé el diseño de ensayo de ejemplo en su web (pendiente de " + pct + " %). Quiero asesoría para el diseño y el análisis de mi ensayo.";
+        cta = "Diseñar mi ensayo";
+      } else {
+        var flujo = trazarFlujo(x, y, 60, 9), largo = 0;
+        for (var i = 1; i < flujo.length; i++) largo += Math.hypot(flujo[i][0] - flujo[i - 1][0], flujo[i][1] - flujo[i - 1][1]);
+        if (flujo.length > 2) el("path", { d: "M" + flujo.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join("L"), "class": "dg-flujo" }, gDiag);
+        var ne = nivelErosion(pct), metros = Math.round(largo * ESCALA_M / 10) * 10;
+        html = semaforo(ne.s, "Riesgo " + ne.n + " de erosión") +
+          '<p class="dg-tit">Pendiente ' + pct + " % · " + ne.cls + (metros > 0 ? " · el agua corre ~" + metros.toLocaleString("es-CO") + " m" : "") + "</p>" +
+          '<p class="dg-txt">' + esc(ne.t) + "</p>";
+        msg = "Hola, equipo de Consultoría. Probé el diagnóstico de ejemplo en su web (pendiente " + pct + " %, riesgo " + ne.n + " de erosión). Quiero este análisis con dron en mi finca.";
+        cta = "Quiero esto en mi finca";
+      }
+      if (hDiag) {
+        hDiag.innerHTML = html + '<div class="dg-acc"><a class="dg-wa" target="_blank" rel="noopener" href="' + waLink(msg) + '">' + esc(cta) + '</a>' +
+          '<a class="dg-ver" href="#proceso">Ver cómo lo hacemos</a><button type="button" class="dg-cerrar">Cerrar</button></div><p class="dg-nota">Ejemplo sobre relieve simulado · ' + Math.round(z).toLocaleString("es-CO") + " msnm</p>";
+        hDiag.hidden = false;
+        ubicarDiag(pt);
+      }
+    }
+    /* en escritorio el resultado flota junto al punto tocado (no tapa el texto ni los botones);
+       en teléfono va dentro del HUD, que está debajo de los botones */
+    var hud = $("#gis-hud");
+    function ubicarDiag(pt) {
+      if (!hDiag || hDiag.hidden) return;
+      var ancho = window.innerWidth > 860;
+      hDiag.classList.toggle("dg-flota", ancho);
+      if (!ancho) { if (hud && hDiag.parentNode !== hud) hud.appendChild(hDiag); hDiag.style.left = hDiag.style.top = ""; return; }
+      if (hDiag.parentNode !== hero) hero.appendChild(hDiag);
+      var ctm = svg.getScreenCTM(), hr = hero.getBoundingClientRect();
+      if (!ctm) return;
+      var sx = pt[0] * ctm.a + ctm.e - hr.left, sy = pt[1] * ctm.d + ctm.f - hr.top;
+      var w = hDiag.offsetWidth, h = hDiag.offsetHeight;
+      var techo = hud ? hud.getBoundingClientRect().top - hr.top - 12 : hr.height - 20;
+      var sep = perfil === "academica" ? 84 : 22, left = sx + sep + w > hr.width - 16 ? sx - sep - w : sx + sep;
+      var top = Math.max(78, Math.min(sy - 30, techo - h));
+      hDiag.style.left = Math.max(16, left).toFixed(0) + "px"; hDiag.style.top = top.toFixed(0) + "px";
+    }
+    window.addEventListener("resize", function () { if (diagPt) ubicarDiag(diagPt); });
+    function limpiarDiag() {
+      diagPt = null; gDiag.innerHTML = "";
+      if (hDiag) { hDiag.hidden = true; hDiag.innerHTML = ""; }
+      if (perfil !== "empresarial") gEudr.setAttribute("hidden", "");
       if (btnLimpiar) btnLimpiar.hidden = true;
     }
+    /* muestra el diagnóstico en un punto; en teléfono la ficha va dentro del HUD y puede quedar bajo el borde */
+    function mostrarDiag(pt, desplazar) {
+      manual = true; diagPt = pt; pintarDiag(pt);
+      if (btnLimpiar) btnLimpiar.hidden = false;
+      actualizarSonda(pt[0], pt[1]);
+      if (desplazar && hDiag && !hDiag.hidden && window.innerWidth <= 860)
+        hDiag.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+    }
+    /* punto de ejemplo en el terreno libre, a la derecha del texto del inicio, para que la ficha flotante no lo tape
+       (en teléfono la ficha va dentro de la consola y sirve el punto de la sonda) */
+    function puntoLibre() {
+      if (window.innerWidth <= 860) return ultPt.slice();
+      var hr = hero.getBoundingClientRect(), der = hr.left, rg = document.createRange();
+      /* borde derecho del texto visible (un Range mide las letras; la caja de un párrafo o una viñeta ocupa todo el ancho) */
+      [].forEach.call(hero.querySelectorAll(".hero-in h1, .hero-in .lema, .hero-in li, .hero-acc a"), function (n) {
+        rg.selectNodeContents(n);
+        der = Math.max(der, n.tagName === "A" ? n.getBoundingClientRect().right : rg.getBoundingClientRect().right);
+      });
+      var techo = hud ? hud.getBoundingClientRect().top : hr.bottom - 160;
+      /* la ficha (340 px) va a la derecha del punto; se reserva la separación mayor (84 px, la del ensayo en bloques)
+         para que al cambiar de perfil no salte al lado del texto. Si no cabe, se acerca al borde lo más posible */
+      var cx = Math.min(der + 24, hr.right - 16 - 340 - 84 - 8);
+      return aCoordSVG({ clientX: cx, clientY: Math.max(hr.top + 120, techo - 150) });
+    }
+    /* pestañas de perfil de la consola: el mismo perfil del embudo y de «Cómo trabajamos» */
+    var bPerf = document.querySelectorAll(".hud-pf[data-perfil]");
+    function ponerPerfil(id) {
+      if (!PROMPT[id] || id === perfil) return;
+      perfil = id;
+      [].forEach.call(bPerf, function (b) { b.setAttribute("aria-pressed", b.dataset.perfil === id ? "true" : "false"); });
+      var pt = diagPt; limpiarDiag();
+      if (id === "empresarial") gEudr.removeAttribute("hidden"); else gEudr.setAttribute("hidden", "");
+      if (pt) mostrarDiag(pt, false); else actualizarSonda(ultPt[0], ultPt[1]);
+    }
+    document.addEventListener("perfil", function (e) { ponerPerfil(e.detail); });
+    [].forEach.call(bPerf, function (b) {
+      b.addEventListener("click", function () {
+        var id = b.dataset.perfil, E = window.consultoriaEmbudo;
+        if (E) E.linea(id); else document.dispatchEvent(new CustomEvent("perfil", { detail: id }));
+        ponerPerfil(id);
+        /* elegir perfil ya muestra un ejemplo: el visitante no tiene que adivinar que debe tocar el terreno */
+        if (!diagPt) mostrarDiag(puntoLibre(), true);
+        else if (window.innerWidth <= 860 && hDiag) hDiag.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+      });
+    });
 
     function aCoordSVG(e) {
       if (svg.createSVGPoint && svg.getScreenCTM) {
@@ -595,27 +721,18 @@
       raf = requestAnimationFrame(function () { raf = 0; actualizarSonda(ultPt[0], ultPt[1]); });
     }, { passive: true });
 
-    hero.addEventListener("pointerleave", function () { if (!ptoA) manual = false; });
+    hero.addEventListener("pointerleave", function () { if (!diagPt) manual = false; });
 
+    /* tocar el terreno (no el texto ni los botones) da el diagnóstico de ejemplo del perfil */
     hero.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest("a, button, .gis-hud")) return;
-      manual = true;
-      var pt = aCoordSVG(e);
-      if (!ptoA) {
-        ptoA = pt; ptoB = null;
-        cPtoA.setAttribute("cx", pt[0].toFixed(1)); cPtoA.setAttribute("cy", pt[1].toFixed(1));
-        tLblA.setAttribute("x", (pt[0] + 8).toFixed(1)); tLblA.setAttribute("y", (pt[1] - 8).toFixed(1));
-        cPtoA.removeAttribute("hidden"); tLblA.removeAttribute("hidden"); lTransecto.removeAttribute("hidden");
-        if (btnLimpiar) btnLimpiar.hidden = false;
-      } else if (!ptoB) {
-        ptoB = pt;
-      } else {
-        limpiarAB();
-      }
-      actualizarSonda(pt[0], pt[1]);
+      if (e.target.closest && e.target.closest("a, button, .gis-hud, h1, p, li")) return;
+      mostrarDiag(aCoordSVG(e), true);
     });
 
-    if (btnLimpiar) btnLimpiar.addEventListener("click", function () { limpiarAB(); actualizarSonda(ultPt[0], ultPt[1]); });
+    if (hDiag) hDiag.addEventListener("click", function (e) {
+      if (!e.target.closest(".dg-cerrar")) return;
+      limpiarDiag(); manual = false; actualizarSonda(ultPt[0], ultPt[1]);
+    });
 
     var mapaCapas = { curvas: gCurvas, pendiente: gPend, hidro: gHidro, lotes: gLotes };
     [].forEach.call(document.querySelectorAll(".hud-chip[data-capa]"), function (b) {
@@ -634,13 +751,17 @@
 
     actualizarSonda(885, 275);
     if (reduce) return;
-    var heroVis = true;
+    /* la órbita solo pide fotogramas mientras el inicio se ve; fuera de pantalla el bucle se detiene del todo */
+    var heroVis = true, rafO = 0;
+    function arrancarOrbita() { if (!rafO) rafO = requestAnimationFrame(orbita); }
     if ("IntersectionObserver" in window) {
-      var ioH = new IntersectionObserver(function (es) { heroVis = es[0].isIntersecting; }, { threshold: 0.05 });
+      var ioH = new IntersectionObserver(function (es) { heroVis = es[0].isIntersecting; if (heroVis) arrancarOrbita(); }, { threshold: 0.05 });
       ioH.observe(hero);
     }
-    (function orbita(t) {
-      if (heroVis && !manual && !ptoA) {
+    function orbita(t) {
+      rafO = 0;
+      if (!heroVis) return;
+      if (!manual && !diagPt) {
         var s = t * 0.00045;
         var mov = window.innerWidth <= 860, cxO = mov ? 600 : 865, rxO = mov ? 70 : 195;
         var ox = cxO + Math.cos(s) * rxO + Math.sin(s * 2.1) * (mov ? 15 : 40);
@@ -648,8 +769,9 @@
         ultPt = [ox, oy];
         actualizarSonda(ox, oy);
       }
-      requestAnimationFrame(orbita);
-    })(0);
+      arrancarOrbita();
+    }
+    arrancarOrbita();
   })();
 
   /* ---------- embudo (2 pasos directos) ---------- */
@@ -1116,5 +1238,22 @@
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("ya"); io.unobserve(e.target); } });
     }, { threshold: .15 });
     [].forEach.call(nodos, function (n, i) { n.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(n); });
+  })();
+
+  /* ---------- rendimiento: las animaciones infinitas de una sección solo corren mientras se ve ----------
+     Las animaciones CSS sobre SVG no pasan a la GPU: fuera de pantalla seguían forzando estilo y layout
+     60 veces por segundo (medido el 26/11/2026: 126 ms de CPU por segundo con la página quieta en el pie). */
+  (function pausarFuera() {
+    if (!("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        e.target.classList.toggle("fuera", !e.isIntersecting);
+        /* SMIL (animateMotion del ciclo en «Cómo trabajamos») no obedece a animation-play-state */
+        [].forEach.call(e.target.querySelectorAll("svg"), function (s) {
+          if (s.pauseAnimations) { if (e.isIntersecting) s.unpauseAnimations(); else s.pauseAnimations(); }
+        });
+      });
+    }, { rootMargin: "100px 0px" });
+    [].forEach.call(document.querySelectorAll("#contenido > section"), function (s) { io.observe(s); });
   })();
 })();
