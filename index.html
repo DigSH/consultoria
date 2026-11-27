@@ -32,7 +32,7 @@
 </script>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <link rel="preload" href="vendor/fonts/manrope/Manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261127m">
+<link rel="stylesheet" href="styles.css?v=20261128a">
 </head>
 <body>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -155,7 +155,8 @@
     <h2>Servicios</h2>
   </div>
   <div class="filtros" id="filtros" role="group" aria-label="Filtrar servicios"></div>
-  <div class="rejilla" id="rejilla"></div>
+  <div class="rejilla" id="rejilla" role="region" aria-label="Servicios" tabindex="0"></div>
+  <p class="serv-pos" id="serv-pos" aria-hidden="true"></p>
 </section>
 
 <!-- ============ SURCO, LA APP DE LA CONSULTORÍA ============ -->
@@ -339,6 +340,7 @@
 
 <footer class="pie">
   <p>© 2026 Consultoría · Diego Sanabria, Zahira Rodríguez, Stiven Santana y Faiver Salcedo</p>
+  <p class="pie-s" id="aviso-medicion" hidden>Contamos visitas y clics de forma anónima, sin cookies ni datos personales (GoatCounter).</p>
 </footer>
 
 <!-- símbolos reutilizables -->
@@ -357,11 +359,11 @@
   </defs>
 </svg>
 
-<script src="datos.js?v=20261126g"></script>
+<script src="datos.js?v=20261128a"></script>
 <script src="vendor/leaflet/leaflet.min.js"></script>
-<script src="app.js?v=20261127i"></script>
+<script src="app.js?v=20261128b"></script>
 <script src="gis.js?v=20261118c"></script>
 <script src="iguaque.js?v=20261118c"></script>
-<script src="proceso.js?v=20261127e"></script>
+<script src="proceso.js?v=20261128a"></script>
 </body>
 </html>

@@ -58,6 +58,8 @@
   var PERFILES = {
     productor: {
       serv: ["geomatica", "ia", "surco", "bpa"],
+      /* la prueba de cada fase en la misma página: el ciclo sirve de índice sin encerrar el contenido */
+      prueba: [["#mapas", "Ver mapas en vivo"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero mi diagnóstico de finca",
       hitos: ["Visita", "Reporte BPA o EUDR", "Ajuste del plan"]
     },
@@ -69,6 +71,7 @@
         ["Acompañamiento", "Reportes consolidados BPA o EUDR para compradores y auditorías, y ajuste del plan."]
       ],
       serv: ["geomatica", "tableros", "surco", "bpa"],
+      prueba: [["#mapas", "Pruebe el validador EUDR"], ["#evidencia", "Ver publicaciones"], ["#surco", "Conocer Surco"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero el diagnóstico de mi organización",
       tel: { tit: "Organización", sub: "3 fincas · 1 hato", filas: ["Finca 1", "Finca 2", "Finca 3", "Hato"], datos: ["BPA al día", "Riego hoy", "EUDR listo", "12 bovinos"], alerta: "Reporte comprador" },
       hitos: ["Comité", "Reporte consolidado", "Auditoría"],
@@ -89,6 +92,7 @@
         ["Acompañamiento", "Hasta la sustentación y la respuesta a revisores."]
       ],
       serv: ["cienciometria", "estadistica", "gobernanza", "cienciometria"],
+      prueba: [["#equipo", "Conocer al equipo"], ["#mapas", "Ver un estudio longitudinal"], ["#evidencia", "Ver publicaciones"], ["#contacto", "Ir al contacto"]],
       cta: "Quiero asesoría para mi investigación",
       pec: false,
       capas: ["Diseño experimental", "Estadística en R", "Modelos PLS-SEM", "Figuras y tablas"],
@@ -157,10 +161,12 @@
     cajaS.innerHTML = '<p class="k">Servicio de esta fase</p><h4></h4><p class="e"></p>' +
       '<div class="acc"><a class="boton boton-chico pr-wa" target="_blank" rel="noopener">Escribir por WhatsApp</a>' +
       '<button type="button" class="pr-ver">Ver entregable</button>' +
-      (s.id === "geomatica" ? '<a class="pr-ver pr-lab" href="#mapas">Pruebe el validador EUDR</a>' : '') + '</div>';
+      (PERFILES[perfil].prueba ? '<a class="pr-ver pr-lab" data-evento="prueba"></a>' : '') + '</div>';
     cajaS.querySelector("h4").textContent = s.titulo;
     cajaS.querySelector(".e").textContent = s.entrega;
     cajaS.querySelector(".pr-wa").href = waLink(msg);
+    var pr = PERFILES[perfil].prueba, lab = cajaS.querySelector(".pr-lab");
+    if (pr && lab) { lab.href = pr[i][0]; lab.textContent = pr[i][1]; }
     cajaS.querySelector(".pr-ver").addEventListener("click", function () {
       var E = window.consultoriaEmbudo; if (!E) return;
       E.linea(perfil); E.servicio(s.id);

@@ -2,6 +2,9 @@
    C:\proyectos\Laboral\job-hunter-cgiar\data\perfil.json (base factual).
    Cambiar un hecho = cambiarlo aquí. Nada se inventa. */
 window.CONSULTORIA = {
+  /* medición anónima sin cookies: poner aquí el código de la cuenta de GoatCounter (p. ej. "consultoria-uptc");
+     vacío = no se carga nada ni se muestra el aviso */
+  analitica: { goatcounter: "" },
   contacto: {
     nombre: "Diego Israel Sanabria Higuera",
     whatsapp: "573158091128",

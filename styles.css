@@ -960,3 +960,14 @@ section[hidden]{display:none!important}
 }
 @media (max-width:860px){.hero-nota.gis-hud{padding-top:18px}}
 .pr-vaca-c{fill:#f2efe6;stroke:#0e1512;stroke-width:1}
+/* servicios en teléfono: carrusel deslizable en vez de 9 tarjetas apiladas (4,2 pantallas medidas el 26/11/2026) */
+.serv-pos{display:none}
+@media (max-width:640px){
+  #rejilla{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
+    margin:0 -16px;padding:4px 16px 14px;scroll-padding:0 16px;scrollbar-width:none}
+  #rejilla::-webkit-scrollbar{display:none}
+  #rejilla>.serv{flex:0 0 84%;scroll-snap-align:start}
+  #rejilla>.serv[hidden]{display:none}
+  #rejilla>.serv:hover{transform:none}
+  .serv-pos{display:block;margin:4px 0 0;text-align:center;font:600 12px var(--mono);color:#9bd8b6;min-height:1.4em}
+}

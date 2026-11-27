@@ -894,8 +894,24 @@
       b.addEventListener("click", function () {
         [].forEach.call(fil.children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
         [].forEach.call(rej.children, function (c) { c.hidden = f.k !== "todas" && c.dataset.cat !== f.k; });
+        rej.scrollLeft = 0; posicion();
       });
     });
+
+    /* en teléfono la rejilla es un carrusel deslizable (CSS, < 641 px): «2 de 9 · deslice» */
+    var pos = $("#serv-pos");
+    function posicion() {
+      if (!pos) return;
+      var vis = [].filter.call(rej.children, function (c) { return !c.hidden; });
+      if (rej.scrollWidth <= rej.clientWidth + 4 || !vis.length) { pos.textContent = ""; return; }
+      var paso = vis.length > 1 ? vis[1].offsetLeft - vis[0].offsetLeft : rej.clientWidth;
+      var k = Math.min(vis.length, Math.round(rej.scrollLeft / paso) + 1);
+      pos.textContent = k + " de " + vis.length + (k < vis.length ? " · deslice →" : "");
+    }
+    var tPos = 0;
+    rej.addEventListener("scroll", function () { if (!tPos) tPos = requestAnimationFrame(function () { tPos = 0; posicion(); }); }, { passive: true });
+    window.addEventListener("resize", posicion);
+    posicion();
   })();
 
   /* ---------- cifras con conteo ---------- */
@@ -1238,6 +1254,42 @@
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("ya"); io.unobserve(e.target); } });
     }, { threshold: .15 });
     [].forEach.call(nodos, function (n, i) { n.style.transitionDelay = (i % 4) * 70 + "ms"; io.observe(n); });
+  })();
+
+  /* ---------- medición anónima y sin cookies (GoatCounter); inactiva mientras datos.js no traiga el código ----------
+     Cuenta: perfil elegido, clics en WhatsApp por sección, enlaces de prueba de cada fase, «Cotizar», envío del
+     formulario y hasta qué sección llega la visita (una vez por sección). Nada de nombres, teléfonos ni textos escritos. */
+  (function medicion() {
+    var codigo = D.analitica && D.analitica.goatcounter;
+    if (!codigo || !/^[a-z0-9-]+$/.test(codigo)) return;
+    var s = document.createElement("script");
+    s.async = true; s.src = "https://gc.zgo.at/count.js";
+    s.setAttribute("data-goatcounter", "https://" + codigo + ".goatcounter.com/count");
+    document.head.appendChild(s);
+    var aviso = $("#aviso-medicion"); if (aviso) aviso.hidden = false;
+    var cola = [], hechos = {};
+    function medir(ruta, titulo, unaVez) {
+      if (unaVez) { if (hechos[ruta]) return; hechos[ruta] = 1; }
+      var ev = { path: ruta, title: titulo || ruta, event: true };
+      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count(ev); else cola.push(ev);
+    }
+    s.addEventListener("load", function () { cola.forEach(function (ev) { window.goatcounter.count(ev); }); cola = []; });
+    var perfilActual = "sin-perfil";
+    document.addEventListener("perfil", function (e) { perfilActual = e.detail; medir("perfil/" + e.detail, "Perfil elegido", true); });
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("a, button"); if (!a) return;
+      var sec = (a.closest("section, header, footer") || {}).id || "pagina";
+      if (a.href && a.href.indexOf("wa.me/") >= 0) medir("whatsapp/" + sec + "/" + perfilActual, "Clic en WhatsApp");
+      else if (a.dataset && a.dataset.evento === "prueba") medir("prueba" + (a.getAttribute("href") || "").replace("#", "/"), "Prueba de la fase");
+      else if (a.dataset && a.dataset.serv) medir("cotizar/" + a.dataset.serv, "Cotizar servicio");
+    }, true);
+    var f = $("#formu"); if (f) f.addEventListener("submit", function () { medir("formulario/envio/" + perfilActual, "Envío del formulario"); }, true);
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { medir("seccion/" + e.target.id, "Llegó a la sección", true); io.unobserve(e.target); } });
+      }, { rootMargin: "-45% 0px -45% 0px" });   /* cuenta cuando la sección cruza el centro: sirve para secciones de varias pantallas */
+      [].forEach.call(document.querySelectorAll("#contenido > section[id]:not([hidden])"), function (x) { io.observe(x); });
+    }
   })();
 
   /* ---------- rendimiento: las animaciones infinitas de una sección solo corren mientras se ve ----------
