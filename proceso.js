@@ -64,7 +64,7 @@
     empresarial: {
       fases: [
         ["Diagnóstico", "Levantamos el estado de sus fincas o asociados: dron, suelo y registros."],
-        ["Análisis y plan", "Indicadores por finca y por lote en un tablero, con un plan y metas para la organización."],
+        ["Análisis y plan", "Indicadores por finca, lote y hato en un tablero, con un plan y metas para la organización."],
         ["Implementación de app", "Surco configurado para su organización: fincas, técnicos con roles y tablero gerencial."],
         ["Acompañamiento", "Reportes consolidados BPA o EUDR para compradores y auditorías, y ajuste del plan."]
       ],
@@ -90,6 +90,7 @@
       ],
       serv: ["cienciometria", "estadistica", "gobernanza", "cienciometria"],
       cta: "Quiero asesoría para mi investigación",
+      pec: false,
       capas: ["Diseño experimental", "Estadística en R", "Modelos PLS-SEM", "Figuras y tablas"],
       tel: { tit: "Ensayo", sub: "3 tratamientos · testigo", filas: ["T1", "T2", "T3", "Testigo"], datos: ["Datos al día", "Datos al día", "Datos al día", "Datos al día"], alerta: "Base depurada" },
       hitos: ["Revisión", "Respuesta a revisores", "Sustentación"],
@@ -362,6 +363,46 @@
     var izq = iso(-lim, lim, z);
     etiqueta(cg, izq[0] - 12, izq[1] - 4, PF.capas ? PF.capas[k] : cp.t, "fin");
   });
+
+  /* ===== fase 2 (pecuario): hato y pastos, ligado al potrero ===== */
+  if (PF.pec !== false) {
+    var fp = g(svg, "pr-f pr-f1");
+    [[1.0, 1.0], [3.85, 1.25], [3.0, 3.95]].forEach(function (m, i) {
+      var lado = 0.55, mg = g(fp, "pr-aforo");
+      mg.style.transitionDelay = (0.3 + i * 0.12) + "s";
+      poly(mg, [[m[0], m[1], 0.04], [m[0] + lado, m[1], 0.04], [m[0] + lado, m[1] + lado, 0.04], [m[0], m[1] + lado, 0.04]], { "class": "pr-aforo-m" });
+    });
+    [[1.7, 1.6], [3.5, 2.6], [2.0, 3.6]].forEach(function (v, i) {
+      var q = iso(v[0], v[1], 0), a = el("ellipse", { cx: q[0], cy: q[1], rx: 17, ry: 7, "class": "pr-vaca-anillo" }, fp);
+      a.style.animationDelay = (i * 0.5) + "s";
+    });
+    var pc = iso(2.6, 2.6, 0.3);
+    var pw = estrecho ? { x: 214, y: 486, w: 372, h: 176 } : { x: 604, y: 140, w: 180, h: 240 };
+    var fin = estrecho ? [pw.x + pw.w / 2, pw.y] : [pw.x, pw.y + pw.h / 2];
+    el("path", { d: "M" + pc[0] + " " + pc[1] + "C" + (estrecho ? pc[0] : pc[0] + 110) + " " + (estrecho ? pc[1] + 60 : pc[1]) + " " +
+      (estrecho ? fin[0] : fin[0] - 60) + " " + (estrecho ? fin[1] - 40 : fin[1]) + " " + fin[0] + " " + fin[1], "class": "pr-enlace pr-enlace-pec" }, fp);
+    var pg = g(fp, "pr-pec");
+    el("rect", { x: pw.x, y: pw.y, width: pw.w, height: pw.h, rx: 16, "class": "pr-pec-caja" }, pg);
+    el("text", { x: pw.x + 16, y: pw.y + 26, "class": "pr-fun-t" }, pg, "Hato y pastos");
+    el("text", { x: pw.x + 16, y: pw.y + 42, "class": "pr-fun-s" }, pg, "Peso por foto y aforos");
+    var bx0 = pw.x + 16, by0 = pw.y + 130, bw = estrecho ? 20 : 16, sep = estrecho ? 10 : 8, alt = [34, 46, 40, 58, 52];
+    el("text", { x: bx0, y: pw.y + 62, "class": "pr-pec-k" }, pg, "GANANCIA DE PESO");
+    alt.forEach(function (hh, i) {
+      var r = el("rect", { x: bx0 + i * (bw + sep), y: by0 - hh, width: bw, height: hh, rx: 4, "class": "pr-pec-barra" }, pg);
+      r.style.transitionDelay = (0.4 + i * 0.08) + "s";
+    });
+    el("line", { x1: bx0 - 2, y1: by0, x2: bx0 + 5 * (bw + sep) - sep + 2, y2: by0, "class": "pr-pec-eje" }, pg);
+    var cb = estrecho ? { x: pw.x + 196, y: pw.y + 66, w: 156 } : { x: pw.x + 16, y: pw.y + 152, w: pw.w - 32 };
+    el("text", { x: cb.x, y: cb.y, "class": "pr-pec-k" }, pg, "AFORO DE PASTO");
+    el("text", { x: cb.x + cb.w, y: cb.y, "text-anchor": "end", "class": "pr-pec-v" }, pg, "72 %");
+    el("rect", { x: cb.x, y: cb.y + 8, width: cb.w, height: 8, rx: 4, "class": "pr-pec-pista" }, pg);
+    el("rect", { x: cb.x, y: cb.y + 8, width: cb.w * 0.72, height: 8, rx: 4, "class": "pr-pec-lleno" }, pg);
+    var ry2 = cb.y + (estrecho ? 44 : 46);
+    el("circle", { cx: cb.x + 6, cy: ry2 - 4, r: 5, "class": "pr-pec-pt" }, pg);
+    el("text", { x: cb.x + 18, y: ry2, "class": "pr-pec-t" }, pg, "2 vacas en celo");
+    el("circle", { cx: cb.x + 6, cy: ry2 + 18, r: 5, "class": "pr-pec-pt" }, pg);
+    el("text", { x: cb.x + 18, y: ry2 + 22, "class": "pr-pec-t" }, pg, "Vacuna en 5 días");
+  }
 
   /* ===== fase 3: implementación de app (lotes y potrero en Surco, con sus funciones) ===== */
   var f2 = g(svg, "pr-f pr-f2");
